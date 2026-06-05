@@ -132,7 +132,7 @@
 
 
     /* ══ DISTANCE TOOL ══ */
-    #distTool{position:absolute;top:52px;right:10px;z-index:800;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px;width:260px;box-shadow:0 4px 20px var(--shadow);display:none;}
+    #distTool{position:absolute;top:52px;right:10px;z-index:800;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px;width:310px;max-height:calc(100vh - 80px);overflow-y:auto;box-shadow:0 4px 20px var(--shadow);display:none;}
     #distTool.show{display:block;}
     .dt-title{font-size:11px;font-weight:700;color:var(--accent2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
     .dt-x{cursor:pointer;color:var(--muted);font-size:13px;}
@@ -209,6 +209,51 @@
     .wx-raw{font-family:monospace;font-size:10px;color:var(--text2);line-height:1.5;word-break:break-all;white-space:pre-wrap;}
     .wx-na{font-size:10px;color:var(--muted);font-style:italic;}
 
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .wx-spin{animation:spin .9s linear infinite;display:inline-block;}
+    #wxGlobalDot{width:8px;height:8px;border-radius:50%;background:#6b7b8d;display:inline-block;align-self:center;flex-shrink:0;cursor:help;transition:background .3s;}
+
+    /* ══ E6B SIDEBAR ══ */
+    .e6b-sb{width:290px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .25s,min-width .25s;}
+    .e6b-sb.collapsed{width:0;min-width:0;border-left:none;}
+    .e6b-tog{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:900;width:18px;height:44px;background:var(--surface);border:1px solid var(--border);border-right:none;border-left:1px solid var(--border);border-radius:7px 0 0 7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);transition:right .25s,background .15s;}
+    .e6b-tog:hover{background:var(--surface2);color:var(--text);}
+    .e6b-hdr{background:linear-gradient(135deg,#0d1a3a,#132260);padding:8px 10px;display:flex;align-items:center;gap:8px;flex-shrink:0;border-bottom:1px solid var(--border);}
+    .e6b-badge{background:rgba(14,165,233,.2);border:1px solid rgba(14,165,233,.5);color:#38bdf8;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;}
+    .e6b-body{display:flex;flex:1;overflow:hidden;}
+    .e6b-nav{width:82px;flex-shrink:0;background:var(--bg);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+    .e6b-nav::-webkit-scrollbar{width:0;}
+    .e6b-nav-item{padding:9px 5px 8px;text-align:center;cursor:pointer;border-left:2px solid transparent;border-bottom:1px solid var(--border2);font-size:8.5px;color:var(--muted);font-weight:600;transition:background .12s,color .12s,border-color .12s;line-height:1.3;user-select:none;}
+    .e6b-nav-item:hover{background:var(--surface);color:var(--text2);}
+    .e6b-nav-item:last-child{border-bottom:none;}
+    .e6b-nav-item.active{border-left-color:var(--accent);background:var(--surface2);color:var(--accent2);font-weight:700;}
+    .e6b-nav-item .ni-icon{font-size:14px;display:block;margin-bottom:3px;}
+    .e6b-content{flex:1;overflow-y:auto;padding:9px;min-width:0;}
+    .e6b-content::-webkit-scrollbar{width:3px;}
+    .e6b-content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+    .e6b-panel{display:none;}
+    .e6b-panel.show{display:block;}
+    .e6b-sect-title{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border2);}
+    .e6b-row{margin-bottom:7px;}
+    .e6b-lbl{display:block;font-size:9px;color:var(--muted);margin-bottom:2px;font-weight:600;}
+    .e6b-irow{display:flex;align-items:center;gap:4px;margin-bottom:3px;}
+    .e6b-inp{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 7px;font-size:10px;outline:none;min-width:0;}
+    .e6b-inp:focus{border-color:var(--accent);}
+    .e6b-inp::placeholder{color:var(--muted);}
+    .e6b-unit{font-size:9px;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+    .e6b-sel{background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:3px 4px;font-size:9px;outline:none;flex-shrink:0;}
+    .e6b-result-box{background:rgba(14,165,233,.05);border:1px solid rgba(14,165,233,.2);border-radius:7px;padding:8px;margin-top:8px;}
+    .e6b-result-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid var(--border2);}
+    .e6b-result-row:last-child{border-bottom:none;}
+    .e6b-result-row.hi .e6b-result-val{color:var(--accent2);font-size:12px;font-weight:700;}
+    .e6b-result-lbl{font-size:9px;color:var(--muted);font-weight:600;}
+    .e6b-result-val{font-size:10px;color:var(--text2);font-family:monospace;font-weight:600;}
+    .e6b-hint{font-size:9px;color:var(--muted);text-align:center;padding:5px 0;}
+    .e6b-hint-sm{font-size:9px;color:var(--muted);margin-bottom:6px;font-style:italic;}
+    .e6b-conv-group{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border2);}
+    .e6b-conv-group:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+    .e6b-conv-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+
     /* ══ RESPONSIVE ══ */
     /* Tablet (iPad ≤ 1024px) */
     @media (max-width:1024px){
@@ -234,7 +279,7 @@
       .sb-toggle{left:0;border-radius:7px;border-left:1px solid var(--border);}
       .sidebar.mobile-open ~ .sb-toggle{left:280px;border-radius:0 7px 7px 0;}
       #map{flex:1;}
-      #distTool{top:52px;right:8px;width:calc(100vw - 16px);max-width:280px;}
+      #distTool{top:52px;right:8px;width:calc(100vw - 16px);max-width:310px;}
       .stats{gap:8px;font-size:8px;padding:3px 8px;}
       #coordDisp{display:none;}
     }
@@ -259,6 +304,9 @@
     <a class="ql-btn" href="https://aip.caat.or.th/" target="_blank">🛫 AIP Thailand</a>
     <a class="ql-btn" href="https://skyvector.com/" target="_blank">🗺 SkyVector</a>
     <a class="ql-btn" href="https://www.windy.com/?14.823,100.676,5" target="_blank">🌬 Windy</a>
+    <a class="ql-btn" href="https://www.flightradar24.com/14.76,101.85/7" target="_blank">✈ FlightRadar24</a>
+    <a class="ql-btn" href="https://awssweather.com/observation/" target="_blank">🌩 RTAF Weather</a>
+    <a class="ql-btn" href="https://sofia-briefing.aviation-civile.gouv.fr/sofia/pages/prepavol.html" target="_blank">📋 NOTAM Check</a>
   </div>
 
   <div class="header-right">
@@ -266,6 +314,8 @@
     <button class="theme-btn" id="btnDist" onclick="toggleDist()" title="Distance Measure (M)">📏</button>
     <button class="theme-btn" onclick="map.setView([13,101],6)" title="Reset View">🏠</button>
     <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark/Light mode" id="themeBtn">🌙</button>
+    <button class="theme-btn" id="btnWxRefresh" onclick="openAIP()" title="AIP Thailand — checking…">🔄</button>
+    <span id="wxGlobalDot" title="Weather: not fetched yet"></span>
     <div class="hbadge">eAIP Thailand</div>
   </div>
 </header>
@@ -291,7 +341,7 @@
         <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">13</span>
         <span class="lp-chevron">▼</span>
       </div>
-      <div class="lp-body" id="lpb-layers">
+      <div class="lp-body collapsed" id="lpb-layers">
         <div class="layer-row" onclick="toggleLayer('airports')">
           <div class="layer-dot" style="background:#0ea5e9;border-radius:50%;"></div>
           <span class="layer-label">Aerodromes</span>
@@ -357,12 +407,12 @@
 
     <!-- NAV AIDS SEARCH (collapsible) -->
     <div class="layer-panel">
-      <div class="lp-header" id="lph-navsearch" onclick="togglePanel('navsearch')">
+      <div class="lp-header collapsed" id="lph-navsearch" onclick="togglePanel('navsearch')">
         <span style="font-size:11px;">📡</span>
         <span class="lp-title">Nav Aid Search</span>
         <span class="lp-chevron">▼</span>
       </div>
-      <div class="lp-body" id="lpb-navsearch">
+      <div class="lp-body collapsed" id="lpb-navsearch">
         <div class="search-wrap" style="margin-bottom:5px;">
           <span class="si">🔍</span>
           <input type="text" id="navSearch" placeholder="Ident, name, freq… (e.g. ILS, VOR, BKK)" oninput="filterNavAids()" style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 9px 5px 27px;font-size:11px;outline:none;"/>
@@ -380,41 +430,457 @@
   <div class="sb-toggle" id="sbToggle" onclick="toggleSidebar()">◀</div>
 
   <div id="map"></div>
+
+  <!-- E6B TOGGLE -->
+  <div class="e6b-tog" id="e6bTog" onclick="toggleE6B()">◀</div>
+
+  <!-- E6B SIDEBAR -->
+  <div class="e6b-sb collapsed" id="e6bSb">
+    <div class="e6b-hdr">
+      <span style="font-size:15px;">✈</span>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#fff;">E6B Flight Computer</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.55);">Aviation Calculator</div>
+      </div>
+      <div class="e6b-badge" style="margin-left:auto;">E6B</div>
+    </div>
+
+    <div class="e6b-body">
+      <div class="e6b-nav">
+        <div class="e6b-nav-item active" data-e6b="wind" onclick="e6bTab('wind')"><span class="ni-icon">💨</span>Wind</div>
+        <div class="e6b-nav-item" data-e6b="tas"  onclick="e6bTab('tas')"><span class="ni-icon">✈</span>TAS / DA</div>
+        <div class="e6b-nav-item" data-e6b="tsd"  onclick="e6bTab('tsd')"><span class="ni-icon">⏱</span>T · S · D</div>
+        <div class="e6b-nav-item" data-e6b="fuel" onclick="e6bTab('fuel')"><span class="ni-icon">⛽</span>Fuel</div>
+        <div class="e6b-nav-item" data-e6b="conv" onclick="e6bTab('conv')"><span class="ni-icon">⇌</span>Convert</div>
+        <div class="e6b-nav-item" data-e6b="pa"   onclick="e6bTab('pa')"><span class="ni-icon">🔼</span>PA / QNH</div>
+        <div class="e6b-nav-item" data-e6b="rwy"  onclick="e6bTab('rwy')"><span class="ni-icon">🛬</span>RWY Wind</div>
+        <div class="e6b-nav-item" data-e6b="cld"  onclick="e6bTab('cld')"><span class="ni-icon">☁</span>Cloud Base</div>
+        <div class="e6b-nav-item" data-e6b="hold" onclick="e6bTab('hold')"><span class="ni-icon">🔄</span>Holding</div>
+        <div class="e6b-nav-item" data-e6b="tod"  onclick="e6bTab('tod')"><span class="ni-icon">📉</span>TOD</div>
+        <div class="e6b-nav-item" data-e6b="rdd"  onclick="e6bTab('rdd')"><span class="ni-icon">📐</span>Rate / Dist</div>
+      </div>
+
+    <div class="e6b-content">
+
+      <!-- ── WIND TRIANGLE ── -->
+      <div class="e6b-panel show" id="e6b-wind">
+        <div class="e6b-sect-title">Wind Correction Angle &amp; Ground Speed</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">True Course (TC)</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="w_tc"  type="number" min="0" max="360" placeholder="090" oninput="calcWind()"><span class="e6b-unit">°</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">True Airspeed (TAS)</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="w_tas" type="number" min="0" placeholder="120" oninput="calcWind()"><span class="e6b-unit">kts</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Wind From</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="w_wd"  type="number" min="0" max="360" placeholder="360" oninput="calcWind()"><span class="e6b-unit">°</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Wind Speed</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="w_ws"  type="number" min="0" placeholder="20" oninput="calcWind()"><span class="e6b-unit">kts</span></div>
+        </div>
+        <div class="e6b-result-box" id="wind-result"><div class="e6b-hint">Fill all fields above</div></div>
+      </div>
+
+      <!-- ── TAS / DENSITY ALTITUDE ── -->
+      <div class="e6b-panel" id="e6b-tas">
+        <div class="e6b-sect-title">True Airspeed &amp; Density Altitude</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">CAS / IAS</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="t_ias" type="number" min="0" placeholder="120" oninput="calcTASe6b()"><span class="e6b-unit">kts</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Pressure Altitude</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="t_alt" type="number" placeholder="5000" oninput="calcTASe6b()"><span class="e6b-unit">ft</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Outside Air Temp (OAT)</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="t_oat" type="number" placeholder="15" oninput="calcTASe6b()"><span class="e6b-unit">°C</span></div>
+        </div>
+        <div class="e6b-result-box" id="tas-result"><div class="e6b-hint">Fill all fields above</div></div>
+      </div>
+
+      <!-- ── TIME / SPEED / DISTANCE ── -->
+      <div class="e6b-panel" id="e6b-tsd">
+        <div class="e6b-sect-title">Time · Speed · Distance</div>
+        <div class="e6b-hint-sm">Leave exactly one field blank — it will be solved</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Distance</label>
+          <div class="e6b-irow">
+            <input class="e6b-inp" id="tsd_d" type="number" min="0" placeholder="blank to solve" oninput="calcTSD()">
+            <select class="e6b-sel" id="tsd_du" onchange="calcTSD()">
+              <option value="nm">nm</option><option value="km">km</option><option value="sm">sm</option>
+            </select>
+          </div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Speed</label>
+          <div class="e6b-irow">
+            <input class="e6b-inp" id="tsd_s" type="number" min="0" placeholder="blank to solve" oninput="calcTSD()">
+            <select class="e6b-sel" id="tsd_su" onchange="calcTSD()">
+              <option value="kts">kts</option><option value="kmh">km/h</option><option value="mph">mph</option>
+            </select>
+          </div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Time (blank to solve)</label>
+          <div class="e6b-irow">
+            <input class="e6b-inp" id="tsd_h" type="number" min="0" max="99" placeholder="h" oninput="calcTSD()" style="width:56px;flex:none;">
+            <span class="e6b-unit">h</span>
+            <input class="e6b-inp" id="tsd_m" type="number" min="0" max="59" placeholder="min" oninput="calcTSD()" style="width:56px;flex:none;">
+            <span class="e6b-unit">min</span>
+          </div>
+        </div>
+        <div class="e6b-result-box" id="tsd-result"><div class="e6b-hint">Leave one field blank</div></div>
+      </div>
+
+      <!-- ── FUEL PLANNING ── -->
+      <div class="e6b-panel" id="e6b-fuel">
+        <div class="e6b-sect-title">Fuel Planning</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Fuel Flow</label>
+          <div class="e6b-irow">
+            <input class="e6b-inp" id="f_flow" type="number" min="0" placeholder="50" oninput="calcFuel()">
+            <select class="e6b-sel" id="f_flowu" onchange="calcFuel()">
+              <option value="lh">L/hr</option><option value="usg">USG/hr</option><option value="kgh">kg/hr</option>
+            </select>
+          </div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Flight Time</label>
+          <div class="e6b-irow">
+            <input class="e6b-inp" id="f_h" type="number" min="0" max="24" placeholder="h" oninput="calcFuel()" style="width:56px;flex:none;">
+            <span class="e6b-unit">h</span>
+            <input class="e6b-inp" id="f_m" type="number" min="0" max="59" placeholder="min" oninput="calcFuel()" style="width:56px;flex:none;">
+            <span class="e6b-unit">min</span>
+          </div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Fuel Available</label>
+          <div class="e6b-irow">
+            <input class="e6b-inp" id="f_avail" type="number" min="0" placeholder="optional" oninput="calcFuel()">
+            <select class="e6b-sel" id="f_availu" onchange="calcFuel()">
+              <option value="L">L</option><option value="USG">USG</option><option value="kg">kg</option>
+            </select>
+          </div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Reserve</label>
+          <div class="e6b-irow">
+            <input class="e6b-inp" id="f_res" type="number" min="0" placeholder="45" oninput="calcFuel()">
+            <span class="e6b-unit">min</span>
+          </div>
+        </div>
+        <div class="e6b-result-box" id="fuel-result"><div class="e6b-hint">Enter fuel flow + time or fuel available</div></div>
+      </div>
+
+      <!-- ── UNIT CONVERSIONS ── -->
+      <div class="e6b-panel" id="e6b-conv">
+        <div class="e6b-sect-title">Unit Conversions</div>
+
+        <div class="e6b-conv-group">
+          <div class="e6b-conv-label">Distance</div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_nm"  type="number" placeholder="nm"   oninput="cvDist('nm')"> <span class="e6b-unit" style="min-width:30px;">nm</span></div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_km"  type="number" placeholder="km"   oninput="cvDist('km')"> <span class="e6b-unit" style="min-width:30px;">km</span></div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_sm"  type="number" placeholder="sm"   oninput="cvDist('sm')"> <span class="e6b-unit" style="min-width:30px;">sm</span></div>
+        </div>
+
+        <div class="e6b-conv-group">
+          <div class="e6b-conv-label">Altitude</div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_ft"  type="number" placeholder="ft"   oninput="cvAlt('ft')">  <span class="e6b-unit" style="min-width:30px;">ft</span></div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_m"   type="number" placeholder="m"    oninput="cvAlt('m')">   <span class="e6b-unit" style="min-width:30px;">m</span></div>
+        </div>
+
+        <div class="e6b-conv-group">
+          <div class="e6b-conv-label">Speed</div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_kts" type="number" placeholder="kts"  oninput="cvSpd('kts')"> <span class="e6b-unit" style="min-width:30px;">kts</span></div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_kmh" type="number" placeholder="km/h" oninput="cvSpd('kmh')"> <span class="e6b-unit" style="min-width:30px;">km/h</span></div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_mph" type="number" placeholder="mph"  oninput="cvSpd('mph')"> <span class="e6b-unit" style="min-width:30px;">mph</span></div>
+        </div>
+
+        <div class="e6b-conv-group">
+          <div class="e6b-conv-label">Pressure</div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_hpa"  type="number" placeholder="hPa"  oninput="cvPres('hpa')">  <span class="e6b-unit" style="min-width:30px;">hPa</span></div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_inhg" type="number" placeholder="inHg" oninput="cvPres('inhg')" step="0.01"> <span class="e6b-unit" style="min-width:30px;">inHg</span></div>
+        </div>
+
+        <div class="e6b-conv-group">
+          <div class="e6b-conv-label">Temperature</div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_c" type="number" placeholder="°C" oninput="cvTemp('c')"> <span class="e6b-unit" style="min-width:30px;">°C</span></div>
+          <div class="e6b-irow"><input class="e6b-inp" id="cv_f" type="number" placeholder="°F" oninput="cvTemp('f')"> <span class="e6b-unit" style="min-width:30px;">°F</span></div>
+        </div>
+
+      </div><!-- /conv -->
+
+      <!-- ── PRESSURE ALTITUDE ── -->
+      <div class="e6b-panel" id="e6b-pa">
+        <div class="e6b-sect-title">Pressure Altitude</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Field / Airport Elevation</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="pa_elev" type="number" placeholder="0" oninput="calcPA()"><span class="e6b-unit">ft MSL</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Altimeter Setting (QNH)</label>
+          <div class="e6b-irow">
+            <input class="e6b-inp" id="pa_qnh" type="number" placeholder="29.92" step="0.01" oninput="calcPA()">
+            <select class="e6b-sel" id="pa_qnh_u" onchange="calcPA()">
+              <option value="inhg">inHg</option>
+              <option value="hpa">hPa</option>
+            </select>
+          </div>
+        </div>
+        <div class="e6b-result-box" id="pa-result"><div class="e6b-hint">Fill fields above</div></div>
+      </div>
+
+      <!-- ── RUNWAY WIND COMPONENTS ── -->
+      <div class="e6b-panel" id="e6b-rwy">
+        <div class="e6b-sect-title">Runway Wind Components</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Runway Number (01–36)</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="rwy_hdg" type="number" min="1" max="36" placeholder="27" oninput="calcRWY()"><span class="e6b-unit">RWY</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Wind From</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="rwy_wdfrom" type="number" min="0" max="360" placeholder="270" oninput="calcRWY()"><span class="e6b-unit">°</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Wind Speed</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="rwy_wspd" type="number" min="0" placeholder="15" oninput="calcRWY()"><span class="e6b-unit">kts</span></div>
+        </div>
+        <div class="e6b-result-box" id="rwy-result"><div class="e6b-hint">Fill all fields above</div></div>
+      </div>
+
+      <!-- ── CLOUD BASE ── -->
+      <div class="e6b-panel" id="e6b-cld">
+        <div class="e6b-sect-title">Cloud Base Estimate</div>
+        <div class="e6b-hint-sm">Based on temp/dewpoint spread (convective clouds)</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Temperature (OAT)</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="cld_temp" type="number" placeholder="25" oninput="calcCloud()"><span class="e6b-unit">°C</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Dewpoint</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="cld_dp" type="number" placeholder="14" oninput="calcCloud()"><span class="e6b-unit">°C</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Station Elevation</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="cld_elev" type="number" placeholder="0" oninput="calcCloud()"><span class="e6b-unit">ft (optional)</span></div>
+        </div>
+        <div class="e6b-result-box" id="cld-result"><div class="e6b-hint">Fill temperature and dewpoint</div></div>
+      </div>
+
+      <!-- ── HOLDING PATTERN ENTRY ── -->
+      <div class="e6b-panel" id="e6b-hold">
+        <div class="e6b-sect-title">Holding Pattern Entry</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Aircraft Heading</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="h_hdg" type="number" min="0" max="360" placeholder="045" oninput="calcHolding()"><span class="e6b-unit">°</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Inbound Course (to fix)</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="h_inbound" type="number" min="0" max="360" placeholder="090" oninput="calcHolding()"><span class="e6b-unit">°</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Turn Direction</label>
+          <div class="e6b-irow">
+            <select class="e6b-sel" id="h_turn" onchange="calcHolding()" style="flex:1;">
+              <option value="R">Right — Standard</option>
+              <option value="L">Left — Non-standard</option>
+            </select>
+          </div>
+        </div>
+        <div class="e6b-result-box" id="hold-result"><div class="e6b-hint">Fill aircraft heading and inbound course</div></div>
+      </div>
+
+      <!-- ── TOP OF DESCENT ── -->
+      <div class="e6b-panel" id="e6b-tod">
+        <div class="e6b-sect-title">Top of Descent (TOD)</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Current Altitude</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="tod_cur" type="number" placeholder="10000" oninput="calcTOD()"><span class="e6b-unit">ft</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Target Altitude</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="tod_tgt" type="number" placeholder="3000" oninput="calcTOD()"><span class="e6b-unit">ft</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Ground Speed</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="tod_gs" type="number" placeholder="250" oninput="calcTOD()"><span class="e6b-unit">kts</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Descent Angle</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="tod_angle" type="number" placeholder="3.0" step="0.1" oninput="calcTOD()"><span class="e6b-unit">° (default 3°)</span></div>
+        </div>
+        <div class="e6b-result-box" id="tod-result"><div class="e6b-hint">Fill altitude and ground speed</div></div>
+      </div>
+
+      <!-- ── RATE OF DESCENT vs DISTANCE ── -->
+      <div class="e6b-panel" id="e6b-rdd">
+        <div class="e6b-sect-title">Rate of Descent ↔ Distance</div>
+        <div class="e6b-hint-sm">Enter GS + angle OR GS + rate — the other is solved</div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Ground Speed</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="rdd_gs" type="number" min="1" placeholder="140" oninput="calcRDD()"><span class="e6b-unit">kts</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Descent Angle</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="rdd_angle" type="number" step="0.1" placeholder="3.0 (blank to solve)" oninput="calcRDD()"><span class="e6b-unit">°</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Descent Rate</label>
+          <div class="e6b-irow"><input class="e6b-inp" id="rdd_rate" type="number" placeholder="750 (blank to solve)" oninput="calcRDD()"><span class="e6b-unit">ft/min</span></div>
+        </div>
+        <div class="e6b-row">
+          <label class="e6b-lbl">Altitude to Lose <span style="font-weight:400;">(optional)</span></label>
+          <div class="e6b-irow"><input class="e6b-inp" id="rdd_alt" type="number" placeholder="3000" oninput="calcRDD()"><span class="e6b-unit">ft</span></div>
+        </div>
+        <div class="e6b-result-box" id="rdd-result"><div class="e6b-hint">Enter ground speed to start</div></div>
+
+        <!-- Quick reference table -->
+        <div style="margin-top:10px;">
+          <div class="e6b-sect-title" style="margin-bottom:5px;">3° ILS Quick Reference</div>
+          <table style="width:100%;border-collapse:collapse;font-size:9px;">
+            <thead>
+              <tr style="color:var(--muted);font-weight:700;">
+                <th style="text-align:left;padding:2px 4px;border-bottom:1px solid var(--border2);">GS (kts)</th>
+                <th style="text-align:right;padding:2px 4px;border-bottom:1px solid var(--border2);">Rate (ft/min)</th>
+                <th style="text-align:right;padding:2px 4px;border-bottom:1px solid var(--border2);">nm/1000ft</th>
+              </tr>
+            </thead>
+            <tbody id="rdd-ref-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /e6b-content -->
+    </div><!-- /e6b-body -->
+  </div><!-- /e6b-sb -->
+
 </div>
 
 <!-- DISTANCE PANEL -->
 <div id="distTool">
   <div class="dt-title">📏 Distance Measure<span class="dt-x" onclick="toggleDist()">✕</span></div>
-
-  <!-- TABS -->
   <div class="dt-tabs">
-    <div class="dt-tab active" onclick="switchTab('map')">🗺 Map Click</div>
-    <div class="dt-tab" onclick="switchTab('airport')">✈ Airport to Airport</div>
+    <div class="dt-tab active" data-tab="map" onclick="switchTab('map')">🗺 Map Click</div>
+    <div class="dt-tab" data-tab="airport" onclick="switchTab('airport')">✈ Airport Route</div>
+    <div class="dt-tab" data-tab="coord" onclick="switchTab('coord')">📍 Nearby</div>
   </div>
 
   <!-- TAB: MAP CLICK -->
   <div class="dt-section show" id="tab-map">
-    <div class="dt-lbl">Point A (Origin)</div>
-    <div class="dt-val" id="ptA">—</div>
-    <div class="dt-lbl">Point B (Destination)</div>
-    <div class="dt-val" id="ptB">—</div>
-    <div class="dt-hint" id="distHint">Click on map to set Point A</div>
+    <div id="mapPtList" style="height:120px;max-height:380px;min-height:40px;overflow-y:auto;margin-bottom:0;"></div>
+    <div id="map-resize-handle" title="Drag to resize"
+         style="height:7px;cursor:ns-resize;display:flex;align-items:center;justify-content:center;margin-bottom:4px;border-radius:2px;background:var(--border2);transition:background .15s;"
+         onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--border2)'">
+      <div style="width:20px;height:2px;border-radius:1px;background:var(--muted);pointer-events:none;"></div>
+    </div>
+    <div class="dt-hint" id="distHint">Click on map to add Point 1</div>
+    <div style="display:flex;align-items:center;gap:4px;margin-top:5px;">
+      <button class="dt-btn sec" onclick="if(mapPts.length)removeMapPt(mapPts.length-1)" style="padding:4px 9px;font-size:10px;flex:0 0 auto;">⌫ Undo</button>
+      <div id="mapPtCount" style="flex:1;font-size:9px;color:var(--muted);text-align:center;">0 / 12 points</div>
+    </div>
   </div>
 
-  <!-- TAB: AIRPORT TO AIRPORT -->
+  <!-- TAB: AIRPORT ROUTE -->
   <div class="dt-section" id="tab-airport">
-    <div class="dt-lbl">Origin Airport</div>
-    <select class="dt-select" id="apFrom" onchange="calcApDist()">
-      <option value="">— Select origin —</option>
-    </select>
-    <div class="dt-lbl">Destination Airport</div>
-    <select class="dt-select" id="apTo" onchange="calcApDist()">
-      <option value="">— Select destination —</option>
-    </select>
-    <div class="dt-lbl" id="apDistLblA" style="display:none;">Origin</div>
-    <div class="dt-val" id="apDistA" style="display:none;">—</div>
-    <div class="dt-lbl" id="apDistLblB" style="display:none;">Destination</div>
-    <div class="dt-val" id="apDistB" style="display:none;">—</div>
+    <div id="apRouteList" style="height:160px;max-height:380px;min-height:52px;overflow-y:auto;margin-bottom:0;"></div>
+    <div id="ap-resize-handle" title="Drag to resize"
+         style="height:7px;cursor:ns-resize;display:flex;align-items:center;justify-content:center;margin-bottom:4px;border-radius:2px;background:var(--border2);transition:background .15s;"
+         onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--border2)'">
+      <div style="width:20px;height:2px;border-radius:1px;background:var(--muted);pointer-events:none;"></div>
+    </div>
+    <button class="dt-btn sec" id="addApBtn" onclick="addApRow()" style="width:100%;margin-bottom:4px;font-size:10px;">＋ Add Airport</button>
+    <div id="apLegList" style="max-height:90px;overflow-y:auto;"></div>
+  </div>
+
+  <!-- TAB: COORD REFERENCE / WAYPOINT BUILDER -->
+  <div class="dt-section" id="tab-coord">
+
+    <!-- Mode toggle -->
+    <div style="display:flex;gap:2px;margin-bottom:8px;background:var(--bg);border-radius:6px;padding:2px;border:1px solid var(--border2);">
+      <div id="cr-mode-direct" onclick="setCrMode('direct')"
+        style="flex:1;padding:4px 3px;text-align:center;font-size:9px;font-weight:700;cursor:pointer;border-radius:5px;background:var(--accent);color:#fff;transition:all .15s;user-select:none;">📍 Lat / Lon</div>
+      <div id="cr-mode-pbd" onclick="setCrMode('pbd')"
+        style="flex:1;padding:4px 3px;text-align:center;font-size:9px;font-weight:700;cursor:pointer;border-radius:5px;color:var(--muted);transition:all .15s;user-select:none;">⚡ Radial / DME</div>
+    </div>
+
+    <!-- ── DIRECT MODE ── -->
+    <div id="cr-direct">
+      <div style="display:flex;gap:4px;margin-bottom:4px;">
+        <div style="flex:1;">
+          <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Latitude (°N)</div>
+          <input id="cr_lat" type="number" step="0.00001" placeholder="13.6858" oninput="calcCoordRef()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 6px;font-size:10px;outline:none;"/>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Longitude (°E)</div>
+          <input id="cr_lon" type="number" step="0.00001" placeholder="100.7489" oninput="calcCoordRef()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 6px;font-size:10px;outline:none;"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PBD MODE ── -->
+    <div id="cr-pbd" style="display:none;">
+      <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Reference Station (Airport / Nav Aid)</div>
+      <div style="position:relative;margin-bottom:5px;">
+        <input id="pbd_ref" type="text" placeholder="ICAO / Ident  e.g. VTBS, HTY, BKK" autocomplete="off"
+          oninput="onPbdRefInput(this.value)" onfocus="onPbdRefInput(this.value)" onblur="hidePbdDd()"
+          style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 7px;font-size:10px;outline:none;"/>
+        <div id="pbd_dd" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 2px);background:var(--surface);border:1px solid var(--border);border-radius:5px;z-index:3000;max-height:120px;overflow-y:auto;box-shadow:0 4px 12px var(--shadow);"></div>
+      </div>
+      <div id="pbd_ref_info" style="display:none;font-size:9px;background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.2);border-radius:5px;padding:4px 7px;margin-bottom:5px;color:var(--text2);line-height:1.5;"></div>
+      <div style="display:flex;gap:4px;margin-bottom:2px;">
+        <div style="flex:1;">
+          <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Radial (FROM station)</div>
+          <input id="pbd_radial" type="number" min="0" max="360" step="0.1" placeholder="250" oninput="calcPBDWpt()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 6px;font-size:10px;outline:none;"/>
+        </div>
+        <div style="flex:0 0 auto;display:flex;align-items:flex-end;padding-bottom:5px;"><span style="font-size:9px;color:var(--muted);">°</span></div>
+        <div style="flex:1;">
+          <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Distance (DME)</div>
+          <input id="pbd_dist" type="number" min="0" step="0.1" placeholder="30.0" oninput="calcPBDWpt()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 6px;font-size:10px;outline:none;"/>
+        </div>
+        <div style="flex:0 0 auto;display:flex;align-items:flex-end;padding-bottom:5px;"><span style="font-size:9px;color:var(--muted);">NM</span></div>
+      </div>
+    </div>
+
+    <!-- Waypoint output box -->
+    <div id="cr-wpt-box" style="display:none;background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.25);border-radius:6px;padding:7px;margin:5px 0 6px;">
+      <div style="font-size:9px;font-weight:700;color:var(--accent2);margin-bottom:5px;letter-spacing:.4px;">📍 WAYPOINT</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:9px;color:var(--muted);min-width:36px;">DD</span>
+        <span id="cr-wpt-dd-val"  style="font-size:9px;color:var(--text2);font-family:monospace;text-align:right;"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:9px;color:var(--muted);min-width:36px;">DDM</span>
+        <span id="cr-wpt-ddm-val" style="font-size:9px;color:var(--text2);font-family:monospace;text-align:right;"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:9px;color:var(--muted);min-width:36px;">DMS</span>
+        <span id="cr-wpt-dms-val" style="font-size:9px;color:var(--text2);font-family:monospace;text-align:right;"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:4px;border-top:1px solid rgba(14,165,233,.2);">
+        <span style="font-size:9px;color:var(--muted);min-width:36px;">FMS</span>
+        <span id="cr-wpt-fms-val" style="font-size:10px;font-weight:700;color:var(--accent2);font-family:monospace;text-align:right;"></span>
+      </div>
+    </div>
+
+    <div class="dt-hint" id="cr-hint" style="margin-bottom:6px;">Click on map to set coordinate, or type above</div>
+    <div style="display:flex;gap:4px;margin-bottom:6px;">
+      <div id="cr-pill-ap" onclick="toggleCrFilter('ap')"
+        style="cursor:pointer;padding:2px 9px;border-radius:10px;font-size:9px;font-weight:700;color:#0ea5e9;background:rgba(14,165,233,.12);border:1px solid #0ea5e9;transition:opacity .15s;user-select:none;">✈ Airports</div>
+      <div id="cr-pill-nav" onclick="toggleCrFilter('nav')"
+        style="cursor:pointer;padding:2px 9px;border-radius:10px;font-size:9px;font-weight:700;color:#a78bfa;background:rgba(167,139,250,.12);border:1px solid #a78bfa;transition:opacity .15s;user-select:none;">📡 Nav Aids</div>
+      <div id="cr-pill-count" style="margin-left:auto;font-size:9px;color:var(--muted);align-self:center;"></div>
+    </div>
+    <div id="cr-results" style="max-height:180px;overflow-y:auto;">
+      <div style="color:var(--muted);text-align:center;padding:12px;font-size:10px;">Set a coordinate to see nearby references</div>
+    </div>
   </div>
 
   <!-- UNIT + RESULT (shared) -->
@@ -427,7 +893,7 @@
   </div>
   <div class="dt-result">
     <div class="dt-dist" id="distRes">—</div>
-    <div class="dt-ulbl" id="unitLbl">Select two points</div>
+    <div class="dt-ulbl" id="unitLbl">Add points to measure</div>
   </div>
   <div class="dt-acts">
     <button class="dt-btn pri" onclick="resetMeasure()">Reset</button>
@@ -646,7 +1112,7 @@ const satTile   = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/servi
 const osmTile   = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OSM',maxZoom:19});
 
 darkTile.addTo(map);
-L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite":satTile,"🗺 OSM":osmTile},{},{position:'topright'}).addTo(map);
+L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite":satTile,"🗺 OSM":osmTile},{},{position:'bottomright'}).addTo(map);
 
 map.on('mousemove',e=>{
   document.getElementById('coordDisp').textContent=`Lat: ${e.latlng.lat.toFixed(4)}  Lon: ${e.latlng.lng.toFixed(4)}`;
@@ -1820,49 +2286,43 @@ function filterAP(){
 }
 renderList(airports);
 
-// Populate airport selects
-const sels=['apFrom','apTo'];
-sels.forEach(id=>{
-  const sel=document.getElementById(id);
-  airports.slice().sort((a,b)=>a.icao.localeCompare(b.icao)).forEach(ap=>{
-    const o=document.createElement('option');
-    o.value=ap.icao; o.textContent=`${ap.icao} — ${ap.name}`;
-    sel.appendChild(o);
-  });
-});
-
 // ═══════════════════════════════════════════
 // DISTANCE TOOL
 // ═══════════════════════════════════════════
-let distMode=false,ptA=null,ptB=null,distUnit='km';
-let lineLayer=null,mrkA=null,mrkB=null,apLineLayer=null;
-let activeTab='map';
+let distMode=false, distUnit='km', activeTab='map';
 const UCONV={km:1,nm:.539957,mi:.621371,m:1000};
 const ULBL={km:'kilometers',nm:'nautical miles',mi:'miles',m:'meters'};
+const MAX_MAP_PTS=12, MAX_AP_ROWS=13;
+
+// Map click state
+let mapPts=[], mapPolyline=null, mapSegments=[];
+
+// Airport route state
+let apRows=['',''], apRouteLines=[];
 
 function toggleDist(){
   distMode=!distMode;
   document.getElementById('distTool').classList.toggle('show',distMode);
   document.getElementById('btnDist').classList.toggle('active',distMode);
-  if(!distMode)resetMeasure();
-  map.getContainer().style.cursor=distMode&&activeTab==='map'?'crosshair':'';
+  if(!distMode){ resetMeasure(); }
+  else { renderMapPtList(); renderApRows(); recalcDist(); }
+  map.getContainer().style.cursor=distMode&&(activeTab==='map'||activeTab==='coord')?'crosshair':'';
 }
 
 function switchTab(t){
   activeTab=t;
-  document.querySelectorAll('.dt-tab').forEach((el,i)=>el.classList.toggle('active',[...document.querySelectorAll('.dt-tab')].indexOf(el)===(['map','airport'].indexOf(t))));
+  document.querySelectorAll('.dt-tab').forEach(el=>el.classList.toggle('active',el.dataset.tab===t));
   document.querySelectorAll('.dt-section').forEach(el=>el.classList.remove('show'));
   document.getElementById('tab-'+t).classList.add('show');
-  map.getContainer().style.cursor=distMode&&t==='map'?'crosshair':'';
-  resetMeasure();
+  map.getContainer().style.cursor=distMode&&(t==='map'||t==='coord')?'crosshair':'';
+  recalcDist();
 }
 
 function setUnit(u,btn){
   distUnit=u;
   document.querySelectorAll('.dt-units button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if(activeTab==='map'&&ptA&&ptB)showDist(haversine(ptA,ptB));
-  else if(activeTab==='airport')calcApDist();
+  recalcDist();
 }
 
 function haversine(a,b){
@@ -1872,72 +2332,550 @@ function haversine(a,b){
 }
 
 function showDist(km){
-  const val=(km*UCONV[distUnit]).toFixed(distUnit==='m'?0:2);
-  document.getElementById('distRes').textContent=val;
+  document.getElementById('distRes').textContent=(km*UCONV[distUnit]).toFixed(distUnit==='m'?0:2);
   document.getElementById('unitLbl').textContent=ULBL[distUnit];
 }
 
-function fmtLL(ll){return `${ll[0].toFixed(4)}°N, ${ll[1].toFixed(4)}°E`;}
-const pIcon=l=>L.divIcon({html:`<div style="width:18px;height:18px;background:${l==='A'?'#0ea5e9':'#f59e0b'};border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.5);">${l}</div>`,iconSize:[18,18],iconAnchor:[9,9],className:''});
+// ─── MAP CLICK ────────────────────────────
+function mkNumIcon(n){
+  return L.divIcon({
+    html:`<div style="width:20px;height:20px;background:#0ea5e9;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;box-shadow:0 1px 5px rgba(0,0,0,.5);cursor:move;">${n}</div>`,
+    iconSize:[20,20],iconAnchor:[10,10],className:''
+  });
+}
+
+function bindDrag(idx){
+  const p=mapPts[idx];
+  p.marker.off('drag');
+  p.marker.on('drag',()=>{
+    const ll=p.marker.getLatLng();
+    mapPts[idx].lat=ll.lat; mapPts[idx].lng=ll.lng;
+    updateMapLine(); renderMapPtList(); recalcDist();
+  });
+}
+
+function addMapPt(latlng){
+  if(mapPts.length>=MAX_MAP_PTS)return;
+  const idx=mapPts.length;
+  const m=L.marker([latlng.lat,latlng.lng],{draggable:true,icon:mkNumIcon(idx+1),zIndexOffset:1000}).addTo(map);
+  mapPts.push({lat:latlng.lat,lng:latlng.lng,marker:m});
+  bindDrag(idx);
+  updateMapLine(); renderMapPtList(); recalcDist();
+}
+
+function removeMapPt(i){
+  map.removeLayer(mapPts[i].marker);
+  mapPts.splice(i,1);
+  mapPts.forEach((p,j)=>{ p.marker.setIcon(mkNumIcon(j+1)); bindDrag(j); });
+  updateMapLine(); renderMapPtList(); recalcDist();
+}
+
+function updateMapLine(){
+  if(mapPolyline){map.removeLayer(mapPolyline);mapPolyline=null;}
+  mapSegments.forEach(s=>map.removeLayer(s)); mapSegments=[];
+  if(mapPts.length<2) return;
+
+  for(let i=0;i<mapPts.length-1;i++){
+    const lls=[[mapPts[i].lat,mapPts[i].lng],[mapPts[i+1].lat,mapPts[i+1].lng]];
+
+    // Visual line (non-interactive)
+    const vis=L.polyline(lls,{color:'#f59e0b',weight:2,dashArray:'6,4',interactive:false}).addTo(map);
+
+    // Invisible wide hit-target — intercepts clicks before map
+    const hit=L.polyline(lls,{weight:18,color:'#f59e0b',opacity:0.001,bubblingMouseEvents:false}).addTo(map);
+
+    const idx=i;
+    hit.on('click',e=>{
+      if(!distMode||activeTab!=='map')return;
+      L.DomEvent.stopPropagation(e);
+      insertMapPt(e.latlng,idx+1);
+    });
+    hit.on('mouseover',()=>{ map.getContainer().style.cursor='cell'; });
+    hit.on('mouseout', ()=>{ map.getContainer().style.cursor=distMode&&(activeTab==='map'||activeTab==='coord')?'crosshair':''; });
+
+    mapSegments.push(vis,hit);
+  }
+}
+
+function insertMapPt(latlng,pos){
+  if(mapPts.length>=MAX_MAP_PTS)return;
+  const m=L.marker([latlng.lat,latlng.lng],{draggable:true,icon:mkNumIcon(pos),zIndexOffset:1000}).addTo(map);
+  mapPts.splice(pos,0,{lat:latlng.lat,lng:latlng.lng,marker:m});
+  mapPts.forEach((_,k)=>{ mapPts[k].marker.setIcon(mkNumIcon(k+1)); bindDrag(k); });
+  updateMapLine(); renderMapPtList(); recalcDist();
+}
+
+function renderMapPtList(){
+  const el=document.getElementById('mapPtList');
+  document.getElementById('mapPtCount').textContent=`${mapPts.length} / ${MAX_MAP_PTS} points`;
+  if(!mapPts.length){el.innerHTML='';return;}
+  el.innerHTML=mapPts.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid var(--border2);">
+      <div style="width:16px;height:16px;background:#0ea5e9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;">${i+1}</div>
+      <span style="font-size:9px;font-family:monospace;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;">${p.lat.toFixed(4)}°N ${p.lng.toFixed(4)}°E</span>
+      <div style="display:flex;flex-direction:column;gap:0;flex-shrink:0;">
+        <span onclick="moveMapPt(${i},-1)" title="Move up"
+          style="cursor:${i===0?'default':'pointer'};color:${i===0?'var(--border2)':'var(--muted)'};font-size:9px;line-height:1.2;padding:0 2px;display:block;">▲</span>
+        <span onclick="moveMapPt(${i},1)" title="Move down"
+          style="cursor:${i===mapPts.length-1?'default':'pointer'};color:${i===mapPts.length-1?'var(--border2)':'var(--muted)'};font-size:9px;line-height:1.2;padding:0 2px;display:block;">▼</span>
+      </div>
+      <span onclick="removeMapPt(${i})" title="Remove"
+        style="cursor:pointer;color:var(--muted);font-size:11px;padding:0 2px;flex-shrink:0;">✕</span>
+    </div>`).join('');
+  document.getElementById('distHint').textContent=mapPts.length>=MAX_MAP_PTS
+    ?'Max points reached. Drag to reposition.'
+    :`Click map to add Point ${mapPts.length+1}`;
+}
+
+function moveMapPt(i, dir){
+  const j=i+dir;
+  if(j<0||j>=mapPts.length)return;
+  [mapPts[i],mapPts[j]]=[mapPts[j],mapPts[i]];
+  mapPts.forEach((_,k)=>{ mapPts[k].marker.setIcon(mkNumIcon(k+1)); bindDrag(k); });
+  updateMapLine(); renderMapPtList(); recalcDist();
+}
+
+// ─── AIRPORT ROUTE ────────────────────────
+function renderApRows(){
+  const el=document.getElementById('apRouteList');
+  el.innerHTML=apRows.map((icao,i)=>{
+    const ap=airports.find(a=>a.icao===icao);
+    const val=ap?`${ap.icao} — ${ap.name}`:(icao||'');
+    const dot=i===0?'#0ea5e9':i===apRows.length-1?'#f59e0b':'#6b7b8d';
+    const canRm=apRows.length>2;
+    return `<div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+      <div style="width:14px;height:14px;background:${dot};border-radius:50%;font-size:7px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i+1}</div>
+      <div style="position:relative;flex:1;">
+        <input type="text" id="ap-input-${i}" value="${val.replace(/"/g,'&quot;')}"
+          placeholder="ICAO or name…" autocomplete="off"
+          oninput="onApInput(${i},this.value)"
+          onfocus="showApDd(${i})"
+          onblur="hideApDd(${i})"
+          style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 7px;font-size:10px;outline:none;"/>
+        <div id="ap-dd-${i}" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 2px);background:var(--surface);border:1px solid var(--border);border-radius:5px;z-index:3000;max-height:110px;overflow-y:auto;box-shadow:0 4px 12px var(--shadow);"></div>
+      </div>
+      <span onclick="${canRm?'removeApRow('+i+')':''}" style="cursor:${canRm?'pointer':'default'};color:${canRm?'var(--muted)':'transparent'};font-size:11px;flex-shrink:0;padding:2px;">✕</span>
+    </div>`;
+  }).join('');
+  document.getElementById('addApBtn').style.display=apRows.length>=MAX_AP_ROWS?'none':'';
+}
+
+function onApInput(i,val){
+  apRows[i]='';
+  const q=val.trim().toLowerCase();
+  const dd=document.getElementById('ap-dd-'+i);
+  if(!q){dd.style.display='none';updateApLines();recalcDist();return;}
+  const hits=airports.filter(a=>a.icao.toLowerCase().includes(q)||a.name.toLowerCase().includes(q)||a.city.toLowerCase().includes(q)).slice(0,8);
+  dd.innerHTML=!hits.length
+    ?`<div style="padding:5px 8px;font-size:10px;color:var(--muted);">No results</div>`
+    :hits.map(a=>`<div onmousedown="selectAp(${i},'${a.icao}')"
+        style="padding:4px 8px;cursor:pointer;display:flex;gap:5px;align-items:center;"
+        onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+        <span style="font-size:10px;font-weight:700;color:${opColor(a.op)};min-width:36px;">${a.icao}</span>
+        <span style="font-size:9px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.name}</span>
+      </div>`).join('');
+  dd.style.display='block';
+}
+
+function selectAp(i,icao){
+  apRows[i]=icao;
+  const ap=airports.find(a=>a.icao===icao);
+  const inp=document.getElementById('ap-input-'+i);
+  if(inp&&ap) inp.value=`${ap.icao} — ${ap.name}`;
+  document.getElementById('ap-dd-'+i).style.display='none';
+  updateApLines(); recalcDist();
+}
+
+function showApDd(i){const inp=document.getElementById('ap-input-'+i);if(inp)onApInput(i,inp.value);}
+function hideApDd(i){setTimeout(()=>{const dd=document.getElementById('ap-dd-'+i);if(dd)dd.style.display='none';},160);}
+
+function addApRow(){
+  if(apRows.length>=MAX_AP_ROWS)return;
+  apRows.push(''); renderApRows();
+}
+
+function removeApRow(i){
+  if(apRows.length<=2)return;
+  apRows.splice(i,1); renderApRows(); updateApLines(); recalcDist();
+}
+
+function updateApLines(){
+  apRouteLines.forEach(l=>map.removeLayer(l)); apRouteLines=[];
+  const valid=apRows.map(icao=>airports.find(a=>a.icao===icao)).filter(Boolean);
+  if(valid.length<2)return;
+  const lls=valid.map(a=>[a.lat,a.lon]);
+  apRouteLines.push(L.polyline(lls,{color:'#f59e0b',weight:2,dashArray:'6,4'}).addTo(map));
+  valid.forEach(a=>apRouteLines.push(L.circleMarker([a.lat,a.lon],{radius:4,color:'#f59e0b',fillColor:'#f59e0b',fillOpacity:1,weight:1}).addTo(map)));
+  map.fitBounds(L.latLngBounds(lls),{padding:[50,50]});
+}
+
+function renderApLegs(valid){
+  const el=document.getElementById('apLegList');
+  if(!el||valid.length<2){if(el)el.innerHTML='';return;}
+  el.innerHTML=Array.from({length:valid.length-1},(_,i)=>{
+    const km=haversine([valid[i].lat,valid[i].lon],[valid[i+1].lat,valid[i+1].lon]);
+    return `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--border2);">
+      <span style="color:var(--text2);">${valid[i].icao} → ${valid[i+1].icao}</span>
+      <span style="color:var(--accent2);font-weight:700;">${(km*UCONV[distUnit]).toFixed(2)} ${distUnit.toUpperCase()}</span>
+    </div>`;
+  }).join('');
+}
+
+function recalcDist(){
+  if(activeTab==='map'){
+    if(mapPts.length>=2){
+      let km=0;
+      for(let i=0;i<mapPts.length-1;i++) km+=haversine([mapPts[i].lat,mapPts[i].lng],[mapPts[i+1].lat,mapPts[i+1].lng]);
+      showDist(km);
+    } else {
+      document.getElementById('distRes').textContent='—';
+      document.getElementById('unitLbl').textContent=mapPts.length===1?'Add another point':'Click map to add points';
+    }
+  } else if(activeTab==='coord'){
+    // coord tab manages its own display — re-run with current unit
+    calcCoordRef();
+  } else {
+    const valid=apRows.map(icao=>airports.find(a=>a.icao===icao)).filter(Boolean);
+    if(valid.length>=2){
+      let km=0;
+      for(let i=0;i<valid.length-1;i++) km+=haversine([valid[i].lat,valid[i].lon],[valid[i+1].lat,valid[i+1].lon]);
+      showDist(km); renderApLegs(valid);
+    } else {
+      document.getElementById('distRes').textContent='—';
+      document.getElementById('unitLbl').textContent='Select at least 2 airports';
+      const el=document.getElementById('apLegList'); if(el) el.innerHTML='';
+    }
+  }
+}
 
 function resetMeasure(){
-  ptA=ptB=null;
-  if(lineLayer){map.removeLayer(lineLayer);lineLayer=null;}
-  if(mrkA){map.removeLayer(mrkA);mrkA=null;}
-  if(mrkB){map.removeLayer(mrkB);mrkB=null;}
-  if(apLineLayer){map.removeLayer(apLineLayer);apLineLayer=null;}
-  document.getElementById('ptA').textContent='—';
-  document.getElementById('ptB').textContent='—';
+  mapPts.forEach(p=>map.removeLayer(p.marker)); mapPts=[];
+  if(mapPolyline){map.removeLayer(mapPolyline);mapPolyline=null;}
+  mapSegments.forEach(s=>map.removeLayer(s)); mapSegments=[];
+  apRouteLines.forEach(l=>map.removeLayer(l)); apRouteLines=[];
+  if(crMarker){map.removeLayer(crMarker);crMarker=null;}
+  apRows=['',''];
+  renderMapPtList(); renderApRows();
+  const cll=document.getElementById('cr_lat'); if(cll) cll.value='';
+  const clo=document.getElementById('cr_lon'); if(clo) clo.value='';
+  const crh=document.getElementById('cr-hint'); if(crh) crh.textContent='Click on map to set coordinate, or type above';
+  const crr=document.getElementById('cr-results'); if(crr) crr.innerHTML='<div style="color:var(--muted);text-align:center;padding:12px;font-size:10px;">Set a coordinate to see nearby references</div>';
+  // Reset PBD state
+  pbdRefLat=null; pbdRefLon=null; pbdRefId='';
+  const pbdR=document.getElementById('pbd_ref');      if(pbdR) pbdR.value='';
+  const pbdRad=document.getElementById('pbd_radial'); if(pbdRad) pbdRad.value='';
+  const pbdDst=document.getElementById('pbd_dist');   if(pbdDst) pbdDst.value='';
+  const pbdInfo=document.getElementById('pbd_ref_info'); if(pbdInfo){pbdInfo.style.display='none';pbdInfo.innerHTML='';}
+  const wptBox=document.getElementById('cr-wpt-box'); if(wptBox) wptBox.style.display='none';
+  setCrMode('direct');
   document.getElementById('distRes').textContent='—';
-  document.getElementById('unitLbl').textContent='Select two points';
-  document.getElementById('distHint').textContent='Click on map to set Point A';
-  document.getElementById('apDistLblA').style.display='none';
-  document.getElementById('apDistA').style.display='none';
-  document.getElementById('apDistLblB').style.display='none';
-  document.getElementById('apDistB').style.display='none';
-  document.getElementById('apFrom').value='';
-  document.getElementById('apTo').value='';
+  document.getElementById('unitLbl').textContent='Add points to measure';
+  document.getElementById('distHint').textContent='Click on map to add Point 1';
 }
 
 map.on('click',e=>{
-  if(!distMode||activeTab!=='map')return;
-  const ll=[e.latlng.lat,e.latlng.lng];
-  if(!ptA){
-    ptA=ll;document.getElementById('ptA').textContent=fmtLL(ll);
-    document.getElementById('distHint').textContent='Click on map to set Point B';
-    if(mrkA)map.removeLayer(mrkA);mrkA=L.marker(ll,{icon:pIcon('A'),zIndexOffset:1000}).addTo(map);
-  } else {
-    ptB=ll;document.getElementById('ptB').textContent=fmtLL(ll);
-    document.getElementById('distHint').textContent='Click Reset to start again';
-    if(mrkB)map.removeLayer(mrkB);mrkB=L.marker(ll,{icon:pIcon('B'),zIndexOffset:1000}).addTo(map);
-    if(lineLayer)map.removeLayer(lineLayer);
-    lineLayer=L.polyline([ptA,ptB],{color:'#f59e0b',weight:2,dashArray:'6,4'}).addTo(map);
-    showDist(haversine(ptA,ptB));
+  if(!distMode)return;
+  if(activeTab==='map') addMapPt(e.latlng);
+  else if(activeTab==='coord'&&crMode==='direct'){
+    document.getElementById('cr_lat').value=e.latlng.lat.toFixed(5);
+    document.getElementById('cr_lon').value=e.latlng.lng.toFixed(5);
+    calcCoordRef();
   }
 });
 
-function calcApDist(){
-  const from=document.getElementById('apFrom').value;
-  const to=document.getElementById('apTo').value;
-  if(!from||!to)return;
-  const apA=airports.find(a=>a.icao===from);
-  const apB=airports.find(a=>a.icao===to);
-  if(!apA||!apB)return;
-  const a=[apA.lat,apA.lon],b=[apB.lat,apB.lon];
-  if(apLineLayer)map.removeLayer(apLineLayer);
-  apLineLayer=L.polyline([a,b],{color:'#f59e0b',weight:2,dashArray:'6,4'}).addTo(map);
-  map.fitBounds(L.latLngBounds([a,b]),{padding:[60,60]});
-  // show info
-  document.getElementById('apDistLblA').style.display='block';
-  document.getElementById('apDistA').style.display='block';
-  document.getElementById('apDistLblB').style.display='block';
-  document.getElementById('apDistB').style.display='block';
-  document.getElementById('apDistLblA').textContent=`Origin (${apA.icao})`;
-  document.getElementById('apDistA').textContent=`${apA.name}`;
-  document.getElementById('apDistLblB').textContent=`Destination (${apB.icao})`;
-  document.getElementById('apDistB').textContent=`${apB.name}`;
-  showDist(haversine(a,b));
+// ═══════════════════════════════════════════
+// COORD REFERENCE (Nearby tab)
+// ═══════════════════════════════════════════
+let crFilterAp=true, crFilterNav=true, crMarker=null;
+let crMode='direct', pbdRefLat=null, pbdRefLon=null, pbdRefId='';
+
+function calcBearing(lat1,lon1,lat2,lon2){
+  const dL=(lon2-lon1)*Math.PI/180;
+  const y=Math.sin(dL)*Math.cos(lat2*Math.PI/180);
+  const x=Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180)
+          -Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos(dL);
+  return((Math.atan2(y,x)*180/Math.PI)+360)%360;
 }
+
+// Teardrop / pin SVG icon
+function mkPinIcon(color='#e11d48'){
+  return L.divIcon({
+    html:`<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 0 28 40"
+          style="filter:drop-shadow(0 2px 5px rgba(0,0,0,.45));cursor:grab;">
+        <path d="M14 0C6.3 0 0 6.3 0 14C0 24.5 14 40 14 40C14 40 28 24.5 28 14C28 6.3 21.7 0 14 0Z"
+              fill="${color}" stroke="white" stroke-width="2"/>
+        <circle cx="14" cy="14" r="6" fill="rgba(255,255,255,0.45)"/>
+        <circle cx="14" cy="14" r="3.2" fill="rgba(0,0,0,0.28)"/>
+      </svg>`,
+    iconSize:[28,40], iconAnchor:[14,40], popupAnchor:[0,-44], className:''
+  });
+}
+
+function calcCoordRef(){
+  const lat=parseFloat(document.getElementById('cr_lat').value);
+  const lon=parseFloat(document.getElementById('cr_lon').value);
+  if(!document.getElementById('cr-results'))return;
+
+  if(isNaN(lat)||isNaN(lon)){
+    document.getElementById('cr-results').innerHTML='<div style="color:var(--muted);text-align:center;padding:12px;font-size:10px;">Set a coordinate to see nearby references</div>';
+    if(crMarker){map.removeLayer(crMarker);crMarker=null;}
+    const wb=document.getElementById('cr-wpt-box'); if(wb) wb.style.display='none';
+    return;
+  }
+
+  // Create marker ONCE with drag handlers; on subsequent calls just move it
+  if(!crMarker){
+    crMarker=L.marker([lat,lon],{draggable:true,icon:mkPinIcon(),zIndexOffset:2000}).addTo(map);
+
+    crMarker.on('drag',()=>{
+      const ll=crMarker.getLatLng();
+      const latEl=document.getElementById('cr_lat'); if(latEl) latEl.value=ll.lat.toFixed(5);
+      const lonEl=document.getElementById('cr_lon'); if(lonEl) lonEl.value=ll.lng.toFixed(5);
+      if(crMode!=='direct') setCrMode('direct');
+      const hint=document.getElementById('cr-hint');
+      if(hint) hint.textContent=`${ll.lat.toFixed(5)}°N, ${ll.lng.toFixed(5)}°E — dragging…`;
+      showWptFormats(ll.lat,ll.lng,`${toDDM(ll.lat,true)}  ${toDDM(ll.lng,false)}`);
+      _renderCrNearby(ll.lat,ll.lng);
+    });
+
+    crMarker.on('dragend',()=>{
+      const ll=crMarker.getLatLng();
+      const hint=document.getElementById('cr-hint');
+      if(hint) hint.textContent=`${ll.lat.toFixed(5)}°N, ${ll.lng.toFixed(5)}°E — drag pin to reposition`;
+    });
+  } else {
+    crMarker.setLatLng([lat,lon]);
+  }
+
+  const hint=document.getElementById('cr-hint');
+  if(hint) hint.textContent=`${lat.toFixed(5)}°N, ${lon.toFixed(5)}°E — drag pin to reposition`;
+
+  if(crMode==='direct') showWptFormats(lat,lon,`${toDDM(lat,true)}  ${toDDM(lon,false)}`);
+
+  _renderCrNearby(lat,lon);
+}
+
+function _renderCrNearby(lat,lon){
+  const el=document.getElementById('cr-results');
+  const cnt=document.getElementById('cr-pill-count');
+  if(!el)return;
+  let items=[];
+  if(crFilterAp){
+    airports.forEach(ap=>{
+      const km=haversine([lat,lon],[ap.lat,ap.lon]);
+      items.push({type:'ap',id:ap.icao,name:ap.name,sub:ap.op,
+        km,brng:calcBearing(lat,lon,ap.lat,ap.lon),color:opColor(ap.op)});
+    });
+  }
+  if(crFilterNav){
+    navAids.forEach(n=>{
+      const km=haversine([lat,lon],[n.lat,n.lon]);
+      const cfg=NAV_CFG[n.type]||{color:'#94a3b8'};
+      items.push({type:'nav',id:n.id,name:n.name,sub:n.type+' '+n.freq,
+        km,brng:calcBearing(lat,lon,n.lat,n.lon),color:cfg.color});
+    });
+  }
+  items.sort((a,b)=>a.km-b.km);
+  const top=items.slice(0,20);
+  if(cnt) cnt.textContent=top.length?`${top.length} shown`:'';
+  if(!top.length){
+    el.innerHTML='<div style="color:var(--muted);text-align:center;padding:12px;font-size:10px;">No results — enable a filter above</div>';
+    return;
+  }
+  const ul=distUnit.toUpperCase();
+  el.innerHTML=top.map(item=>{
+    const dist=(item.km*UCONV[distUnit]).toFixed(distUnit==='m'?0:1);
+    const brng=Math.round(item.brng).toString().padStart(3,'0');
+    const icon=item.type==='ap'?'✈':'📡';
+    return `<div onclick="crFlyTo('${item.type}','${item.id}')"
+      style="display:flex;align-items:center;gap:6px;padding:4px 3px;border-bottom:1px solid var(--border2);cursor:pointer;border-radius:3px;"
+      onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+      <span style="font-size:11px;color:${item.color};flex-shrink:0;">${icon}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:10px;font-weight:700;color:${item.color};line-height:1.2;">${item.id}</div>
+        <div style="font-size:9px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.name}</div>
+        <div style="font-size:8px;color:var(--muted);">${item.sub}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-size:11px;font-weight:700;color:var(--accent2);">${dist} ${ul}</div>
+        <div style="font-size:9px;color:var(--muted);">${brng}°</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCrFilter(type){
+  if(type==='ap') crFilterAp=!crFilterAp;
+  else crFilterNav=!crFilterNav;
+  const pill=document.getElementById('cr-pill-'+type);
+  const on=type==='ap'?crFilterAp:crFilterNav;
+  if(pill) pill.style.opacity=on?'1':'0.35';
+  calcCoordRef();
+}
+
+function crFlyTo(type,id){
+  if(type==='ap'){
+    const ap=airports.find(a=>a.icao===id); if(!ap)return;
+    map.setView([ap.lat,ap.lon],13,{animate:true});
+    setTimeout(()=>{ if(markers[id]) markers[id].openPopup(); },350);
+  } else {
+    const entry=allNavMarkers.find(m=>m.data.id===id); if(!entry)return;
+    map.setView([entry.data.lat,entry.data.lon],13,{animate:true});
+    setTimeout(()=>entry.marker.openPopup(),350);
+  }
+}
+
+// ── PBD (Radial/DME) Waypoint Builder ──────────────────────────────────────
+function setCrMode(mode){
+  crMode=mode;
+  const isD=mode==='direct';
+  const dBtn=document.getElementById('cr-mode-direct');
+  const pBtn=document.getElementById('cr-mode-pbd');
+  if(dBtn){ dBtn.style.background=isD?'var(--accent)':''; dBtn.style.color=isD?'#fff':'var(--muted)'; }
+  if(pBtn){ pBtn.style.background=!isD?'var(--accent)':''; pBtn.style.color=!isD?'#fff':'var(--muted)'; }
+  const dd=document.getElementById('cr-direct');  if(dd) dd.style.display=isD?'':'none';
+  const pd=document.getElementById('cr-pbd');     if(pd) pd.style.display=isD?'none':'';
+  const hint=document.getElementById('cr-hint');
+  if(hint) hint.textContent=isD?'Click on map to set coordinate, or type above':'Select reference station, then enter radial and distance';
+  if(crMarker){map.removeLayer(crMarker);crMarker=null;}
+  const wb=document.getElementById('cr-wpt-box'); if(wb) wb.style.display='none';
+  const cr=document.getElementById('cr-results');
+  if(cr) cr.innerHTML='<div style="color:var(--muted);text-align:center;padding:12px;font-size:10px;">Set a coordinate to see nearby references</div>';
+  map.getContainer().style.cursor=distMode&&isD?'crosshair':'';
+}
+
+function onPbdRefInput(val){
+  pbdRefLat=null; pbdRefLon=null; pbdRefId='';
+  const q=val.trim().toLowerCase();
+  const dd=document.getElementById('pbd_dd');
+  if(!q){dd.style.display='none';return;}
+  let hits=[];
+  airports.forEach(a=>{
+    if(a.icao.toLowerCase().includes(q)||a.name.toLowerCase().includes(q)||a.city.toLowerCase().includes(q))
+      hits.push({type:'ap',id:a.icao,name:a.name,lat:a.lat,lon:a.lon,color:opColor(a.op)});
+  });
+  navAids.forEach(n=>{
+    if(n.id.toLowerCase().includes(q)||n.name.toLowerCase().includes(q)){
+      const cfg=NAV_CFG[n.type]||{color:'#94a3b8'};
+      hits.push({type:'nav',id:n.id,name:n.name+' ('+n.type+')',lat:n.lat,lon:n.lon,color:cfg.color});
+    }
+  });
+  hits=hits.slice(0,9);
+  dd.innerHTML=!hits.length
+    ?'<div style="padding:5px 8px;font-size:10px;color:var(--muted);">No results</div>'
+    :hits.map(h=>`<div onmousedown="selectPbdRef('${h.type}','${h.id}',${h.lat},${h.lon},'${h.name.replace(/'/g,'')}')"
+        style="padding:4px 8px;cursor:pointer;display:flex;gap:5px;align-items:center;"
+        onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+        <span style="font-size:10px;font-weight:700;color:${h.color};min-width:36px;">${h.id}</span>
+        <span style="font-size:9px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${h.name}</span>
+      </div>`).join('');
+  dd.style.display='block';
+}
+
+function selectPbdRef(type,id,lat,lon,name){
+  pbdRefLat=lat; pbdRefLon=lon; pbdRefId=id;
+  document.getElementById('pbd_ref').value=`${id}  —  ${name}`;
+  document.getElementById('pbd_dd').style.display='none';
+  const info=document.getElementById('pbd_ref_info');
+  if(info){
+    info.style.display='block';
+    info.innerHTML=`<strong style="color:var(--accent2);">${id}</strong>  ${name}<br>`+
+      `<span style="font-family:monospace;">${lat.toFixed(5)}°N  ${lon.toFixed(5)}°E</span>`;
+  }
+  calcPBDWpt();
+}
+
+function hidePbdDd(){ setTimeout(()=>{ const d=document.getElementById('pbd_dd'); if(d) d.style.display='none'; },160); }
+
+function calcPBDWpt(){
+  if(pbdRefLat===null||pbdRefLon===null)return;
+  const radial=parseFloat(document.getElementById('pbd_radial').value);
+  const dist  =parseFloat(document.getElementById('pbd_dist').value);
+  if(isNaN(radial)||isNaN(dist)||dist<=0)return;
+
+  // Great-circle point from origin along bearing at distance
+  const R=3440.065; // Earth radius NM
+  const d=dist/R;
+  const brng=radial*Math.PI/180;
+  const lat1=pbdRefLat*Math.PI/180;
+  const lon1=pbdRefLon*Math.PI/180;
+  const lat2=Math.asin(Math.sin(lat1)*Math.cos(d)+Math.cos(lat1)*Math.sin(d)*Math.cos(brng));
+  const lon2=lon1+Math.atan2(Math.sin(brng)*Math.sin(d)*Math.cos(lat1),Math.cos(d)-Math.sin(lat1)*Math.sin(lat2));
+  const wLat=lat2*180/Math.PI;
+  const wLon=((lon2*180/Math.PI)+540)%360-180;
+
+  // Feed into lat/lon inputs so calcCoordRef picks them up
+  document.getElementById('cr_lat').value=wLat.toFixed(5);
+  document.getElementById('cr_lon').value=wLon.toFixed(5);
+
+  const radStr=Math.round(radial).toString().padStart(3,'0');
+  const distStr=dist.toFixed(1);
+  showWptFormats(wLat,wLon,`${pbdRefId}/${radStr}/${distStr}`);
+  calcCoordRef();
+}
+
+// Coordinate format helpers
+function toDDM(deg,isLat){
+  const d=Math.floor(Math.abs(deg));
+  const m=((Math.abs(deg)-d)*60).toFixed(3);
+  const dir=isLat?(deg>=0?'N':'S'):(deg>=0?'E':'W');
+  return `${String(d).padStart(isLat?2:3,'0')}°${m}'${dir}`;
+}
+function toDMS(deg,isLat){
+  const d=Math.floor(Math.abs(deg));
+  const m=Math.floor((Math.abs(deg)-d)*60);
+  const s=(((Math.abs(deg)-d)*60)-m)*60;
+  const dir=isLat?(deg>=0?'N':'S'):(deg>=0?'E':'W');
+  return `${String(d).padStart(isLat?2:3,'0')}°${String(m).padStart(2,'0')}'${s.toFixed(1)}"${dir}`;
+}
+
+function showWptFormats(lat,lon,fmsStr){
+  const box=document.getElementById('cr-wpt-box'); if(!box)return;
+  box.style.display='block';
+  const ddLat=`${Math.abs(lat).toFixed(5)}°${lat>=0?'N':'S'}`;
+  const ddLon=`${Math.abs(lon).toFixed(5)}°${lon>=0?'E':'W'}`;
+  document.getElementById('cr-wpt-dd-val').textContent =`${ddLat}  ${ddLon}`;
+  document.getElementById('cr-wpt-ddm-val').textContent=`${toDDM(lat,true)}  ${toDDM(lon,false)}`;
+  document.getElementById('cr-wpt-dms-val').textContent=`${toDMS(lat,true)}  ${toDMS(lon,false)}`;
+  document.getElementById('cr-wpt-fms-val').textContent=fmsStr;
+}
+
+// ── Airport Route panel — resizable height ─────────────────────────────────
+(function(){
+  let dragging=false, startY=0, startH=0;
+  function getEls(){ return { handle:document.getElementById('ap-resize-handle'), list:document.getElementById('apRouteList') }; }
+  function onStart(y){ const {list}=getEls(); if(!list)return; dragging=true; startY=y; startH=list.offsetHeight||160; document.body.style.cursor='ns-resize'; }
+  function onMove(y){ if(!dragging)return; const {list}=getEls(); if(!list)return; const h=Math.max(52,Math.min(380,startH+(y-startY))); list.style.height=h+'px'; list.style.maxHeight=h+'px'; }
+  function onEnd(){ dragging=false; document.body.style.cursor=''; }
+  document.addEventListener('DOMContentLoaded',()=>{
+    const {handle}=getEls();
+    if(!handle)return;
+    handle.addEventListener('mousedown', e=>{ onStart(e.clientY); e.preventDefault(); });
+    handle.addEventListener('touchstart', e=>{ onStart(e.touches[0].clientY); e.preventDefault(); },{passive:false});
+  });
+  document.addEventListener('mousemove', e=>{ if(dragging) onMove(e.clientY); });
+  document.addEventListener('touchmove', e=>{ if(dragging) onMove(e.touches[0].clientY); },{passive:false});
+  document.addEventListener('mouseup',  onEnd);
+  document.addEventListener('touchend', onEnd);
+})();
+
+(function(){
+  let dragging=false, startY=0, startH=0;
+  function getEls(){ return { handle:document.getElementById('map-resize-handle'), list:document.getElementById('mapPtList') }; }
+  function onStart(y){ const {list}=getEls(); if(!list)return; dragging=true; startY=y; startH=list.offsetHeight||120; document.body.style.cursor='ns-resize'; }
+  function onMove(y){ if(!dragging)return; const {list}=getEls(); if(!list)return; const h=Math.max(40,Math.min(380,startH+(y-startY))); list.style.height=h+'px'; list.style.maxHeight=h+'px'; }
+  function onEnd(){ dragging=false; document.body.style.cursor=''; }
+  document.addEventListener('DOMContentLoaded',()=>{
+    const {handle}=getEls();
+    if(!handle)return;
+    handle.addEventListener('mousedown', e=>{ onStart(e.clientY); e.preventDefault(); });
+    handle.addEventListener('touchstart', e=>{ onStart(e.touches[0].clientY); e.preventDefault(); },{passive:false});
+  });
+  document.addEventListener('mousemove', e=>{ if(dragging) onMove(e.clientY); });
+  document.addEventListener('touchmove', e=>{ if(dragging) onMove(e.touches[0].clientY); },{passive:false});
+  document.addEventListener('mouseup',  onEnd);
+  document.addEventListener('touchend', onEnd);
+})();
 
 // ═══════════════════════════════════════════
 // KEYBOARD
@@ -2004,9 +2942,9 @@ async function fetchAllMETARs(){
   METAR_BULK_TS = now;
 }
 
-// Fetch single TAF via corsproxy → aviationweather.gov
+// Fetch single TAF — direct call to aviationweather.gov (CORS enabled)
 async function fetchTAF(icao){
-  const url = `https://corsproxy.io/?https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`;
+  const url = `https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`;
   const data = await fetch(url).then(r=>r.json());
   return data?.length ? (data[0].rawTAF || null) : null;
 }
@@ -2085,6 +3023,389 @@ async function loadWXIntoPopup(icao, force=false){
     const stEl = document.getElementById('wx-status-'+icao);
     if(stEl){ stEl.className='wx-status error'; stEl.textContent='✕ Error'; }
   }
+}
+
+// ═══════════════════════════════════════════
+// AIRAC STATUS
+// ═══════════════════════════════════════════
+function checkAIRAC(){
+  const AIRAC_DATE = new Date('2026-05-14');
+  const nextAIRAC  = new Date(AIRAC_DATE.getTime() + 28*86400000);
+  const days = Math.ceil((nextAIRAC - new Date()) / 86400000);
+  const nextStr = nextAIRAC.toISOString().split('T')[0];
+  const dot = document.getElementById('wxGlobalDot');
+  const btn = document.getElementById('btnWxRefresh');
+  if(!dot) return;
+  if(days < 0){
+    dot.style.background='#ef4444';
+    dot.title=`⚠ AIRAC expired ${Math.abs(days)} days ago — update needed (next: ${nextStr})`;
+    if(btn) btn.title='AIP data outdated — click to open AIP Thailand';
+  } else if(days <= 7){
+    dot.style.background='#f59e0b';
+    dot.title=`⚠ AIRAC expires in ${days} day${days===1?'':'s'} (${nextStr})`;
+    if(btn) btn.title=`AIRAC expires soon — click to open AIP Thailand`;
+  } else {
+    dot.style.background='#22c55e';
+    dot.title=`✓ AIRAC valid — next cycle in ${days} days (${nextStr})`;
+    if(btn) btn.title='AIP data up to date — click to open AIP Thailand';
+  }
+}
+function openAIP(){
+  window.open('https://aip.caat.or.th/2026-05-14-AIRAC/html/index-en-GB.html','_blank');
+}
+checkAIRAC();
+setInterval(checkAIRAC, 3600000);
+
+// ═══════════════════════════════════════════
+// E6B FLIGHT COMPUTER
+// ═══════════════════════════════════════════
+let e6bOpen = false;
+
+function toggleE6B(){
+  e6bOpen = !e6bOpen;
+  const sb  = document.getElementById('e6bSb');
+  const tog = document.getElementById('e6bTog');
+  sb.classList.toggle('collapsed', !e6bOpen);
+  tog.textContent = e6bOpen ? '▶' : '◀';
+  tog.style.right  = e6bOpen ? '290px' : '0';
+  setTimeout(()=>map.invalidateSize(), 260);
+}
+
+function e6bTab(name){
+  document.querySelectorAll('.e6b-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.e6b===name));
+  document.querySelectorAll('.e6b-panel').forEach(el=>el.classList.toggle('show', el.id==='e6b-'+name));
+}
+
+// ── Wind Triangle ──────────────────────────────────────────────────────────
+function calcWind(){
+  const TC=parseFloat(document.getElementById('w_tc').value);
+  const TAS=parseFloat(document.getElementById('w_tas').value);
+  const WD=parseFloat(document.getElementById('w_wd').value);
+  const WS=parseFloat(document.getElementById('w_ws').value);
+  const el=document.getElementById('wind-result');
+  if([TC,TAS,WD,WS].some(isNaN)){el.innerHTML='<div class="e6b-hint">Fill all fields above</div>';return;}
+
+  const TCr=TC*Math.PI/180, WDr=WD*Math.PI/180;
+  const wE=-WS*Math.sin(WDr), wN=-WS*Math.cos(WDr);
+  const Wa=wE*Math.sin(TCr)+wN*Math.cos(TCr);
+  const disc=Wa*Wa-(WS*WS-TAS*TAS);
+  if(disc<0){el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">No solution — wind speed exceeds TAS</div>';return;}
+
+  const GS=Wa+Math.sqrt(disc);
+  const airE=GS*Math.sin(TCr)-wE, airN=GS*Math.cos(TCr)-wN;
+  let TH=Math.atan2(airE,airN)*180/Math.PI;
+  if(TH<0)TH+=360; if(TH>=360)TH-=360;
+  let WCA=TH-TC; if(WCA>180)WCA-=360; if(WCA<-180)WCA+=360;
+
+  const relA=(WD-TC)*Math.PI/180;
+  const xw=WS*Math.sin(relA), hw=WS*Math.cos(relA);
+
+  el.innerHTML=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">True Heading</span><span class="e6b-result-val">${TH.toFixed(1)}°</span></div>
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Ground Speed</span><span class="e6b-result-val">${GS.toFixed(1)} kts</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Wind Correction</span><span class="e6b-result-val">${WCA>=0?'+':''}${WCA.toFixed(1)}° ${WCA>=0?'(Right)':'(Left)'}</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Crosswind</span><span class="e6b-result-val">${Math.abs(xw).toFixed(1)} kts ${xw>=0?'from Right':'from Left'}</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">H/W Component</span><span class="e6b-result-val">${Math.abs(hw).toFixed(1)} kts ${hw>=0?'Headwind':'Tailwind'}</span></div>`;
+}
+
+// ── TAS / Density Altitude ──────────────────────────────────────────────────
+function calcTASe6b(){
+  const IAS=parseFloat(document.getElementById('t_ias').value);
+  const alt=parseFloat(document.getElementById('t_alt').value);
+  const OAT=parseFloat(document.getElementById('t_oat').value);
+  const el=document.getElementById('tas-result');
+  if([IAS,alt,OAT].some(isNaN)){el.innerHTML='<div class="e6b-hint">Fill all fields above</div>';return;}
+
+  const T_K=OAT+273.15;
+  const pRatio=Math.pow(1-6.8756e-6*alt, 5.2561);
+  const TAS=IAS/Math.sqrt(pRatio/(T_K/288.15));
+  const ISA_T=15-0.001981*alt;
+  const DA=alt+120*(OAT-ISA_T);
+  const sos=661.5*Math.sqrt(T_K/288.15);
+  const Mach=TAS/sos;
+
+  el.innerHTML=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">True Airspeed</span><span class="e6b-result-val">${TAS.toFixed(1)} kts</span></div>
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Density Altitude</span><span class="e6b-result-val">${Math.round(DA).toLocaleString()} ft</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Mach Number</span><span class="e6b-result-val">M ${Mach.toFixed(3)}</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">ISA Deviation</span><span class="e6b-result-val">${(OAT-ISA_T)>=0?'+':''}${(OAT-ISA_T).toFixed(1)} °C</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Speed of Sound</span><span class="e6b-result-val">${sos.toFixed(1)} kts</span></div>`;
+}
+
+// ── Time / Speed / Distance ─────────────────────────────────────────────────
+function calcTSD(){
+  const dv=document.getElementById('tsd_d').value;
+  const sv=document.getElementById('tsd_s').value;
+  const hv=document.getElementById('tsd_h').value;
+  const mv=document.getElementById('tsd_m').value;
+  const el=document.getElementById('tsd-result');
+  const DC={nm:1,km:1/1.852,sm:1/1.15078};
+  const SC={kts:1,kmh:1/1.852,mph:1/1.15078};
+  const hasD=dv!==''&&!isNaN(+dv);
+  const hasS=sv!==''&&!isNaN(+sv);
+  const hasT=(hv!==''&&!isNaN(+hv))||(mv!==''&&!isNaN(+mv));
+  const blanks=[!hasD,!hasS,!hasT].filter(Boolean).length;
+  if(blanks!==1){el.innerHTML=`<div class="e6b-hint">${blanks===0?'Leave one field blank to solve':'Fill at least two fields'}</div>`;return;}
+  const D_nm=hasD?+dv*DC[document.getElementById('tsd_du').value]:null;
+  const S_kts=hasS?+sv*SC[document.getElementById('tsd_su').value]:null;
+  const T_hrs=hasT?(+hv||0)+(+mv||0)/60:null;
+  let rd,rs,rt;
+  if(!hasD){rd=S_kts*T_hrs;rs=S_kts;rt=T_hrs;}
+  else if(!hasS){rd=D_nm;rs=T_hrs>0?D_nm/T_hrs:null;rt=T_hrs;}
+  else{rd=D_nm;rs=S_kts;rt=S_kts>0?D_nm/S_kts:null;}
+  if(rd==null||rs==null||rt==null||rs<=0||rt<0){el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">Invalid values</div>';return;}
+  const th=Math.floor(rt), tm=Math.round((rt-th)*60);
+  el.innerHTML=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Distance</span><span class="e6b-result-val">${rd.toFixed(1)} nm · ${(rd*1.852).toFixed(1)} km</span></div>
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Speed</span><span class="e6b-result-val">${rs.toFixed(1)} kts · ${(rs*1.852).toFixed(1)} km/h</span></div>
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Time</span><span class="e6b-result-val">${th}h ${String(tm).padStart(2,'0')}m (${(rt*60).toFixed(0)} min)</span></div>`;
+}
+
+// ── Fuel Planning ───────────────────────────────────────────────────────────
+function calcFuel(){
+  const flow=parseFloat(document.getElementById('f_flow').value);
+  const fh=parseFloat(document.getElementById('f_h').value)||0;
+  const fm=parseFloat(document.getElementById('f_m').value)||0;
+  const avail=parseFloat(document.getElementById('f_avail').value);
+  const res=parseFloat(document.getElementById('f_res').value)||0;
+  const fu=document.getElementById('f_flowu').value;
+  const el=document.getElementById('fuel-result');
+  const ul=fu==='lh'?'L':fu==='usg'?'USG':'kg';
+  if(isNaN(flow)){el.innerHTML='<div class="e6b-hint">Enter fuel flow first</div>';return;}
+  const tHrs=fh+fm/60;
+  const hasT=fh>0||fm>0, hasA=!isNaN(avail)&&avail>0;
+  if(!hasT&&!hasA){el.innerHTML='<div class="e6b-hint">Enter flight time or fuel available</div>';return;}
+  let rows=[];
+  if(hasT){
+    const need=flow*tHrs, resF=flow*(res/60), total=need+resF;
+    rows.push(`<div class="e6b-result-row hi"><span class="e6b-result-lbl">Fuel Required</span><span class="e6b-result-val">${need.toFixed(1)} ${ul}</span></div>`);
+    if(res>0) rows.push(`<div class="e6b-result-row"><span class="e6b-result-lbl">Reserve (${res} min)</span><span class="e6b-result-val">${resF.toFixed(1)} ${ul}</span></div>`);
+    rows.push(`<div class="e6b-result-row hi"><span class="e6b-result-lbl">Total incl. Reserve</span><span class="e6b-result-val">${total.toFixed(1)} ${ul}</span></div>`);
+  }
+  if(hasA){
+    const endHrs=avail/flow, useHrs=Math.max(0,endHrs-res/60);
+    const eh=Math.floor(endHrs), em=Math.round((endHrs-eh)*60);
+    const uh=Math.floor(useHrs), um=Math.round((useHrs-uh)*60);
+    rows.push(`<div class="e6b-result-row hi"><span class="e6b-result-lbl">Total Endurance</span><span class="e6b-result-val">${eh}h ${String(em).padStart(2,'0')}m</span></div>`);
+    if(res>0) rows.push(`<div class="e6b-result-row hi"><span class="e6b-result-lbl">Usable (after res.)</span><span class="e6b-result-val">${uh}h ${String(um).padStart(2,'0')}m</span></div>`);
+  }
+  el.innerHTML=rows.join('');
+}
+
+// ── Unit Conversions ────────────────────────────────────────────────────────
+function cvDist(f){
+  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
+  const N={nm:1,km:1.852,sm:1.15078}, nm=v/N[f];
+  ['nm','km','sm'].forEach(u=>{if(u!==f)document.getElementById('cv_'+u).value=(nm*N[u]).toFixed(3);});
+}
+function cvAlt(f){
+  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
+  f==='ft'?document.getElementById('cv_m').value=(v*0.3048).toFixed(1)
+          :document.getElementById('cv_ft').value=(v/0.3048).toFixed(1);
+}
+function cvSpd(f){
+  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
+  const k=f==='kts'?v:f==='kmh'?v/1.852:v/1.15078;
+  if(f!=='kts') document.getElementById('cv_kts').value=k.toFixed(2);
+  if(f!=='kmh') document.getElementById('cv_kmh').value=(k*1.852).toFixed(2);
+  if(f!=='mph') document.getElementById('cv_mph').value=(k*1.15078).toFixed(2);
+}
+function cvPres(f){
+  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
+  f==='hpa'?document.getElementById('cv_inhg').value=(v*0.02953).toFixed(2)
+           :document.getElementById('cv_hpa').value=(v/0.02953).toFixed(1);
+}
+function cvTemp(f){
+  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
+  f==='c'?document.getElementById('cv_f').value=(v*9/5+32).toFixed(1)
+         :document.getElementById('cv_c').value=((v-32)*5/9).toFixed(1);
+}
+
+// ── Pressure Altitude ───────────────────────────────────────────────────────
+function calcPA(){
+  const elev=parseFloat(document.getElementById('pa_elev').value)||0;
+  let qnh=parseFloat(document.getElementById('pa_qnh').value);
+  const unit=document.getElementById('pa_qnh_u').value;
+  const el=document.getElementById('pa-result');
+  if(isNaN(qnh)){el.innerHTML='<div class="e6b-hint">Enter altimeter setting (QNH)</div>';return;}
+  if(unit==='hpa') qnh=qnh*0.02953; // convert hPa → inHg
+  const PA=Math.round((29.92-qnh)*1000+elev);
+  const qnhHpa=(qnh/0.02953).toFixed(1);
+  const ISA_T=(15-0.001981*PA).toFixed(1);
+  const corr=Math.round((29.92-qnh)*1000);
+  el.innerHTML=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Pressure Altitude</span><span class="e6b-result-val">${PA.toLocaleString()} ft</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">QNH</span><span class="e6b-result-val">${qnh.toFixed(2)} inHg · ${qnhHpa} hPa</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Correction</span><span class="e6b-result-val">${corr>=0?'+':''}${corr} ft from field elev</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">ISA Temp at PA</span><span class="e6b-result-val">${ISA_T} °C</span></div>`;
+}
+
+// ── Runway Wind Components ──────────────────────────────────────────────────
+function calcRWY(){
+  const rwyNum=parseFloat(document.getElementById('rwy_hdg').value);
+  const wdfrom=parseFloat(document.getElementById('rwy_wdfrom').value);
+  const wspd=parseFloat(document.getElementById('rwy_wspd').value);
+  const el=document.getElementById('rwy-result');
+  if([rwyNum,wdfrom,wspd].some(isNaN)){el.innerHTML='<div class="e6b-hint">Fill all fields above</div>';return;}
+  const rwyHdg=rwyNum*10;
+  const angleRad=(wdfrom-rwyHdg)*Math.PI/180;
+  const hw=wspd*Math.cos(angleRad);   // + = headwind
+  const xw=wspd*Math.sin(angleRad);   // + = from right
+  // wind angle to runway (0–180)
+  let windAngle=Math.abs(((wdfrom-rwyHdg)+180)%360-180);
+  const maxXW_limit=[10,13,15,20]; // common crosswind limits
+  el.innerHTML=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">${hw>=0?'Headwind':'Tailwind'}</span><span class="e6b-result-val">${Math.abs(hw).toFixed(1)} kts ${hw>=0?'⬆':'⬇'}</span></div>
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Crosswind</span><span class="e6b-result-val">${Math.abs(xw).toFixed(1)} kts ${xw>=0?'from Right ➡':'from Left ⬅'}</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">RWY Heading</span><span class="e6b-result-val">RWY ${String(rwyNum).padStart(2,'0')} · ${rwyHdg}° mag</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Wind Angle to RWY</span><span class="e6b-result-val">${windAngle.toFixed(0)}° ${xw>=0?'right':'left'}</span></div>`;
+}
+
+// ── Cloud Base ─────────────────────────────────────────────────────────────
+function calcCloud(){
+  const T=parseFloat(document.getElementById('cld_temp').value);
+  const Td=parseFloat(document.getElementById('cld_dp').value);
+  const elev=parseFloat(document.getElementById('cld_elev').value)||0;
+  const el=document.getElementById('cld-result');
+  if(isNaN(T)||isNaN(Td)){el.innerHTML='<div class="e6b-hint">Fill temperature and dewpoint</div>';return;}
+  if(T<Td){el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">Temp must be ≥ Dewpoint</div>';return;}
+  const spread=T-Td;
+  const base_AGL=Math.round(spread*400);   // spread × 400 ft rule
+  const base_MSL=base_AGL+elev;
+  const RH=Math.max(0,Math.min(100,Math.round(100-5*spread)));
+  const outlook=spread<3?'⚠ Fog / very low cloud likely':spread<6?'Low cloud, reduced vis possible':spread>20?'Clear & dry':spread>12?'Scattered cloud':'Moderate cloud likely';
+  el.innerHTML=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Cloud Base AGL</span><span class="e6b-result-val">${base_AGL.toLocaleString()} ft</span></div>
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Cloud Base MSL</span><span class="e6b-result-val">${base_MSL.toLocaleString()} ft</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">T/DP Spread</span><span class="e6b-result-val">${spread.toFixed(1)} °C</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Approx. RH</span><span class="e6b-result-val">~${RH}%</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Outlook</span><span class="e6b-result-val" style="white-space:normal;">${outlook}</span></div>`;
+}
+
+// ── Holding Pattern Entry ───────────────────────────────────────────────────
+function calcHolding(){
+  const hdg=parseFloat(document.getElementById('h_hdg').value);
+  const inbound=parseFloat(document.getElementById('h_inbound').value);
+  const turn=document.getElementById('h_turn').value;
+  const el=document.getElementById('hold-result');
+  if(isNaN(hdg)||isNaN(inbound)){el.innerHTML='<div class="e6b-hint">Fill aircraft heading and inbound course</div>';return;}
+  const outbound=(inbound+180)%360;
+  let angle=hdg-outbound;
+  while(angle>180)angle-=360; while(angle<-180)angle+=360;
+
+  let entry,color,desc;
+  if(turn==='R'){
+    if(angle>=-70&&angle<=110){entry='Direct';color='#22c55e';desc='Proceed directly to the fix, then turn right to fly outbound.';}
+    else if(angle>110){entry='Parallel';color='#f59e0b';desc='Fly parallel (outbound direction) past the fix, turn right 180° to intercept inbound.';}
+    else{entry='Teardrop';color='#38bdf8';desc='Cross the fix, fly 30° into the holding side outbound ~1 min, then turn right to intercept inbound.';}
+  } else {
+    if(angle<=70&&angle>=-110){entry='Direct';color='#22c55e';desc='Proceed directly to the fix, then turn left to fly outbound.';}
+    else if(angle<-110){entry='Parallel';color='#f59e0b';desc='Fly parallel (outbound direction) past the fix, turn left 180° to intercept inbound.';}
+    else{entry='Teardrop';color='#38bdf8';desc='Cross the fix, fly 30° into the holding side outbound ~1 min, then turn left to intercept inbound.';}
+  }
+  el.innerHTML=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Entry Type</span><span class="e6b-result-val" style="color:${color};font-size:13px;font-weight:800;">${entry} Entry</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Inbound / Outbound</span><span class="e6b-result-val">${inbound}° / ${outbound}°</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Holds</span><span class="e6b-result-val">${turn==='R'?'Right (Standard)':'Left (Non-std)'}</span></div>
+    <div style="margin-top:6px;padding:5px 6px;background:var(--bg);border-radius:5px;font-size:9px;color:var(--text2);line-height:1.55;">${desc}</div>`;
+}
+
+// ── Top of Descent ─────────────────────────────────────────────────────────
+function calcTOD(){
+  const curAlt=parseFloat(document.getElementById('tod_cur').value);
+  const tgtAlt=parseFloat(document.getElementById('tod_tgt').value);
+  const gs=parseFloat(document.getElementById('tod_gs').value);
+  const angle=parseFloat(document.getElementById('tod_angle').value)||3.0;
+  const el=document.getElementById('tod-result');
+  if([curAlt,tgtAlt,gs].some(isNaN)){el.innerHTML='<div class="e6b-hint">Fill altitude and ground speed</div>';return;}
+  const dAlt=curAlt-tgtAlt;
+  if(dAlt<=0){el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">Current alt must be above target</div>';return;}
+  const tanA=Math.tan(angle*Math.PI/180);
+  const dist_nm=dAlt/(tanA*6076.12);
+  const rate_fpm=gs/60*6076.12*tanA;
+  const time_min=dist_nm/gs*60;
+  const tm=Math.floor(time_min), ts=Math.round((time_min-tm)*60);
+  const thumb=Math.round(dAlt/1000*3); // 3° rule of thumb
+  el.innerHTML=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Start Descent</span><span class="e6b-result-val">${dist_nm.toFixed(1)} nm from target</span></div>
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Descent Rate</span><span class="e6b-result-val">${Math.round(rate_fpm)} ft/min</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Time to Descend</span><span class="e6b-result-val">${tm}m ${ts}s</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Alt to Lose</span><span class="e6b-result-val">${dAlt.toLocaleString()} ft @ ${angle}°</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">3° Rule of Thumb</span><span class="e6b-result-val">~${thumb} nm (alt/1000 × 3)</span></div>`;
+}
+
+// ── Rate of Descent vs Distance ─────────────────────────────────────────────
+function calcRDD(){
+  const gs    = parseFloat(document.getElementById('rdd_gs').value);
+  const aVal  = document.getElementById('rdd_angle').value.trim();
+  const rVal  = document.getElementById('rdd_rate').value.trim();
+  const altV  = parseFloat(document.getElementById('rdd_alt').value);
+  const el    = document.getElementById('rdd-result');
+
+  if(isNaN(gs)||gs<=0){ el.innerHTML='<div class="e6b-hint">Enter Ground Speed first</div>'; buildRddTable(null); return; }
+
+  const hasA = aVal!==''&&!isNaN(+aVal);
+  const hasR = rVal!==''&&!isNaN(+rVal);
+
+  if(!hasA&&!hasR){
+    // show 3° reference only
+    const r3 = gs*101.269*Math.tan(3*Math.PI/180);
+    const d3 = 1000/(Math.tan(3*Math.PI/180)*6076.12);
+    el.innerHTML=`
+      <div class="e6b-result-row hi"><span class="e6b-result-lbl">3° Rate @ ${gs} kts</span><span class="e6b-result-val">${Math.round(r3)} ft/min</span></div>
+      <div class="e6b-result-row"><span class="e6b-result-lbl">Dist per 1,000 ft (3°)</span><span class="e6b-result-val">${d3.toFixed(2)} nm</span></div>
+      <div class="e6b-hint-sm" style="margin-top:5px;">Enter angle or rate to solve ↑</div>`;
+    buildRddTable(gs); return;
+  }
+
+  let A, R;
+  if(hasA && hasR){ A=+aVal; R=+rVal; }
+  else if(hasA)   { A=+aVal; R=gs*101.269*Math.tan(A*Math.PI/180); }
+  else            { R=+rVal; A=Math.atan(R/(gs*101.269))*180/Math.PI; }
+
+  if(A<=0||A>30){ el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">Angle must be 0°–30°</div>'; return; }
+
+  const tanA = Math.tan(A*Math.PI/180);
+  const dist_per_1000 = 1000/(tanA*6076.12);        // nm per 1000 ft lost
+  const grad_ftnm     = tanA*6076.12;                // ft lost per nm
+  const grad_pct      = tanA*100;                    // %
+  const rate_3deg     = gs*101.269*Math.tan(3*Math.PI/180);
+  const diff          = R - rate_3deg;
+
+  let rows = `
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Descent Angle</span><span class="e6b-result-val">${A.toFixed(2)}°</span></div>
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Descent Rate</span><span class="e6b-result-val">${Math.round(R)} ft/min</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Dist per 1,000 ft</span><span class="e6b-result-val">${dist_per_1000.toFixed(2)} nm</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Gradient</span><span class="e6b-result-val">${grad_ftnm.toFixed(0)} ft/nm · ${grad_pct.toFixed(1)}%</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">vs 3° ILS</span><span class="e6b-result-val" style="color:${Math.abs(diff)<30?'#22c55e':Math.abs(diff)<80?'#f59e0b':'#ef4444'}">${diff>=0?'+':''}${Math.round(diff)} ft/min from 3°</span></div>`;
+
+  if(!isNaN(altV)&&altV>0){
+    const dist_total = altV/(tanA*6076.12);
+    const time_min   = dist_total/gs*60;
+    const tm=Math.floor(time_min), ts=Math.round((time_min-tm)*60);
+    rows+=`
+    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Dist to lose ${altV.toLocaleString()} ft</span><span class="e6b-result-val">${dist_total.toFixed(1)} nm</span></div>
+    <div class="e6b-result-row"><span class="e6b-result-lbl">Time to lose</span><span class="e6b-result-val">${tm}m ${ts}s</span></div>`;
+  }
+  el.innerHTML = rows;
+  buildRddTable(gs);
+}
+
+function buildRddTable(gs){
+  const tbody = document.getElementById('rdd-ref-table');
+  if(!tbody) return;
+  const GS_LIST = [70,80,90,100,110,120,130,140,150,160,180,200];
+  const tan3 = Math.tan(3*Math.PI/180);
+  tbody.innerHTML = GS_LIST.map(g=>{
+    const r = Math.round(g*101.269*tan3);
+    const d = (1000/(tan3*6076.12)).toFixed(2);
+    const hi = gs && Math.abs(g-gs)<=5;
+    return `<tr style="${hi?'color:var(--accent2);font-weight:700;background:rgba(14,165,233,.07);':'color:var(--text2);'}">
+      <td style="padding:2px 4px;">${g}</td>
+      <td style="padding:2px 4px;text-align:right;">${r}</td>
+      <td style="padding:2px 4px;text-align:right;">${d}</td>
+    </tr>`;
+  }).join('');
 }
 
 // Build the weather HTML fragment (empty shell — filled by loadWXIntoPopup)
