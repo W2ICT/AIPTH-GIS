@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Thailand AIP — Aerodrome GIS</title>
+  <title>AIP Thailand GIS System</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
@@ -70,8 +70,8 @@
     .sidebar.collapsed{width:0;min-width:0;border-right:none;}
 
     /* Sidebar toggle button */
-    .sb-toggle{position:absolute;left:285px;top:50%;transform:translateY(-50%);z-index:900;width:18px;height:44px;background:var(--surface);border:1px solid var(--border);border-left:none;border-radius:0 7px 7px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);transition:left .25s,background .15s;}
-    .sb-toggle:hover{background:var(--surface2);color:var(--text);}
+    .sb-toggle{position:absolute;left:285px;top:50%;transform:translateY(-50%);z-index:900;width:18px;height:44px;background:#dc2626;border:1px solid #b91c1c;border-left:none;border-radius:0 7px 7px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;transition:left .25s,background .15s;box-shadow:2px 0 6px rgba(220,38,38,.4);}
+    .sb-toggle:hover{background:#b91c1c;color:#fff;}
     .sidebar.collapsed ~ .sb-toggle{left:0;border-left:1px solid var(--border);border-radius:7px;}
 
     .search-box{padding:8px 8px 0;}
@@ -216,8 +216,8 @@
     /* ══ E6B SIDEBAR ══ */
     .e6b-sb{width:290px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .25s,min-width .25s;}
     .e6b-sb.collapsed{width:0;min-width:0;border-left:none;}
-    .e6b-tog{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:900;width:18px;height:44px;background:var(--surface);border:1px solid var(--border);border-right:none;border-left:1px solid var(--border);border-radius:7px 0 0 7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);transition:right .25s,background .15s;}
-    .e6b-tog:hover{background:var(--surface2);color:var(--text);}
+    .e6b-tog{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:900;width:18px;height:44px;background:#dc2626;border:1px solid #b91c1c;border-right:none;border-radius:7px 0 0 7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;transition:right .25s,background .15s;box-shadow:-2px 0 6px rgba(220,38,38,.4);}
+    .e6b-tog:hover{background:#b91c1c;color:#fff;}
     .e6b-hdr{background:linear-gradient(135deg,#0d1a3a,#132260);padding:8px 10px;display:flex;align-items:center;gap:8px;flex-shrink:0;border-bottom:1px solid var(--border);}
     .e6b-badge{background:rgba(14,165,233,.2);border:1px solid rgba(14,165,233,.5);color:#38bdf8;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;}
     .e6b-body{display:flex;flex:1;overflow:hidden;}
@@ -294,7 +294,7 @@
 <header>
   <div class="hlogo">✈</div>
   <div class="htitle">
-    <h1>Thailand AIP — Aerodrome GIS</h1>
+    <h1>AIP Thailand GIS System</h1>
     <p>Civil Aviation Authority of Thailand (CAAT) · AIRAC 2026-05-14</p>
   </div>
 
@@ -338,7 +338,7 @@
       <div class="lp-header collapsed" id="lph-layers" onclick="togglePanel('layers')"
         <span style="font-size:11px;">🗂</span>
         <span class="lp-title">Layers</span>
-        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">13</span>
+        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">14</span>
         <span class="lp-chevron">▼</span>
       </div>
       <div class="lp-body collapsed" id="lpb-layers">
@@ -401,6 +401,11 @@
           <div class="layer-dot" style="background:#ffdd00;"></div>
           <span class="layer-label">Danger Areas (VTD)</span>
           <div class="ltog" id="ltog-danger"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('hospitals')">
+          <div class="layer-dot" style="background:#ef4444;border-radius:2px;font-size:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;">+</div>
+          <span class="layer-label" id="lbl-hospitals">Hospitals (OSM)</span>
+          <div class="ltog" id="ltog-hospitals"></div>
         </div>
       </div>
     </div>
@@ -765,8 +770,9 @@
   <div class="dt-title">📏 Distance Measure<span class="dt-x" onclick="toggleDist()">✕</span></div>
   <div class="dt-tabs">
     <div class="dt-tab active" data-tab="map" onclick="switchTab('map')">🗺 Map Click</div>
-    <div class="dt-tab" data-tab="airport" onclick="switchTab('airport')">✈ Airport Route</div>
+    <div class="dt-tab" data-tab="airport" onclick="switchTab('airport')">✈ Route</div>
     <div class="dt-tab" data-tab="coord" onclick="switchTab('coord')">📍 Nearby</div>
+    <div class="dt-tab" data-tab="circle" onclick="switchTab('circle')">⭕ Circle</div>
   </div>
 
   <!-- TAB: MAP CLICK -->
@@ -883,6 +889,41 @@
     </div>
   </div>
 
+  <!-- TAB: CIRCLE -->
+  <div class="dt-section" id="tab-circle">
+    <div class="dt-hint" id="circHint">Click on map to set center point</div>
+
+    <div id="circCenBox" style="display:none;background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.2);border-radius:6px;padding:5px 8px;margin:6px 0;">
+      <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Center</div>
+      <div id="circCenVal" style="font-size:9px;font-family:monospace;color:var(--text2);"></div>
+    </div>
+
+    <div id="circManualWrap" style="display:none;margin-bottom:6px;">
+      <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Manual Radius (current unit)</div>
+      <div style="display:flex;gap:4px;">
+        <input id="circManualR" type="number" min="0" step="0.1" placeholder="e.g. 50 NM"
+          style="flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 7px;font-size:10px;outline:none;"
+          onkeydown="if(event.key==='Enter')applyManualCircle()"/>
+        <button class="dt-btn pri" onclick="applyManualCircle()" style="padding:4px 10px;font-size:10px;">Apply</button>
+      </div>
+    </div>
+
+    <div id="circStatsBox" style="display:none;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:6px 8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:9px;color:var(--muted);">Radius</span>
+        <span id="circRval" style="font-size:10px;font-weight:700;color:var(--accent2);font-family:monospace;"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;padding-top:3px;border-top:1px solid var(--border2);">
+        <span style="font-size:9px;color:var(--muted);">Circumference</span>
+        <span id="circCval" style="font-size:9px;color:var(--text2);font-family:monospace;"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:9px;color:var(--muted);">Area</span>
+        <span id="circAval" style="font-size:9px;color:var(--text2);font-family:monospace;"></span>
+      </div>
+    </div>
+  </div>
+
   <!-- UNIT + RESULT (shared) -->
   <div class="dt-lbl">Unit</div>
   <div class="dt-units">
@@ -897,7 +938,8 @@
   </div>
   <div class="dt-acts">
     <button class="dt-btn pri" onclick="resetMeasure()">Reset</button>
-    <button class="dt-btn sec" onclick="toggleDist()">Close</button>
+    <button class="dt-btn sec" id="btnNavlog" onclick="exportNavlog(this)" title="Export Navigation Log PDF">📋 Navlog</button>
+<button class="dt-btn sec" onclick="toggleDist()">Close</button>
   </div>
 </div>
 
@@ -915,6 +957,8 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
 // ═══════════════════════════════════════════
 // THEME
@@ -1128,9 +1172,16 @@ const LG={
   prohibited: L.layerGroup(),
   restricted: L.layerGroup(),
   danger:     L.layerGroup(),
+  hospitals:  L.markerClusterGroup({
+    maxClusterRadius:50,
+    iconCreateFunction:cl=>L.divIcon({
+      html:`<div style="width:28px;height:28px;background:#ef4444;border:2px solid #fff;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.45);">${cl.getChildCount()}</div>`,
+      iconSize:[28,28],iconAnchor:[14,14],className:''
+    })
+  }),
 };
-// Default: only Aerodromes + NavAids ON; all others OFF
-const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false};
+// Default: only Aerodromes ON; all others OFF
+const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false};
 // Add only active layers to map on startup
 Object.entries(LG).forEach(([k,g])=>{ if(LS[k]!==false) g.addTo(map); });
 
@@ -1151,7 +1202,60 @@ function togglePanel(id){
 function toggleLayer(k){
   LS[k]=!LS[k];
   document.getElementById('ltog-'+k).classList.toggle('on',LS[k]);
+  if(k==='hospitals'&&LS[k]&&!hospitalsLoaded){fetchHospitals();return;}
   LS[k] ? LG[k].addTo(map) : map.removeLayer(LG[k]);
+}
+
+// ── Hospitals (OpenStreetMap / Overpass API) ──────────────────────────────
+let hospitalsLoaded=false;
+const HOSP_ICON=L.divIcon({
+  html:`<div style="width:18px;height:18px;background:#ef4444;border:2px solid #fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;box-shadow:0 1px 5px rgba(0,0,0,.45);line-height:1;">+</div>`,
+  iconSize:[18,18],iconAnchor:[9,9],className:''
+});
+
+async function fetchHospitals(){
+  const lbl=document.getElementById('lbl-hospitals');
+  const tog=document.getElementById('ltog-hospitals');
+  if(lbl) lbl.textContent='⏳ Loading…';
+  try{
+    const query=`[out:json][timeout:40];area["ISO3166-1"="TH"]->.th;(node["amenity"="hospital"](area.th);way["amenity"="hospital"](area.th););out center;`;
+    const res=await fetch('https://overpass-api.de/api/interpreter',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:'data='+encodeURIComponent(query)
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    let count=0;
+    data.elements.forEach(el=>{
+      const lat=el.lat??el.center?.lat;
+      const lon=el.lon??el.center?.lon;
+      if(!lat||!lon)return;
+      const name=el.tags?.name||el.tags?.['name:en']||'Hospital';
+      const nameEN=el.tags?.['name:en']||'';
+      const addr=[el.tags?.['addr:district'],el.tags?.['addr:province']].filter(Boolean).join(', ');
+      const tel=el.tags?.phone||el.tags?.['contact:phone']||'';
+      const m=L.marker([lat,lon],{icon:HOSP_ICON});
+      m.bindPopup(`
+        <div style="min-width:190px;">
+          <div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:3px;">🏥 ${name}</div>
+          ${nameEN&&nameEN!==name?`<div style="font-size:10px;color:var(--text2);margin-bottom:2px;">${nameEN}</div>`:''}
+          ${addr?`<div style="font-size:10px;color:var(--muted);">📍 ${addr}</div>`:''}
+          ${tel?`<div style="font-size:10px;color:var(--muted);">📞 ${tel}</div>`:''}
+          <div style="font-size:9px;color:var(--muted);margin-top:4px;font-family:monospace;">${lat.toFixed(4)}°N  ${lon.toFixed(4)}°E</div>
+        </div>`);
+      LG.hospitals.addLayer(m);
+      count++;
+    });
+    hospitalsLoaded=true;
+    LG.hospitals.addTo(map);
+    if(lbl) lbl.textContent=`Hospitals (${count})`;
+  }catch(e){
+    LS.hospitals=false;
+    if(tog) tog.classList.remove('on');
+    if(lbl) lbl.textContent='Hospitals (OSM)';
+    alert('ไม่สามารถโหลดข้อมูลโรงพยาบาลได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -2300,6 +2404,11 @@ let mapPts=[], mapPolyline=null, mapSegments=[];
 // Airport route state
 let apRows=['',''], apRouteLines=[];
 
+// Circle state
+let circPhase=0; // 0=idle 1=center-set 2=circle-drawn
+let circCenLat=null, circCenLng=null;
+let circCenMarker=null, circRadMarker=null, circLayer=null;
+
 function toggleDist(){
   distMode=!distMode;
   document.getElementById('distTool').classList.toggle('show',distMode);
@@ -2314,7 +2423,7 @@ function switchTab(t){
   document.querySelectorAll('.dt-tab').forEach(el=>el.classList.toggle('active',el.dataset.tab===t));
   document.querySelectorAll('.dt-section').forEach(el=>el.classList.remove('show'));
   document.getElementById('tab-'+t).classList.add('show');
-  map.getContainer().style.cursor=distMode&&(t==='map'||t==='coord')?'crosshair':'';
+  map.getContainer().style.cursor=distMode&&(t==='map'||t==='coord'||t==='circle')?'crosshair':'';
   recalcDist();
 }
 
@@ -2534,6 +2643,8 @@ function recalcDist(){
   } else if(activeTab==='coord'){
     // coord tab manages its own display — re-run with current unit
     calcCoordRef();
+  } else if(activeTab==='circle'){
+    updateCircle();
   } else {
     const valid=apRows.map(icao=>airports.find(a=>a.icao===icao)).filter(Boolean);
     if(valid.length>=2){
@@ -2568,9 +2679,511 @@ function resetMeasure(){
   const pbdInfo=document.getElementById('pbd_ref_info'); if(pbdInfo){pbdInfo.style.display='none';pbdInfo.innerHTML='';}
   const wptBox=document.getElementById('cr-wpt-box'); if(wptBox) wptBox.style.display='none';
   setCrMode('direct');
+  // Circle cleanup
+  if(circCenMarker){map.removeLayer(circCenMarker);circCenMarker=null;}
+  if(circRadMarker){map.removeLayer(circRadMarker);circRadMarker=null;}
+  if(circLayer){map.removeLayer(circLayer);circLayer=null;}
+  circPhase=0; circCenLat=null; circCenLng=null;
+  const _ch=document.getElementById('circHint'); if(_ch) _ch.textContent='Click on map to set center point';
+  const _cb=document.getElementById('circCenBox'); if(_cb) _cb.style.display='none';
+  const _mw=document.getElementById('circManualWrap'); if(_mw) _mw.style.display='none';
+  const _sb=document.getElementById('circStatsBox'); if(_sb) _sb.style.display='none';
+  const _mr=document.getElementById('circManualR'); if(_mr) _mr.value='';
   document.getElementById('distRes').textContent='—';
   document.getElementById('unitLbl').textContent='Add points to measure';
   document.getElementById('distHint').textContent='Click on map to add Point 1';
+}
+
+// ── Export Distance Measure → PDF ─────────────────────────────────────────
+// ── Profile helpers ───────────────────────────────────────────────────────
+function _parseAltFt(s){
+  if(!s)return 0;
+  const u=s.trim().toUpperCase().split('/')[0].trim();
+  if(u==='GND'||u==='SFC'||u==='AGL')return 0;
+  if(u==='UNL'||u==='UNLTD')return 46000;
+  const fl=u.match(/^FL(\d+)$/);if(fl)return parseInt(fl[1])*100;
+  const ft=u.replace(/,/g,'').match(/(\d+)\s*FT/);if(ft)return parseInt(ft[1]);
+  return 0;
+}
+function _parseDMSStr(s){
+  const m=s.trim().match(/^(\d{2,3})(\d{2})(\d{2})([NSEW])$/i);
+  if(!m)return null;
+  let dd=parseInt(m[1])+parseInt(m[2])/60+parseInt(m[3])/3600;
+  if('SW'.includes(m[4].toUpperCase()))dd=-dd;
+  return dd;
+}
+function _parseDMSCoord(str){
+  const p=str.trim().split(/\s+/);if(p.length!==2)return null;
+  const lat=_parseDMSStr(p[0]),lon=_parseDMSStr(p[1]);
+  return(lat!=null&&lon!=null)?{lat,lon}:null;
+}
+function _pointInPoly(lat,lon,poly){
+  let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+    const[yi,xi]=poly[i],[yj,xj]=poly[j];
+    if(((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi)+xi))inside=!inside;
+  }
+  return inside;
+}
+function _sampleRoute(n){
+  let legKms=[],totalKm=0;
+  for(let i=0;i<mapPts.length-1;i++){
+    const km=haversine([mapPts[i].lat,mapPts[i].lng],[mapPts[i+1].lat,mapPts[i+1].lng]);
+    legKms.push(km);totalKm+=km;
+  }
+  if(totalKm===0)return[];
+  const pts=[],step=totalKm/(n-1);
+  for(let i=0;i<n;i++){
+    const d=Math.min(i*step,totalKm);
+    let cum=0,done=false;
+    for(let j=0;j<legKms.length;j++){
+      if(d<=cum+legKms[j]+1e-9){
+        const t=legKms[j]>0?(d-cum)/legKms[j]:0;
+        pts.push({lat:mapPts[j].lat+t*(mapPts[j+1].lat-mapPts[j].lat),
+                  lng:mapPts[j].lng+t*(mapPts[j+1].lng-mapPts[j].lng),distKm:d});
+        done=true;break;
+      }
+      cum+=legKms[j];
+    }
+    if(!done)pts.push({lat:mapPts[mapPts.length-1].lat,lng:mapPts[mapPts.length-1].lng,distKm:totalKm});
+  }
+  return pts;
+}
+async function _fetchElev(pts){
+  try{
+    const locs=pts.map(p=>`${p.lat.toFixed(5)},${p.lng.toFixed(5)}`).join('|');
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),9000);
+    const r=await fetch(`https://api.open-topo-data.com/v1/srtm30m?locations=${locs}`,{signal:ctrl.signal});
+    clearTimeout(tid);
+    if(!r.ok)return null;
+    const d=await r.json();
+    return d.results?d.results.map(r=>Math.max(0,r.elevation||0)):null;
+  }catch{return null;}
+}
+function _getAsHits(pts){
+  const hits=[];
+  function scanZones(zones,cat){
+    (zones||[]).forEach(z=>{
+      const llFt=_parseAltFt(z.ll||z.lower),ulFt=_parseAltFt(z.ul||z.upper);
+      let circ=null,poly=null;
+      if(z.circle){const c=_parseDMSCoord(z.circle.c);if(c)circ={lat:c.lat,lon:c.lon,radKm:z.circle.r*1.852};}
+      else if(z.coords)poly=z.coords.map(s=>{const c=_parseDMSCoord(s);return c?[c.lat,c.lon]:null}).filter(Boolean);
+      else if(z.latlng)poly=z.latlng;
+      else return;
+      let inZ=false,si=-1;
+      pts.forEach((p,i)=>{
+        const inside=circ?haversine([p.lat,p.lng],[circ.lat,circ.lon])<=circ.radKm:_pointInPoly(p.lat,p.lng,poly);
+        if(inside&&!inZ){inZ=true;si=i;}
+        else if(!inside&&inZ){inZ=false;
+          hits.push({id:z.id,cat,llFt,ulFt,s0:pts[si].distKm,s1:pts[i-1].distKm});}
+      });
+      if(inZ)hits.push({id:z.id,cat,llFt,ulFt,s0:pts[si].distKm,s1:pts[pts.length-1].distKm});
+    });
+  }
+  scanZones(atsAirspace,'ctr');
+  scanZones(prohibitedAreas,'prohibited');
+  scanZones(restrictedAreas,'restricted');
+  scanZones(dangerAreas,'danger');
+  return hits;
+}
+function _drawProfileCanvas(pts,elevMtr,asHits,totalDistKm){
+  const CW=900,CH=420;
+  const PL=68,PR=18,PT=26,PB=76;
+  const PW=CW-PL-PR,PH=CH-PT-PB;
+  const canvas=document.createElement('canvas');
+  canvas.width=CW;canvas.height=CH;
+  const ctx=canvas.getContext('2d');
+  const M2F=3.28084;
+  const elevFt=elevMtr?elevMtr.map(e=>e*M2F):null;
+  const maxTerrFt=elevFt?Math.max(...elevFt,100):0;
+  let maxAsFt=0;
+  asHits.forEach(h=>{if(h.ulFt<90000)maxAsFt=Math.max(maxAsFt,h.ulFt);});
+  const maxAltFt=Math.max(maxTerrFt*1.18,maxAsFt>0?maxAsFt*1.08:500,1000);
+  const totalDist=totalDistKm*UCONV[distUnit],ul=distUnit.toUpperCase();
+  function toX(dk){return PL+(dk*UCONV[distUnit]/totalDist)*PW;}
+  function toY(ft){return PT+PH*(1-Math.min(ft,maxAltFt)/maxAltFt);}
+
+  // Background
+  ctx.fillStyle='#0f172a';ctx.fillRect(0,0,CW,CH);
+
+  // Grid
+  const GY=6,GX=6;
+  ctx.lineWidth=1;
+  for(let i=0;i<=GY;i++){
+    const y=PT+i*(PH/GY);
+    ctx.strokeStyle='rgba(255,255,255,0.07)';
+    ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(PL+PW,y);ctx.stroke();
+    const ft=Math.round((1-i/GY)*maxAltFt);
+    const lbl=ft>=1000?`FL${Math.round(ft/100).toString().padStart(3,'0')}`:`${ft} ft`;
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='10px monospace';
+    ctx.textAlign='right';ctx.fillText(lbl,PL-5,y+4);
+  }
+  for(let i=0;i<=GX;i++){
+    const x=PL+i*(PW/GX);
+    ctx.strokeStyle='rgba(255,255,255,0.07)';
+    ctx.beginPath();ctx.moveTo(x,PT);ctx.lineTo(x,PT+PH);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='10px monospace';
+    ctx.textAlign='center';ctx.fillText(`${(totalDist*i/GX).toFixed(1)}`,x,PT+PH+14);
+  }
+
+  // Airspace zones
+  const ZCOL={ctr:'rgba(14,165,233,0.22)',prohibited:'rgba(239,68,68,0.28)',restricted:'rgba(245,158,11,0.25)',danger:'rgba(234,179,8,0.22)'};
+  const ZBDR={ctr:'rgba(14,165,233,0.8)',prohibited:'rgba(239,68,68,0.9)',restricted:'rgba(245,158,11,0.85)',danger:'rgba(234,179,8,0.75)'};
+  const seen=new Set();
+  asHits.forEach(h=>{
+    const x1=toX(h.s0),x2=toX(h.s1),w=Math.max(x2-x1,2);
+    const yTop=toY(Math.min(h.ulFt,maxAltFt)),yBot=toY(h.llFt);
+    ctx.fillStyle=ZCOL[h.cat]||'rgba(180,180,180,0.2)';
+    ctx.fillRect(x1,yTop,w,yBot-yTop);
+    ctx.strokeStyle=ZBDR[h.cat]||'rgba(180,180,180,0.5)';ctx.lineWidth=1.2;
+    ctx.strokeRect(x1,yTop,w,yBot-yTop);
+    ctx.fillStyle='rgba(255,255,255,0.88)';ctx.font='bold 8px sans-serif';ctx.textAlign='center';
+    if(yTop+12<yBot)ctx.fillText(h.id,(x1+x2)/2,yTop+10);
+    seen.add(h.cat);
+  });
+
+  // Terrain
+  if(elevFt){
+    const grad=ctx.createLinearGradient(0,PT,0,PT+PH);
+    grad.addColorStop(0,'rgba(34,197,94,0.55)');grad.addColorStop(1,'rgba(20,83,45,0.92)');
+    ctx.fillStyle=grad;
+    ctx.beginPath();ctx.moveTo(toX(pts[0].distKm),toY(0));
+    pts.forEach((p,i)=>ctx.lineTo(toX(p.distKm),toY(elevFt[i])));
+    ctx.lineTo(toX(pts[pts.length-1].distKm),toY(0));ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(74,222,128,0.85)';ctx.lineWidth=1.5;
+    ctx.beginPath();
+    pts.forEach((p,i)=>i===0?ctx.moveTo(toX(p.distKm),toY(elevFt[i])):ctx.lineTo(toX(p.distKm),toY(elevFt[i])));
+    ctx.stroke();
+  }else{
+    ctx.fillStyle='rgba(255,255,255,0.35)';ctx.font='italic 11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('Terrain elevation unavailable — check internet connection',PL+PW/2,PT+PH/2);
+  }
+
+  // Plot border
+  ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1;
+  ctx.strokeRect(PL,PT,PW,PH);
+
+  // Waypoint tick marks
+  let cumKm=0;
+  mapPts.forEach((p,i)=>{
+    const x=toX(cumKm);
+    ctx.strokeStyle='rgba(251,191,36,0.75)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(x,PT);ctx.lineTo(x,PT+PH+6);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#fbbf24';ctx.font='bold 9px sans-serif';ctx.textAlign='center';
+    ctx.fillText(`P${i+1}`,x,PT+PH+26);
+    if(i<mapPts.length-1)cumKm+=haversine([mapPts[i].lat,mapPts[i].lng],[mapPts[i+1].lat,mapPts[i+1].lng]);
+  });
+
+  // Axis titles
+  ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font='11px sans-serif';ctx.textAlign='center';
+  ctx.fillText(`Distance (${ul})`,PL+PW/2,CH-4);
+  ctx.save();ctx.translate(13,PT+PH/2);ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';ctx.fillText('Altitude (ft)',0,0);ctx.restore();
+
+  // Legend
+  const LEG=[
+    {cat:'ctr',lbl:'CTR / TMA'},{cat:'restricted',lbl:'Restricted'},{cat:'prohibited',lbl:'Prohibited'},
+    {cat:'danger',lbl:'Danger'},{cat:'terrain',lbl:'Terrain (SRTM)'},
+  ];
+  let lx=PL,ly=CH-10;
+  LEG.forEach(li=>{
+    const col=li.cat==='terrain'?'rgba(34,197,94,0.7)':(ZBDR[li.cat]||'rgba(160,160,160,0.6)');
+    ctx.fillStyle=col;ctx.fillRect(lx,ly-8,11,8);
+    ctx.strokeStyle=col;ctx.lineWidth=0.8;ctx.strokeRect(lx,ly-8,11,8);
+    ctx.fillStyle='rgba(255,255,255,0.65)';ctx.font='9px sans-serif';ctx.textAlign='left';
+    ctx.fillText(li.lbl,lx+14,ly);
+    lx+=ctx.measureText(li.lbl).width+28;
+  });
+
+  return canvas;
+}
+
+// ── Export Distance Measure → PDF ─────────────────────────────────────────
+async function exportDistPDF(btn){
+  if(!window.jspdf){alert('PDF library not loaded yet — please wait a moment and try again.');return;}
+  if(btn){btn.textContent='⏳…';btn.disabled=true;}
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=doc.internal.pageSize.getWidth();
+    const mg=14, ul=distUnit.toUpperCase();
+    const now=new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const TS={fontSize:9,cellPadding:2};
+    const HS={fillColor:[14,165,233],textColor:255,fontStyle:'bold',fontSize:9};
+    const FOOT={fontStyle:'bold',fillColor:[230,242,255],textColor:[10,100,200]};
+
+    // Header (page 1)
+    doc.setFontSize(15);doc.setFont('helvetica','bold');
+    doc.setTextColor(20);doc.text('Distance Measure',mg,18);
+    doc.setFontSize(8);doc.setFont('helvetica','normal');
+    doc.setTextColor(130);
+    doc.text(`Thailand AIP GIS  •  AIRAC 2026-05-14  •  ${now}`,mg,24);
+    doc.setTextColor(0);doc.setDrawColor(180);doc.line(mg,27,W-mg,27);
+    let y=33;
+
+    // ── MAP CLICK ──────────────────────────────────────────────────────────
+    if(activeTab==='map'){
+      if(mapPts.length<2){
+        doc.setFontSize(10);doc.text('Add at least 2 map points to export.',mg,y);
+        doc.save('distance-map-click.pdf');return;
+      }
+      doc.setFontSize(12);doc.setFont('helvetica','bold');
+      doc.text(`Map Click  —  ${mapPts.length} points`,mg,y);y+=6;
+
+      doc.autoTable({
+        startY:y,margin:{left:mg,right:mg},
+        head:[['#','Latitude','Longitude']],
+        body:mapPts.map((p,i)=>[i+1,`${p.lat.toFixed(5)}°N`,`${p.lng.toFixed(5)}°E`]),
+        styles:TS,headStyles:HS,
+        columnStyles:{0:{cellWidth:12,halign:'center'},1:{halign:'center'},2:{halign:'center'}},
+      });
+      y=doc.lastAutoTable.finalY+5;
+
+      doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(20);
+      doc.text('Legs',mg,y);y+=4;
+      let totKm=0;const legBody=[];
+      for(let i=0;i<mapPts.length-1;i++){
+        const km=haversine([mapPts[i].lat,mapPts[i].lng],[mapPts[i+1].lat,mapPts[i+1].lng]);
+        totKm+=km;
+        const brng=Math.round(calcBearing(mapPts[i].lat,mapPts[i].lng,mapPts[i+1].lat,mapPts[i+1].lng));
+        legBody.push([`${i+1} → ${i+2}`,`${brng.toString().padStart(3,'0')}°`,`${(km*UCONV[distUnit]).toFixed(distUnit==='m'?0:2)} ${ul}`]);
+      }
+      legBody.push(['TOTAL','',`${(totKm*UCONV[distUnit]).toFixed(distUnit==='m'?0:2)} ${ul}`]);
+      doc.autoTable({
+        startY:y,margin:{left:mg,right:mg},
+        head:[['Leg','Track','Distance']],body:legBody,styles:TS,headStyles:HS,
+        columnStyles:{0:{cellWidth:24,halign:'center'},1:{cellWidth:22,halign:'center'},2:{halign:'right'}},
+        didParseCell:d=>{if(d.row.index===legBody.length-1&&d.section==='body')Object.assign(d.cell.styles,FOOT);}
+      });
+
+      // ── Profile page ─────────────────────────────────────────────────────
+      doc.addPage();
+      doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(20);
+      doc.text('Terrain & Airspace Profile',mg,18);
+      doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(130);
+      doc.text(`SRTM30m terrain  •  CTR/TMA P/R/D intersect  •  ${now}`,mg,24);
+      doc.setTextColor(0);doc.setDrawColor(180);doc.line(mg,27,W-mg,27);
+
+      const pts=_sampleRoute(70);
+      const elevMtr=await _fetchElev(pts);
+      const asHits=_getAsHits(pts);
+      const canvas=_drawProfileCanvas(pts,elevMtr,asHits,pts[pts.length-1].distKm);
+      const imgW=W-2*mg;
+      doc.addImage(canvas.toDataURL('image/png'),'PNG',mg,30,imgW,imgW*(canvas.height/canvas.width));
+
+      doc.save('distance-map-click.pdf');
+
+    // ── AIRPORT ROUTE ────────────────────────────────────────────────────────
+    }else if(activeTab==='airport'){
+      const valid=apRows.map(icao=>airports.find(a=>a.icao===icao)).filter(Boolean);
+      if(valid.length<2){
+        doc.setFontSize(10);doc.text('Select at least 2 airports to export.',mg,y);
+        doc.save('distance-airport-route.pdf');return;
+      }
+      doc.setFontSize(12);doc.setFont('helvetica','bold');
+      doc.text(`Airport Route  —  ${valid.length} stops`,mg,y);y+=6;
+      doc.autoTable({
+        startY:y,margin:{left:mg,right:mg},
+        head:[['#','ICAO','Airport Name','Operator']],
+        body:valid.map((ap,i)=>[i+1,ap.icao,ap.name,ap.op]),styles:TS,headStyles:HS,
+        columnStyles:{0:{cellWidth:12,halign:'center'},1:{cellWidth:20,fontStyle:'bold',halign:'center'},3:{cellWidth:28}},
+      });
+      y=doc.lastAutoTable.finalY+5;
+      doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(20);
+      doc.text('Legs',mg,y);y+=4;
+      let totKm=0;const legBody=[];
+      for(let i=0;i<valid.length-1;i++){
+        const km=haversine([valid[i].lat,valid[i].lon],[valid[i+1].lat,valid[i+1].lon]);
+        totKm+=km;
+        const brng=Math.round(calcBearing(valid[i].lat,valid[i].lon,valid[i+1].lat,valid[i+1].lon));
+        legBody.push([`${valid[i].icao} → ${valid[i+1].icao}`,`${brng.toString().padStart(3,'0')}°`,`${(km*UCONV[distUnit]).toFixed(distUnit==='m'?0:2)} ${ul}`]);
+      }
+      legBody.push(['TOTAL','',`${(totKm*UCONV[distUnit]).toFixed(distUnit==='m'?0:2)} ${ul}`]);
+      doc.autoTable({
+        startY:y,margin:{left:mg,right:mg},
+        head:[['Leg','Track','Distance']],body:legBody,styles:TS,headStyles:HS,
+        columnStyles:{0:{halign:'center'},1:{cellWidth:22,halign:'center'},2:{halign:'right'}},
+        didParseCell:d=>{if(d.row.index===legBody.length-1&&d.section==='body')Object.assign(d.cell.styles,FOOT);}
+      });
+      doc.save('distance-airport-route.pdf');
+
+    // ── NEARBY / COORD ─────────────────────────────────────────────────────
+    }else{
+      const lat=parseFloat(document.getElementById('cr_lat').value);
+      const lon=parseFloat(document.getElementById('cr_lon').value);
+      if(isNaN(lat)||isNaN(lon)){
+        doc.setFontSize(10);doc.text('Set a coordinate first.',mg,y);
+        doc.save('distance-nearby.pdf');return;
+      }
+      doc.setFontSize(12);doc.setFont('helvetica','bold');
+      doc.text('Nearby References',mg,y);y+=6;
+      const fmsEl=document.getElementById('cr-wpt-fms-val');
+      const fms=fmsEl?fmsEl.textContent:`${toDDM(lat,true)}  ${toDDM(lon,false)}`;
+      doc.autoTable({
+        startY:y,margin:{left:mg,right:mg},
+        head:[['Format','Coordinate']],
+        body:[['DD',`${Math.abs(lat).toFixed(5)}°${lat>=0?'N':'S'}  ${Math.abs(lon).toFixed(5)}°${lon>=0?'E':'W'}`],
+          ['DDM',`${toDDM(lat,true)}  ${toDDM(lon,false)}`],
+          ['DMS',`${toDMS(lat,true)}  ${toDMS(lon,false)}`],['FMS',fms]],
+        styles:{...TS,font:'courier'},headStyles:HS,
+        columnStyles:{0:{cellWidth:18,fontStyle:'bold',halign:'center'}},
+      });
+      y=doc.lastAutoTable.finalY+5;
+      let items=[];
+      if(crFilterAp)airports.forEach(ap=>{
+        const km=haversine([lat,lon],[ap.lat,ap.lon]);
+        items.push({type:'Airport',id:ap.icao,name:ap.name,sub:ap.op,km,brng:calcBearing(lat,lon,ap.lat,ap.lon)});
+      });
+      if(crFilterNav)navAids.forEach(n=>{
+        const km=haversine([lat,lon],[n.lat,n.lon]);
+        items.push({type:n.type,id:n.id,name:n.name,sub:n.freq,km,brng:calcBearing(lat,lon,n.lat,n.lon)});
+      });
+      items.sort((a,b)=>a.km-b.km);const top=items.slice(0,20);
+      doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(20);
+      doc.text(`Nearby (top ${top.length})`,mg,y);y+=4;
+      doc.autoTable({
+        startY:y,margin:{left:mg,right:mg},
+        head:[['#','Type','ID','Name / Info',`Dist (${ul})`,'Brng']],
+        body:top.map((item,i)=>[i+1,item.type,item.id,`${item.name}  ${item.sub}`,
+          (item.km*UCONV[distUnit]).toFixed(distUnit==='m'?0:1),
+          `${Math.round(item.brng).toString().padStart(3,'0')}°`]),
+        styles:TS,headStyles:HS,
+        columnStyles:{0:{cellWidth:10,halign:'center'},1:{cellWidth:26},2:{cellWidth:18,fontStyle:'bold'},4:{cellWidth:22,halign:'right'},5:{cellWidth:16,halign:'center'}},
+      });
+      doc.save('distance-nearby.pdf');
+    }
+  }finally{
+    if(btn){btn.textContent='⬇ PDF';btn.disabled=false;}
+  }
+}
+
+// ── Navlog PDF export ─────────────────────────────────────────────────────
+async function exportNavlog(btn){
+  if(!window.jspdf){alert('PDF library not loaded — try again.');return;}
+
+  // Gather waypoints
+  let wpts=[];
+  if(activeTab==='map'){
+    if(mapPts.length<2){alert('Add at least 2 map points first.');return;}
+    wpts=mapPts.map((p,i)=>({name:`P${i+1}`,lat:p.lat,lon:p.lng}));
+  }else if(activeTab==='airport'){
+    const valid=apRows.map(icao=>airports.find(a=>a.icao===icao)).filter(Boolean);
+    if(valid.length<2){alert('Select at least 2 airports first.');return;}
+    wpts=valid.map(a=>({name:a.icao,fullName:a.name,lat:a.lat,lon:a.lon}));
+  }else{
+    alert('Switch to Map Click or Airport Route tab first.');return;
+  }
+
+  if(btn){btn.textContent='⏳…';btn.disabled=true;}
+  try{
+    // Inputs
+    const acft=(prompt('Aircraft Registration:','')||'—').trim()||'—';
+    const tasStr=prompt('TAS (knots) — blank to skip ETE:','');
+    const tas=parseFloat(tasStr)||0;
+    const altStr=(prompt('Cruising Altitude (ft):','8000')||'8000').trim();
+    const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+    const NMC=UCONV['nm'];
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
+    const mg=10,uw=W-2*mg;
+    const TS={fontSize:8,cellPadding:2};
+    const HS={fillColor:[139,92,246],textColor:255,fontStyle:'bold',fontSize:8};
+    const FTROW={fontStyle:'bold',fillColor:[237,233,254],textColor:[76,29,149]};
+
+    // ── Page border ────────────────────────────────────────────
+    doc.setDrawColor(139,92,246);doc.setLineWidth(0.4);
+    doc.rect(5,5,W-10,H-10);
+
+    // ── Header ────────────────────────────────────────────────
+    let y=mg+6;
+    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(30);
+    doc.text('NAVIGATION LOG',mg,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(100);
+    doc.text(`Aircraft: ${acft}`,mg+90,y-3);
+    doc.text(`Date: ${today}`,mg+145,y-3);
+    doc.text(`Thailand AIP GIS  •  AIRAC 2026-05-14`,mg+90,y+2.5);
+    y+=5;
+    doc.setDrawColor(139,92,246);doc.setLineWidth(0.5);doc.line(mg,y,W-mg,y);
+    y+=4;
+
+    // Route info bar
+    doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(20);
+    doc.text(`${wpts[0].name}  ——›  ${wpts[wpts.length-1].name}`,mg,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(90);
+    doc.text(`${wpts.length} WPTs  |  Alt: ${altStr} ft  |  TAS: ${tas>0?tas+' kt':'—'}`,mg+75,y);
+    y+=5;
+
+    // ── Nav Table ─────────────────────────────────────────────
+    let totalNm=0,cumMin=0;
+    const rows=[];
+
+    // DEP row
+    rows.push(['DEP',wpts[0].name,
+      `${toDDM(wpts[0].lat,true)}  ${toDDM(wpts[0].lon,false)}`,
+      '—','—','—','','','']);
+
+    // Leg rows
+    for(let i=0;i<wpts.length-1;i++){
+      const km=haversine([wpts[i].lat,wpts[i].lon],[wpts[i+1].lat,wpts[i+1].lon]);
+      const nm=km*NMC;totalNm+=nm;
+      const trk=Math.round(calcBearing(wpts[i].lat,wpts[i].lon,wpts[i+1].lat,wpts[i+1].lon));
+      let ete='';
+      if(tas>0){const m=Math.round(nm/tas*60);cumMin+=m;ete=`${Math.floor(m/60)?Math.floor(m/60)+'h':''}${(m%60).toString().padStart(2,'0')}m`;}
+      rows.push([i+1,wpts[i+1].name,
+        `${toDDM(wpts[i+1].lat,true)}  ${toDDM(wpts[i+1].lon,false)}`,
+        `${trk.toString().padStart(3,'0')}°`,nm.toFixed(1),ete,'','','']);
+    }
+
+    // Total row
+    const totEte=tas>0&&cumMin>0?`${Math.floor(cumMin/60)>0?Math.floor(cumMin/60)+'h':''}${(cumMin%60).toString().padStart(2,'0')}m`:'';
+    rows.push(['TOT','','','',totalNm.toFixed(1),totEte,'','','']);
+
+    doc.autoTable({
+      startY:y,margin:{left:mg,right:mg},
+      head:[['','WPT','Lat / Lon','TRK°M','Dist(NM)','ETE','ETO','ATE','ATO']],
+      body:rows,styles:TS,headStyles:HS,
+      columnStyles:{
+        0:{cellWidth:8,halign:'center'},
+        1:{cellWidth:18,fontStyle:'bold'},
+        2:{cellWidth:46,font:'courier',fontSize:7},
+        3:{cellWidth:14,halign:'center'},
+        4:{cellWidth:18,halign:'right'},
+        5:{cellWidth:16,halign:'center'},
+        6:{cellWidth:18,halign:'center'},
+        7:{cellWidth:18,halign:'center'},
+        8:{cellWidth:18,halign:'center'},
+      },
+      didParseCell:d=>{if(d.row.index===rows.length-1&&d.section==='body')Object.assign(d.cell.styles,FTROW);}
+    });
+    y=doc.lastAutoTable.finalY+4;
+
+    // ── Footer boxes ──────────────────────────────────────────
+    doc.setDrawColor(180);doc.setLineWidth(0.3);doc.line(mg,y,W-mg,y);
+    y+=3;
+    const bw=(uw-3)/4,bh=22;
+    const fBoxes=[
+      {t:'BLOCK TIME',  f:['OFF  ____:____','ON   ____:____','TOTAL ___:____']},
+      {t:'FLIGHT TIME', f:['TKOF ____:____','LAND ____:____','TOTAL ___:____']},
+      {t:'FUEL',        f:['UPLIFT ________','REMAIN ________','USED   ________']},
+      {t:'SQUAWK / CLR',f:['SQWK  __ __ __','CLR ______________']},
+    ];
+    fBoxes.forEach((b,i)=>{
+      const fx=mg+i*(bw+1);
+      doc.setDrawColor(200);doc.setLineWidth(0.3);doc.rect(fx,y,bw,bh);
+      doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(120);
+      doc.text(b.t,fx+2,y+4);
+      doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(30);
+      b.f.forEach((f,fi)=>doc.text(f,fx+2,y+9+fi*4.5));
+    });
+
+    doc.save(`navlog-${wpts[0].name}-${wpts[wpts.length-1].name}.pdf`);
+  }finally{
+    if(btn){btn.textContent='📋 Navlog';btn.disabled=false;}
+  }
 }
 
 map.on('click',e=>{
@@ -2580,8 +3193,82 @@ map.on('click',e=>{
     document.getElementById('cr_lat').value=e.latlng.lat.toFixed(5);
     document.getElementById('cr_lon').value=e.latlng.lng.toFixed(5);
     calcCoordRef();
+  } else if(activeTab==='circle'){
+    if(circPhase===0) setCircCenter(e.latlng);
+    else if(circPhase===1) setCircRadius(e.latlng);
   }
 });
+
+// ── CIRCLE ────────────────────────────────────────────────────────────────
+function setCircCenter(latlng){
+  if(circCenMarker){map.removeLayer(circCenMarker);circCenMarker=null;}
+  if(circRadMarker){map.removeLayer(circRadMarker);circRadMarker=null;}
+  if(circLayer){map.removeLayer(circLayer);circLayer=null;}
+  circCenLat=latlng.lat; circCenLng=latlng.lng; circPhase=1;
+  circCenMarker=L.marker([latlng.lat,latlng.lng],{draggable:true,icon:mkPinIcon('#0ea5e9'),zIndexOffset:2000}).addTo(map);
+  circCenMarker.on('drag',()=>{
+    const ll=circCenMarker.getLatLng();
+    circCenLat=ll.lat; circCenLng=ll.lng;
+    updateCircle();
+  });
+  const h=document.getElementById('circHint');
+  if(h) h.textContent='Click map to set radius point, or enter radius below';
+  document.getElementById('circCenBox').style.display='';
+  document.getElementById('circCenVal').textContent=`${latlng.lat.toFixed(5)}°N  ${latlng.lng.toFixed(5)}°E`;
+  document.getElementById('circManualWrap').style.display='';
+  document.getElementById('circStatsBox').style.display='none';
+  document.getElementById('distRes').textContent='—';
+  document.getElementById('unitLbl').textContent='Set radius point';
+}
+
+function setCircRadius(latlng){
+  if(circRadMarker){map.removeLayer(circRadMarker);circRadMarker=null;}
+  circRadMarker=L.marker([latlng.lat,latlng.lng],{draggable:true,icon:mkPinIcon('#f59e0b'),zIndexOffset:1500}).addTo(map);
+  circRadMarker.on('drag',()=>updateCircle());
+  circPhase=2;
+  updateCircle();
+}
+
+function updateCircle(){
+  if(circPhase<2||!circCenMarker||!circRadMarker) return;
+  const cll=circCenMarker.getLatLng();
+  const rll=circRadMarker.getLatLng();
+  circCenLat=cll.lat; circCenLng=cll.lng;
+  const km=haversine([cll.lat,cll.lng],[rll.lat,rll.lng]);
+  if(circLayer){map.removeLayer(circLayer);circLayer=null;}
+  circLayer=L.circle([cll.lat,cll.lng],{
+    radius:km*1000,color:'#f59e0b',weight:2,
+    fillColor:'#f59e0b',fillOpacity:0.08,dashArray:'8,5',interactive:false
+  }).addTo(map);
+  const r=(km*UCONV[distUnit]),ul=distUnit.toUpperCase();
+  document.getElementById('circHint').textContent='Drag ⬤ center or ⬤ edge to adjust';
+  document.getElementById('circCenBox').style.display='';
+  document.getElementById('circCenVal').textContent=`${cll.lat.toFixed(5)}°N  ${cll.lng.toFixed(5)}°E`;
+  document.getElementById('circStatsBox').style.display='';
+  document.getElementById('circRval').textContent=`${r.toFixed(2)} ${ul}`;
+  document.getElementById('circCval').textContent=`${(2*Math.PI*r).toFixed(2)} ${ul}`;
+  document.getElementById('circAval').textContent=`${(Math.PI*r*r).toFixed(2)} ${ul}²`;
+  document.getElementById('distRes').textContent=r.toFixed(2);
+  document.getElementById('unitLbl').textContent=`${ULBL[distUnit]} (radius)`;
+}
+
+function applyManualCircle(){
+  if(circPhase===0||!circCenMarker){
+    const h=document.getElementById('circHint');
+    if(h) h.textContent='Click map to set center first';
+    return;
+  }
+  const val=parseFloat(document.getElementById('circManualR').value);
+  if(!val||val<=0) return;
+  const km=val/UCONV[distUnit];
+  const dLat=(km/6371)*(180/Math.PI);
+  if(circRadMarker){map.removeLayer(circRadMarker);circRadMarker=null;}
+  circRadMarker=L.marker([circCenLat+dLat,circCenLng],{draggable:true,icon:mkPinIcon('#f59e0b'),zIndexOffset:1500}).addTo(map);
+  circRadMarker.on('drag',()=>updateCircle());
+  circPhase=2;
+  updateCircle();
+  if(circLayer) map.fitBounds(circLayer.getBounds(),{padding:[40,40]});
+}
 
 // ═══════════════════════════════════════════
 // COORD REFERENCE (Nearby tab)
@@ -2921,46 +3608,83 @@ window.addEventListener('resize', applyResponsive);
 applyResponsive();
 
 // ═══════════════════════════════════════════════════════════════
-// METAR / TAF
-//   METAR : VATSIM METAR API (CORS ✅, bulk, free)
-//   TAF   : corsproxy.io → aviationweather.gov (CORS ✅)
 // ═══════════════════════════════════════════════════════════════
-const WX_CACHE = {};  // { ICAO: { metar, taf, ts } }
-const METAR_BULK_CACHE = {}; // raw text bulk fetch { ICAO: rawString }
-let   METAR_BULK_TS   = 0;
+// METAR / TAF
+//   METAR : VATSIM bulk API  (CORS ✅, plain-text, reliable for Thai airports)
+//   TAF   : aviationweather.gov bulk JSON (CORS ✅, free, no key)
+// ═══════════════════════════════════════════════════════════════
+const WX_CACHE          = {};  // { ICAO: { metar, taf, ts } }
+const METAR_BULK_CACHE  = {};  // { ICAO: raw METAR string }
+const METAR_DECODED_CACHE= {}; // { ICAO: NOAA decoded object }
+const TAF_BULK_CACHE    = {};  // { ICAO: raw TAF string }
+let METAR_BULK_TS = 0;
+let TAF_BULK_TS   = 0;
 
-// Fetch ALL Thai airport METARs in one request (VATSIM bulk)
+// ── METAR: VATSIM bulk (CORS ✅, reliable for Thai VT airports) ─────────────
 async function fetchAllMETARs(){
   const now = Date.now();
-  if(now - METAR_BULK_TS < 600000 && Object.keys(METAR_BULK_CACHE).length) return; // 10-min cache
+  if(now - METAR_BULK_TS < 600000 && Object.keys(METAR_BULK_CACHE).length) return;
   const ids = airports.map(a=>a.icao).join(',');
   const txt = await fetch(`https://metar.vatsim.net/metar.php?id=${ids}`).then(r=>r.text());
   txt.trim().split('\n').forEach(line=>{
-    const m = line.trim().match(/^([A-Z]{4})\s/);
-    if(m) METAR_BULK_CACHE[m[1]] = line.trim();
+    const m=line.trim().match(/^([A-Z]{4})\s/);
+    if(m) METAR_BULK_CACHE[m[1]]=line.trim();
   });
   METAR_BULK_TS = now;
 }
 
-// Fetch single TAF — direct call to aviationweather.gov (CORS enabled)
-async function fetchTAF(icao){
-  const url = `https://aviationweather.gov/api/data/taf?ids=${icao}&format=json`;
-  const data = await fetch(url).then(r=>r.json());
-  return data?.length ? (data[0].rawTAF || null) : null;
+// ── METAR decoded: try NOAA in background for fltCat + structured data ──────
+// Called lazily after VATSIM METAR succeeds, so failures are silent
+async function fetchNoaaMetarDecoded(){
+  const now = Date.now();
+  if(now - METAR_BULK_TS < 600000 && Object.keys(METAR_DECODED_CACHE).length) return;
+  try {
+    const ids = airports.map(a=>a.icao).join(',');
+    const data = await fetch(
+      `https://aviationweather.gov/api/data/metar?ids=${ids}&format=json&hours=2`
+    ).then(r=>r.json());
+    if(Array.isArray(data)){
+      data.forEach(item=>{
+        const key=(item.icaoId||item.stationId||'').toUpperCase();
+        if(key && item.rawOb) METAR_DECODED_CACHE[key]=item;
+      });
+    }
+  } catch(e){ /* silent — VATSIM raw is the primary source */ }
+}
+
+// ── TAF: aviationweather.gov bulk JSON — all 48 airports in ONE request ─────
+async function fetchAllTAFs(){
+  const now = Date.now();
+  if(now - TAF_BULK_TS < 600000 && Object.keys(TAF_BULK_CACHE).length) return;
+  const ids = airports.map(a=>a.icao).join(',');
+  const data = await fetch(
+    `https://aviationweather.gov/api/data/taf?ids=${ids}&format=json&time=valid&hours=24`
+  ).then(r=>r.json());
+  if(Array.isArray(data)){
+    data.forEach(item=>{
+      const key = item.icaoId || item.stationId;
+      if(key && item.rawTAF) TAF_BULK_CACHE[key] = item.rawTAF;
+    });
+  }
+  TAF_BULK_TS = now;
 }
 
 async function fetchWX(icao){
-  const key = icao.toUpperCase();
+  const key  = icao.toUpperCase();
   const now  = Date.now();
-  const cache= WX_CACHE[key];
-  if(cache && (now - cache.ts) < 600000) return cache;  // 10-min cache
+  const cache = WX_CACHE[key];
+  if(cache && (now - cache.ts) < 600000) return cache;
 
-  // Ensure bulk METAR is loaded
-  await fetchAllMETARs().catch(()=>{});
+  // METAR (VATSIM) + TAF (NOAA) in parallel — both required
+  await Promise.all([
+    fetchAllMETARs().catch(()=>{}),
+    fetchAllTAFs().catch(()=>{})
+  ]);
+  // NOAA decoded (fltCat + structured) — best-effort background, never blocks display
+  fetchNoaaMetarDecoded().catch(()=>{});
+
   const metar = METAR_BULK_CACHE[key] || null;
-
-  // TAF on-demand
-  const taf = await fetchTAF(key).catch(()=>null);
+  const taf   = TAF_BULK_CACHE[key]   || null;
 
   const result = { metar, taf, ts: now };
   WX_CACHE[key] = result;
@@ -2989,9 +3713,199 @@ function statusLabel(ts, hasData){
   return min < 90 ? '✓ Live' : '⚠ Stale';
 }
 
+// ═══════════════════════════════════════════
+// METAR VISUAL DECODER
+// ═══════════════════════════════════════════
+
+function parseMETAR(raw){
+  if(!raw) return null;
+  const p={raw,windDir:null,windSpd:null,windGust:null,windVrb:false,
+           vis:null,visStr:'—',cavok:false,wx:[],clouds:[],temp:null,dewp:null,qnh:null};
+
+  // Wind — 22014KT | VRB03KT | 18008G20KT | 00000KT
+  const wm=raw.match(/\b(VRB|\d{3})(\d{2,3})(?:G(\d{2,3}))?KT\b/);
+  if(wm){ p.windVrb=wm[1]==='VRB'; p.windDir=p.windVrb?null:+wm[1]; p.windSpd=+wm[2]; p.windGust=wm[3]?+wm[3]:null; }
+
+  // CAVOK
+  p.cavok=/\bCAVOK\b/.test(raw);
+
+  // Visibility 4-digit metric (9999 = 10+ km)
+  if(!p.cavok){
+    const vm=raw.match(/(?:^|\s)(\d{4})(?:\s|$)/); // avoid matching cloud heights
+    if(vm){ p.vis=+vm[1]; p.visStr=p.vis>=9999?'10+ km':(p.vis/1000).toFixed(1)+' km'; }
+    else p.visStr='—';
+  } else { p.visStr='10+ km'; }
+
+  // Weather phenomena
+  const wxm=raw.match(/\b([+\-]?(?:VC)?(?:MI|PR|BC|DR|BL|SH|TS|FZ)?(?:DZ|RA|SN|SG|IC|PL|GR|GS|UP)?(?:BR|FG|FU|VA|DU|SA|HZ|PO|SQ|FC|SS|DS))\b/g);
+  if(wxm) p.wx=[...new Set(wxm)].filter(w=>/[A-Z]{2}/.test(w)).slice(0,3);
+
+  // Clouds FEW/SCT/BKN/OVC
+  const cr=/\b(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?\b/g; let cm;
+  while((cm=cr.exec(raw))!==null) p.clouds.push({cover:cm[1],base:+cm[2]*100,cb:cm[3]||null});
+
+  // Temp/Dewpoint M01/M05 or 31/22
+  const tm=raw.match(/\b(M?\d{2})\/(M?\d{2})\b/);
+  if(tm){ p.temp=+tm[1].replace('M','-'); p.dewp=+tm[2].replace('M','-'); }
+
+  // QNH: Q1009
+  const qm=raw.match(/\bQ(\d{4})\b/); if(qm) p.qnh=+qm[1];
+
+  return p;
+}
+
+function calcFlightCat(p){
+  if(!p) return 'UNKN';
+  if(p.cavok) return 'VFR';
+  const ceiling=p.clouds.filter(c=>['BKN','OVC'].includes(c.cover)).map(c=>c.base)[0]??Infinity;
+  const vis=p.vis??0;
+  if(ceiling<500  || vis<1600) return 'LIFR';
+  if(ceiling<1000 || vis<4800) return 'IFR';
+  if(ceiling<3000 || vis<8000) return 'MVFR';
+  return 'VFR';
+}
+
+const FC_COLOR={VFR:'#22c55e',MVFR:'#3b82f6',IFR:'#ef4444',LIFR:'#a855f7',UNKN:'#6b7b8d'};
+
+function buildWindCompassSVG(windDir, windSpd, windGust, windVrb){
+  const CX=100,CY=100,R=82,S=200;
+
+  // Compass ticks
+  let tks='';
+  for(let d=0;d<360;d+=10){
+    const isCrd=[0,90,180,270].includes(d), isMaj=d%30===0;
+    const len=isCrd?13:isMaj?8:4;
+    const rad=(d-90)*Math.PI/180;
+    const x1=(CX+(R-len)*Math.cos(rad)).toFixed(1), y1=(CY+(R-len)*Math.sin(rad)).toFixed(1);
+    const x2=(CX+R*Math.cos(rad)).toFixed(1),       y2=(CY+R*Math.sin(rad)).toFixed(1);
+    tks+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(255,255,255,${isCrd?.95:isMaj?.6:.3})" stroke-width="${isCrd?1.8:isMaj?1:.7}"/>`;
+  }
+
+  // Labels at 30° intervals
+  let lbs='';
+  for(let d=0;d<360;d+=30){
+    const isCrd=[0,90,180,270].includes(d);
+    const rad=(d-90)*Math.PI/180;
+    const lx=(CX+(R-20)*Math.cos(rad)).toFixed(1), ly=(CY+(R-20)*Math.sin(rad)).toFixed(1);
+    const label=d===0?'N':d===90?'E':d===180?'S':d===270?'W':String(d/10).padStart(2,'0');
+    lbs+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central"
+      fill="${isCrd?'#fff':'rgba(255,255,255,.78)'}" font-size="${isCrd?11:8}"
+      font-weight="${isCrd?700:400}" font-family="'Segoe UI',Arial,sans-serif">${label}</text>`;
+  }
+
+  // Wind arrow (points FROM center TOWARD wind source direction)
+  let arrow='';
+  if(windVrb){
+    arrow=`<circle cx="${CX}" cy="${CY}" r="18" fill="none" stroke="white" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="${CX}" y="${CY}" text-anchor="middle" dominant-baseline="central" fill="white" font-size="9" font-weight="700">VRB</text>`;
+  } else if(windDir!==null && windSpd!==null && windSpd>0){
+    const aRad=(windDir-90)*Math.PI/180;
+    const arLen=R-28;
+    const ax=(CX+arLen*Math.cos(aRad)).toFixed(2), ay=(CY+arLen*Math.sin(aRad)).toFixed(2);
+    const hs=9, perp=aRad+Math.PI/2;
+    const h1x=(CX+(arLen-hs)*Math.cos(aRad)+hs*.5*Math.cos(perp)).toFixed(2);
+    const h1y=(CY+(arLen-hs)*Math.sin(aRad)+hs*.5*Math.sin(perp)).toFixed(2);
+    const h2x=(CX+(arLen-hs)*Math.cos(aRad)-hs*.5*Math.cos(perp)).toFixed(2);
+    const h2y=(CY+(arLen-hs)*Math.sin(aRad)-hs*.5*Math.sin(perp)).toFixed(2);
+    arrow=`<line x1="${CX}" y1="${CY}" x2="${ax}" y2="${ay}" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
+      <polygon points="${ax},${ay} ${h1x},${h1y} ${h2x},${h2y}" fill="white"/>
+      <circle cx="${CX}" cy="${CY}" r="4" fill="white"/>`;
+  } else {
+    arrow=`<circle cx="${CX}" cy="${CY}" r="10" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"/>
+      <text x="${CX}" y="${CY}" text-anchor="middle" dominant-baseline="central" fill="rgba(255,255,255,.8)" font-size="8">CALM</text>`;
+  }
+
+  // Wind text bottom
+  const wTxt=windVrb?`VRB / ${windSpd} kt`:
+    windSpd===0?'CALM':
+    `${String(windDir??0).padStart(3,'0')}°  ${windSpd} kt${windGust?` G${windGust}`:''}`;
+
+  return `<svg viewBox="0 0 ${S} ${S}" style="width:100%;max-width:200px;display:block;margin:4px auto 0;">
+    <defs>
+      <radialGradient id="cBg" cx="40%" cy="35%" r="65%">
+        <stop offset="0%" stop-color="#1e7dd4"/><stop offset="100%" stop-color="#0c3d77"/>
+      </radialGradient>
+    </defs>
+    <circle cx="${CX}" cy="${CY}" r="${R+2}" fill="url(#cBg)" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
+    <circle cx="${CX}" cy="${CY}" r="${R-25}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+    ${tks}${lbs}${arrow}
+    <text x="${CX}" y="${S-8}" text-anchor="middle" fill="white" font-size="11" font-weight="700"
+      font-family="'Segoe UI',Arial,sans-serif">${wTxt}</text>
+  </svg>`;
+}
+
+function buildWeatherWidget(icao, metar){
+  if(!metar) return '';
+  const key=icao.toUpperCase();
+  const d=METAR_DECODED_CACHE[key]; // NOAA pre-decoded object (preferred)
+  const p=parseMETAR(metar);        // regex fallback
+
+  // ── Resolve values — NOAA decoded takes priority ──────────────────────────
+  const windDir = d?.wdir ?? p?.windDir ?? null;
+  const windSpd = d?.wspd ?? p?.windSpd ?? 0;
+  const windGust= d?.wgst ?? p?.windGust ?? null;
+  const windVrb = (windDir===null && windSpd>0) || (metar.includes('VRB') && windDir===null);
+  const temp    = d?.temp ?? p?.temp ?? null;
+  const dewp    = d?.dewp ?? p?.dewp ?? null;
+  const qnh     = d?.altim ? Math.round(d.altim*33.8639) : (p?.qnh ?? null);
+
+  // Visibility from NOAA (SM) → km
+  let visStr;
+  if(d?.visib !== undefined && d.visib !== null){
+    const sm=parseFloat(d.visib);
+    visStr=isNaN(sm)||sm>=6?'10+ km':(sm*1.60934).toFixed(1)+' km';
+  } else { visStr=p?.visStr??'—'; }
+
+  // Clouds — NOAA object vs parsed
+  const clouds=(d?.clouds||p?.clouds||[]).map(c=>({
+    cover: c.cover||c, base: c.base ?? (typeof c==='number'?c:0)
+  }));
+
+  // Weather phenomena
+  const wx = d?.wxString ? d.wxString.trim().split(/\s+/).filter(Boolean) : (p?.wx??[]);
+
+  // Flight category — NOAA provides it directly
+  const cat = d?.fltCat ?? calcFlightCat(p) ?? 'UNKN';
+  const catC= FC_COLOR[cat]||'#6b7b8d';
+
+  // Ceiling summary
+  const ceiling=(()=>{
+    const bkn=clouds.find(c=>['BKN','OVC'].includes(c.cover));
+    if(bkn) return `${bkn.cover} ${(bkn.base||0).toLocaleString()}ft`;
+    const sct=clouds.find(c=>c.cover==='SCT');
+    if(sct) return `SCT ${(sct.base||0).toLocaleString()}ft`;
+    const few=clouds.find(c=>c.cover==='FEW');
+    if(few) return `FEW ${(few.base||0).toLocaleString()}ft`;
+    return visStr==='10+ km'?'CAVOK / SKC':'SKC';
+  })();
+
+  const wxRow=wx.length?`<span style="color:#f59e0b;font-size:9px;font-weight:700;">${wx.join(' ')}</span>`:'';
+  const tempRow=temp!==null?`🌡 ${temp}°C${dewp!==null?' / DP '+dewp+'°C':''}`:'';
+  const qnhRow=qnh?`<span style="color:var(--muted);font-size:9px;">QNH ${qnh} hPa</span>`:'';
+
+  return `<div style="background:rgba(14,165,233,.05);border:1px solid rgba(14,165,233,.2);border-radius:8px;padding:8px;margin-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:4px;">
+      <span style="background:${catC};color:#fff;font-size:11px;font-weight:800;padding:2px 10px;border-radius:12px;letter-spacing:.3px;">${cat}</span>
+      <span style="font-size:9px;color:var(--text2);">👁 ${visStr}</span>
+      <span style="font-size:9px;color:var(--text2);">☁ ${ceiling}</span>
+      ${wxRow}
+      ${tempRow?`<span style="margin-left:auto;font-size:9px;color:var(--text2);">${tempRow}</span>`:''}
+    </div>
+    ${buildWindCompassSVG(windDir,windSpd,windGust,windVrb)}
+    <div style="display:flex;justify-content:center;margin-top:4px;">${qnhRow}</div>
+  </div>`;
+}
+
 // Inject weather section into an open popup
 async function loadWXIntoPopup(icao, force=false){
-  if(force) delete WX_CACHE[icao];
+  if(force){
+    // Clear all caches → triggers full re-fetch for all airports
+    Object.keys(WX_CACHE).forEach(k=>delete WX_CACHE[k]);
+    Object.keys(METAR_BULK_CACHE).forEach(k=>delete METAR_BULK_CACHE[k]);
+    Object.keys(METAR_DECODED_CACHE).forEach(k=>delete METAR_DECODED_CACHE[k]);
+    Object.keys(TAF_BULK_CACHE).forEach(k=>delete TAF_BULK_CACHE[k]);
+    METAR_BULK_TS=0; TAF_BULK_TS=0;
+  }
   const el = document.getElementById('wx-block-'+icao);
   if(!el) return;
 
@@ -3003,17 +3917,14 @@ async function loadWXIntoPopup(icao, force=false){
 
   try {
     const { metar, taf, ts } = await fetchWX(icao);
-    const sc = statusClass(ts, !!(metar||taf));
-    const sl = statusLabel(ts, !!(metar||taf));
+    const sc = statusClass(ts, !!metar);
+    const sl = statusLabel(ts, !!metar);
 
     const metarHtml = metar
       ? `<div class="wx-block"><div class="wx-label">METAR</div><div class="wx-raw">${metar}</div></div>`
       : `<div class="wx-block"><div class="wx-label">METAR</div><div class="wx-raw wx-na">No METAR available</div></div>`;
-    const tafHtml = taf
-      ? `<div class="wx-block"><div class="wx-label">TAF</div><div class="wx-raw">${taf}</div></div>`
-      : `<div class="wx-block"><div class="wx-label">TAF</div><div class="wx-raw wx-na">No TAF available</div></div>`;
 
-    el.innerHTML = metarHtml + tafHtml;
+    el.innerHTML = metarHtml;
     const stEl = document.getElementById('wx-status-'+icao);
     const tsEl = document.getElementById('wx-ts-'+icao);
     if(stEl){ stEl.className=`wx-status ${sc}`; stEl.textContent=sl; }
