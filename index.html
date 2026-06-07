@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"/>
   <style>
     /* ══ CSS VARIABLES (THEME) ══ */
     :root {
@@ -127,8 +128,39 @@
     /* ══ MAP ══ */
     #map{flex:1;filter:var(--map-filter);}
 
-    /* btnDist active state in header */
+    /* btnDist / btn3D active state in header */
     #btnDist.active{background:rgba(14,165,233,.25) !important;}
+    #btn3D.active{background:rgba(14,165,233,.25) !important;}
+
+    /* ══ MAP 3D CONTAINER ══ */
+    #map3d{
+      flex:1;display:none;position:relative;
+    }
+    /* Override MapLibre popup to match app theme */
+    .maplibregl-popup-content{
+      background:var(--surface) !important;
+      border:1px solid var(--border) !important;
+      border-radius:10px !important;
+      box-shadow:0 8px 30px var(--shadow) !important;
+      padding:10px 13px !important;
+      color:var(--text) !important;
+      font-family:'Segoe UI',Arial,sans-serif;
+      font-size:12px;
+      min-width:160px;
+    }
+    .maplibregl-popup-tip{border-top-color:var(--surface) !important;border-bottom-color:var(--surface) !important;}
+    .maplibregl-popup-close-button{color:var(--muted);font-size:16px;padding:2px 6px;}
+    .maplibregl-popup-close-button:hover{color:var(--text);background:var(--surface2);}
+    .maplibregl-ctrl-group{background:var(--surface) !important;border:1px solid var(--border) !important;border-radius:8px !important;}
+    .maplibregl-ctrl button{color:var(--text) !important;}
+    /* 3D mode hint banner */
+    #hint3d{
+      position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+      background:rgba(0,0,0,.65);color:#fff;font-size:10px;
+      padding:5px 14px;border-radius:20px;white-space:nowrap;
+      pointer-events:none;z-index:10;opacity:1;
+      transition:opacity 1s ease;
+    }
 
 
     /* ══ DISTANCE TOOL ══ */
@@ -254,42 +286,115 @@
     .e6b-conv-group:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
     .e6b-conv-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
 
+    /* ══ iOS SAFE-AREA & HEIGHT FIX ══ */
+    body{height:100dvh;}
+    @supports(padding:max(0px)){
+      header{
+        padding-left:max(14px,env(safe-area-inset-left));
+        padding-right:max(14px,env(safe-area-inset-right));
+        padding-top:max(7px,env(safe-area-inset-top));
+      }
+      .stats{padding-bottom:max(3px,env(safe-area-inset-bottom));}
+    }
+
+    /* ══ MOBILE BACKDROP ══ */
+    #mobileBackdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:940;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
+    #mobileBackdrop.show{display:block;}
+
     /* ══ RESPONSIVE ══ */
-    /* Tablet (iPad ≤ 1024px) */
+    /* Tablet (iPad 641–1024px) */
     @media (max-width:1024px){
       .sidebar{width:260px;}
       .sb-toggle{left:260px;}
       .sidebar.collapsed ~ .sb-toggle{left:0;}
-      .quicklinks .ql-btn{padding:2px 6px;font-size:9px;}
+      .quicklinks .ql-btn{padding:3px 7px;font-size:9.5px;}
       .htitle h1{font-size:13px;}
     }
+
     /* Mobile (iPhone ≤ 640px) */
     @media (max-width:640px){
-      header{padding:6px 10px;gap:8px;}
-      .htitle h1{font-size:12px;}
+      /* Header */
+      header{padding:6px 10px;gap:6px;flex-wrap:nowrap;}
+      .htitle h1{font-size:11px;white-space:nowrap;}
       .htitle p{display:none;}
-      .quicklinks{gap:3px;}
-      .ql-btn{padding:2px 5px;font-size:9px;}
-      .ql-sep{display:none;}
       .hbadge{display:none;}
-      .theme-btn{width:26px;height:26px;font-size:13px;}
-      /* Sidebar hidden by default on mobile */
+
+      /* Quick links — icon-only, scrollable */
+      .quicklinks{
+        overflow-x:auto;flex-wrap:nowrap;gap:4px;margin-left:4px;
+        -webkit-overflow-scrolling:touch;scrollbar-width:none;
+        flex-shrink:1;min-width:0;
+      }
+      .quicklinks::-webkit-scrollbar{display:none;}
+      .ql-sep{display:none;}
+      .ql-text{display:none;}
+      .ql-btn{
+        padding:0;width:34px;height:34px;border-radius:8px;
+        font-size:16px;justify-content:center;flex-shrink:0;
+      }
+
+      /* Header-right buttons — touch-friendly */
+      .header-right{gap:5px;}
+      .theme-btn{width:34px;height:34px;font-size:15px;}
+
+      /* Left sidebar — hidden by default, slide in */
       .sidebar{width:0;min-width:0;border-right:none;}
-      .sidebar.mobile-open{width:280px;position:absolute;z-index:950;height:100%;box-shadow:4px 0 20px rgba(0,0,0,.6);}
+      .sidebar.mobile-open{
+        width:285px;position:fixed;left:0;top:0;bottom:0;
+        z-index:950;box-shadow:4px 0 24px rgba(0,0,0,.7);
+      }
       .sb-toggle{left:0;border-radius:7px;border-left:1px solid var(--border);}
-      .sidebar.mobile-open ~ .sb-toggle{left:280px;border-radius:0 7px 7px 0;}
+      .sidebar.mobile-open ~ .sb-toggle{left:285px;border-radius:0 7px 7px 0;}
+
+      /* E6B sidebar — fullscreen overlay from right */
+      .e6b-sb{
+        position:fixed !important;right:0;top:0;bottom:0;
+        width:88vw !important;max-width:340px;
+        z-index:950;
+        border-left:1px solid var(--border);
+        border-radius:12px 0 0 12px;
+        box-shadow:-6px 0 28px rgba(0,0,0,.65);
+        transform:translateX(0);
+        transition:transform .3s ease !important;
+      }
+      .e6b-sb.collapsed{
+        width:88vw !important;min-width:0 !important;
+        transform:translateX(105%);
+      }
+      .e6b-tog{
+        width:28px;height:56px;font-size:12px;
+        right:0 !important;
+      }
+
+      /* Distance tool */
       #map{flex:1;}
-      #distTool{top:52px;right:8px;width:calc(100vw - 16px);max-width:310px;}
-      .stats{gap:8px;font-size:8px;padding:3px 8px;}
+      #distTool{
+        top:auto;bottom:60px;right:8px;left:8px;
+        width:auto;max-width:none;
+        max-height:55vh;
+      }
+
+      /* Stats bar */
+      .stats{gap:8px;font-size:8px;padding:3px 10px;}
       #coordDisp{display:none;}
+
+      /* Touch-friendly popup */
+      .leaflet-popup-content{width:min(290px,88vw) !important;}
+      .leaflet-popup-content-wrapper{border-radius:12px;}
     }
-    /* Touch-friendly popup width */
-    @media (max-width:640px){
-      .leaflet-popup-content{width:min(280px,85vw) !important;}
+
+    /* Very small phones (≤380px) */
+    @media (max-width:380px){
+      .ql-btn{width:30px;height:30px;font-size:14px;}
+      .theme-btn{width:30px;height:30px;font-size:14px;}
+      .htitle{display:none;}
     }
   </style>
 </head>
 <body>
+
+<!-- Mobile overlay backdrop -->
+<div id="mobileBackdrop" onclick="closeMobileOverlays()"></div>
 
 <header>
   <div class="hlogo">✈</div>
@@ -301,16 +406,17 @@
   <!-- QUICK LINKS -->
   <div class="quicklinks">
     <div class="ql-sep"></div>
-    <a class="ql-btn" href="https://aip.caat.or.th/" target="_blank">🛫 AIP Thailand</a>
-    <a class="ql-btn" href="https://skyvector.com/" target="_blank">🗺 SkyVector</a>
-    <a class="ql-btn" href="https://www.windy.com/?14.823,100.676,5" target="_blank">🌬 Windy</a>
-    <a class="ql-btn" href="https://www.flightradar24.com/14.76,101.85/7" target="_blank">✈ FlightRadar24</a>
-    <a class="ql-btn" href="https://awssweather.com/observation/" target="_blank">🌩 RTAF Weather</a>
-    <a class="ql-btn" href="https://sofia-briefing.aviation-civile.gouv.fr/sofia/pages/prepavol.html" target="_blank">📋 NOTAM Check</a>
+    <a class="ql-btn" href="https://aip.caat.or.th/" target="_blank">🛫<span class="ql-text"> AIP Thailand</span></a>
+    <a class="ql-btn" href="https://skyvector.com/" target="_blank">🗺<span class="ql-text"> SkyVector</span></a>
+    <a class="ql-btn" href="https://www.windy.com/?14.823,100.676,5" target="_blank">🌬<span class="ql-text"> Windy</span></a>
+    <a class="ql-btn" href="https://www.flightradar24.com/14.76,101.85/7" target="_blank">✈<span class="ql-text"> FlightRadar24</span></a>
+    <button class="ql-btn" onclick="openRtafWeather()">🌩<span class="ql-text"> RTAF Weather</span></button>
+    <a class="ql-btn" href="https://sofia-briefing.aviation-civile.gouv.fr/sofia/pages/prepavol.html" target="_blank">📋<span class="ql-text"> NOTAM</span></a>
   </div>
 
   <div class="header-right">
     <button class="theme-btn" id="mobileSbBtn" onclick="toggleMobileSidebar()" title="Menu" style="display:none;">☰</button>
+    <button class="theme-btn" id="btn3D" onclick="toggle3DMode()" title="3D Globe View">🌐</button>
     <button class="theme-btn" id="btnDist" onclick="toggleDist()" title="Distance Measure (M)">📏</button>
     <button class="theme-btn" onclick="map.setView([13,101],6)" title="Reset View">🏠</button>
     <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark/Light mode" id="themeBtn">🌙</button>
@@ -435,6 +541,9 @@
   <div class="sb-toggle" id="sbToggle" onclick="toggleSidebar()">◀</div>
 
   <div id="map"></div>
+  <div id="map3d">
+    <div id="hint3d">🖱 ลาก = เลื่อน · Ctrl+ลาก / สองนิ้ว = หมุน+เอียง · Scroll = ซูม · Esc = กลับ 2D</div>
+  </div>
 
   <!-- E6B TOGGLE -->
   <div class="e6b-tog" id="e6bTog" onclick="toggleE6B()">◀</div>
@@ -957,6 +1066,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
@@ -1209,8 +1319,22 @@ function toggleLayer(k){
 // ── Hospitals (OpenStreetMap / Overpass API) ──────────────────────────────
 let hospitalsLoaded=false;
 const HOSP_ICON=L.divIcon({
-  html:`<div style="width:18px;height:18px;background:#ef4444;border:2px solid #fff;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;box-shadow:0 1px 5px rgba(0,0,0,.45);line-height:1;">+</div>`,
-  iconSize:[18,18],iconAnchor:[9,9],className:''
+  html:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" width="36" height="45" style="display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.40))">
+    <!-- Pin body -->
+    <path d="M40 3C21.2 3 6 18.2 6 37C6 56 40 97 40 97C40 97 74 56 74 37C74 18.2 58.8 3 40 3Z" fill="#C94719"/>
+    <path d="M40 6C22.8 6 9 19.8 9 37C9 55 40 94 40 94C40 94 71 55 71 37C71 19.8 57.2 6 40 6Z" fill="#E8541C"/>
+    <!-- White circle -->
+    <circle cx="40" cy="35" r="24" fill="white"/>
+    <!-- Bag handle (arch) -->
+    <path d="M29 26C29 17 51 17 51 26" fill="none" stroke="#E8541C" stroke-width="7" stroke-linecap="round"/>
+    <!-- Bag body -->
+    <rect x="21" y="25" width="38" height="26" rx="5" fill="#E8541C"/>
+    <!-- White cross (vertical) -->
+    <rect x="35" y="29" width="10" height="18" rx="2" fill="white"/>
+    <!-- White cross (horizontal) -->
+    <rect x="28" y="35.5" width="24" height="5" rx="2" fill="white"/>
+  </svg>`,
+  iconSize:[36,45],iconAnchor:[18,45],popupAnchor:[0,-47],className:''
 });
 
 async function fetchHospitals(){
@@ -2409,13 +2533,19 @@ let circPhase=0; // 0=idle 1=center-set 2=circle-drawn
 let circCenLat=null, circCenLng=null;
 let circCenMarker=null, circRadMarker=null, circLayer=null;
 
+function setDistCursor(on){
+  const cur = on ? 'crosshair' : '';
+  map.getContainer().style.cursor = cur;
+  if(map3d) map3d.getCanvas().style.cursor = cur;
+}
+
 function toggleDist(){
   distMode=!distMode;
   document.getElementById('distTool').classList.toggle('show',distMode);
   document.getElementById('btnDist').classList.toggle('active',distMode);
   if(!distMode){ resetMeasure(); }
   else { renderMapPtList(); renderApRows(); recalcDist(); }
-  map.getContainer().style.cursor=distMode&&(activeTab==='map'||activeTab==='coord')?'crosshair':'';
+  setDistCursor(distMode&&(activeTab==='map'||activeTab==='coord'));
 }
 
 function switchTab(t){
@@ -2423,7 +2553,7 @@ function switchTab(t){
   document.querySelectorAll('.dt-tab').forEach(el=>el.classList.toggle('active',el.dataset.tab===t));
   document.querySelectorAll('.dt-section').forEach(el=>el.classList.remove('show'));
   document.getElementById('tab-'+t).classList.add('show');
-  map.getContainer().style.cursor=distMode&&(t==='map'||t==='coord'||t==='circle')?'crosshair':'';
+  setDistCursor(distMode&&(t==='map'||t==='coord'||t==='circle'));
   recalcDist();
 }
 
@@ -2432,12 +2562,26 @@ function setUnit(u,btn){
   document.querySelectorAll('.dt-units button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   recalcDist();
+  if(mapPts.length>=2) updateMapLine();
 }
 
 function haversine(a,b){
   const R=6371,dLat=(b[0]-a[0])*Math.PI/180,dLon=(b[1]-a[1])*Math.PI/180;
   const s=Math.sin(dLat/2)**2+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLon/2)**2;
   return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
+}
+
+function fmtSegLabel(p1,p2){
+  const fwd=calcBearing(p1.lat,p1.lng,p2.lat,p2.lng);
+  const back=(fwd+180)%360;
+  const km=haversine([p1.lat,p1.lng],[p2.lat,p2.lng]);
+  const dist=(km*UCONV[distUnit]).toFixed(distUnit==='m'?0:1);
+  const unit=distUnit==='nm'?'NM':distUnit==='km'?'KM':'MI';
+  // (fwd-90) converts bearing to text-parallel rotation; normalise to [-90°,90°] so text never inverts
+  let rot=(fwd-90+360)%360, lh=Math.round(fwd), rh=Math.round(back);
+  if(rot>=90&&rot<270){rot=(rot-180+360)%360;[lh,rh]=[rh,lh];}
+  const lbl=`${String(lh).padStart(3,'0')}° < ${dist} ${unit} > ${String(rh).padStart(3,'0')}°`;
+  return{lbl,rot};
 }
 
 function showDist(km){
@@ -2453,7 +2597,18 @@ function mkNumIcon(n){
   });
 }
 
+// ── 3D distance measure state ────────────────────────────────────
+let map3dPtMarkers=[];
+
+function mk3dNumEl(n){
+  const el=document.createElement('div');
+  el.style.cssText='width:22px;height:22px;background:#0ea5e9;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.5);cursor:move;user-select:none;';
+  el.textContent=n;
+  return el;
+}
+
 function bindDrag(idx){
+  if(is3D) return; // 3D drag bound inline in addMapPt
   const p=mapPts[idx];
   p.marker.off('drag');
   p.marker.on('drag',()=>{
@@ -2464,7 +2619,22 @@ function bindDrag(idx){
 }
 
 function addMapPt(latlng){
-  if(mapPts.length>=MAX_MAP_PTS)return;
+  if(mapPts.length>=MAX_MAP_PTS) return;
+  if(is3D){
+    const idx=mapPts.length;
+    const el=mk3dNumEl(idx+1);
+    const m3=new maplibregl.Marker({element:el,draggable:true})
+      .setLngLat([latlng.lng,latlng.lat]).addTo(map3d);
+    map3dPtMarkers.push(m3);
+    mapPts.push({lat:latlng.lat,lng:latlng.lng});
+    m3.on('drag',()=>{
+      const ll=m3.getLngLat();
+      mapPts[idx].lat=ll.lat; mapPts[idx].lng=ll.lng;
+      updateMapLine(); renderMapPtList(); recalcDist();
+    });
+    updateMapLine(); renderMapPtList(); recalcDist();
+    return;
+  }
   const idx=mapPts.length;
   const m=L.marker([latlng.lat,latlng.lng],{draggable:true,icon:mkNumIcon(idx+1),zIndexOffset:1000}).addTo(map);
   mapPts.push({lat:latlng.lat,lng:latlng.lng,marker:m});
@@ -2473,6 +2643,23 @@ function addMapPt(latlng){
 }
 
 function removeMapPt(i){
+  if(is3D){
+    map3dPtMarkers[i].remove();
+    map3dPtMarkers.splice(i,1);
+    mapPts.splice(i,1);
+    map3dPtMarkers.forEach((m,j)=>{ m.getElement().textContent=j+1; });
+    // re-bind drag with correct indices
+    map3dPtMarkers.forEach((m,j)=>{
+      m.off('drag');
+      m.on('drag',()=>{
+        const ll=m.getLngLat();
+        mapPts[j].lat=ll.lat; mapPts[j].lng=ll.lng;
+        updateMapLine(); renderMapPtList(); recalcDist();
+      });
+    });
+    updateMapLine(); renderMapPtList(); recalcDist();
+    return;
+  }
   map.removeLayer(mapPts[i].marker);
   mapPts.splice(i,1);
   mapPts.forEach((p,j)=>{ p.marker.setIcon(mkNumIcon(j+1)); bindDrag(j); });
@@ -2480,6 +2667,28 @@ function removeMapPt(i){
 }
 
 function updateMapLine(){
+  if(is3D){
+    const lineSrc=map3d&&map3d.getSource('dist-line3d');
+    const lblSrc =map3d&&map3d.getSource('dist-labels3d');
+    if(!lineSrc) return;
+    if(mapPts.length<2){
+      lineSrc.setData({type:'FeatureCollection',features:[]});
+      if(lblSrc) lblSrc.setData({type:'FeatureCollection',features:[]});
+      return;
+    }
+    lineSrc.setData({type:'Feature',geometry:{type:'LineString',coordinates:mapPts.map(p=>[p.lng,p.lat])}});
+    if(lblSrc){
+      const lf=[];
+      for(let i=0;i<mapPts.length-1;i++){
+        const{lbl,rot}=fmtSegLabel(mapPts[i],mapPts[i+1]);
+        lf.push({type:'Feature',
+          geometry:{type:'Point',coordinates:[(mapPts[i].lng+mapPts[i+1].lng)/2,(mapPts[i].lat+mapPts[i+1].lat)/2]},
+          properties:{lbl,rot}});
+      }
+      lblSrc.setData({type:'FeatureCollection',features:lf});
+    }
+    return;
+  }
   if(mapPolyline){map.removeLayer(mapPolyline);mapPolyline=null;}
   mapSegments.forEach(s=>map.removeLayer(s)); mapSegments=[];
   if(mapPts.length<2) return;
@@ -2487,12 +2696,8 @@ function updateMapLine(){
   for(let i=0;i<mapPts.length-1;i++){
     const lls=[[mapPts[i].lat,mapPts[i].lng],[mapPts[i+1].lat,mapPts[i+1].lng]];
 
-    // Visual line (non-interactive)
     const vis=L.polyline(lls,{color:'#f59e0b',weight:2,dashArray:'6,4',interactive:false}).addTo(map);
-
-    // Invisible wide hit-target — intercepts clicks before map
     const hit=L.polyline(lls,{weight:18,color:'#f59e0b',opacity:0.001,bubblingMouseEvents:false}).addTo(map);
-
     const idx=i;
     hit.on('click',e=>{
       if(!distMode||activeTab!=='map')return;
@@ -2502,7 +2707,18 @@ function updateMapLine(){
     hit.on('mouseover',()=>{ map.getContainer().style.cursor='cell'; });
     hit.on('mouseout', ()=>{ map.getContainer().style.cursor=distMode&&(activeTab==='map'||activeTab==='coord')?'crosshair':''; });
 
-    mapSegments.push(vis,hit);
+    // ── Segment label: HDG < dist > HDG rotated along the line ──
+    const{lbl,rot}=fmtSegLabel(mapPts[i],mapPts[i+1]);
+    const mid=[(mapPts[i].lat+mapPts[i+1].lat)/2,(mapPts[i].lng+mapPts[i+1].lng)/2];
+    const lm=L.marker(mid,{
+      icon:L.divIcon({
+        html:`<div style="position:absolute;left:0;top:0;transform:translate(-50%,-50%) rotate(${rot}deg);white-space:nowrap;font-size:9px;font-weight:700;color:#f59e0b;background:rgba(0,0,0,0.88);padding:1px 5px;border-radius:2px;pointer-events:none;font-family:monospace;letter-spacing:.4px;">${lbl}</div>`,
+        iconSize:[0,0],iconAnchor:[0,0],className:''
+      }),
+      interactive:false,zIndexOffset:800
+    }).addTo(map);
+
+    mapSegments.push(vis,hit,lm);
   }
 }
 
@@ -2540,7 +2756,17 @@ function moveMapPt(i, dir){
   const j=i+dir;
   if(j<0||j>=mapPts.length)return;
   [mapPts[i],mapPts[j]]=[mapPts[j],mapPts[i]];
-  mapPts.forEach((_,k)=>{ mapPts[k].marker.setIcon(mkNumIcon(k+1)); bindDrag(k); });
+  if(is3D){
+    // swap MapLibre markers positions to match new order
+    [map3dPtMarkers[i],map3dPtMarkers[j]]=[map3dPtMarkers[j],map3dPtMarkers[i]];
+    map3dPtMarkers.forEach((m,k)=>{ m.getElement().textContent=k+1; });
+    map3dPtMarkers.forEach((m,k)=>{
+      m.off('drag');
+      m.on('drag',()=>{ const ll=m.getLngLat(); mapPts[k].lat=ll.lat; mapPts[k].lng=ll.lng; updateMapLine(); renderMapPtList(); recalcDist(); });
+    });
+  } else {
+    mapPts.forEach((_,k)=>{ mapPts[k].marker.setIcon(mkNumIcon(k+1)); bindDrag(k); });
+  }
   updateMapLine(); renderMapPtList(); recalcDist();
 }
 
@@ -2609,12 +2835,52 @@ function removeApRow(i){
 }
 
 function updateApLines(){
-  apRouteLines.forEach(l=>map.removeLayer(l)); apRouteLines=[];
   const valid=apRows.map(icao=>airports.find(a=>a.icao===icao)).filter(Boolean);
+  if(is3D){
+    const src=map3d&&map3d.getSource('ap-route3d');
+    if(!src) return;
+    const lblSrc3d=map3d&&map3d.getSource('ap-route-labels3d');
+    if(valid.length<2){
+      src.setData({type:'FeatureCollection',features:[]});
+      if(lblSrc3d) lblSrc3d.setData({type:'FeatureCollection',features:[]});
+      return;
+    }
+    src.setData({type:'Feature',geometry:{type:'LineString',coordinates:valid.map(a=>[a.lon,a.lat])}});
+    if(lblSrc3d){
+      const lf=[];
+      for(let i=0;i<valid.length-1;i++){
+        const p1={lat:valid[i].lat,lng:valid[i].lon};
+        const p2={lat:valid[i+1].lat,lng:valid[i+1].lon};
+        const{lbl,rot}=fmtSegLabel(p1,p2);
+        lf.push({type:'Feature',
+          geometry:{type:'Point',coordinates:[(valid[i].lon+valid[i+1].lon)/2,(valid[i].lat+valid[i+1].lat)/2]},
+          properties:{lbl,rot}});
+      }
+      lblSrc3d.setData({type:'FeatureCollection',features:lf});
+    }
+    const bounds=valid.reduce((b,a)=>{ b[0]=Math.min(b[0],a.lon);b[1]=Math.min(b[1],a.lat);b[2]=Math.max(b[2],a.lon);b[3]=Math.max(b[3],a.lat); return b; },[180,90,-180,-90]);
+    map3d.fitBounds([[bounds[0],bounds[1]],[bounds[2],bounds[3]]],{padding:60,pitch:50});
+    return;
+  }
+  apRouteLines.forEach(l=>map.removeLayer(l)); apRouteLines=[];
   if(valid.length<2)return;
   const lls=valid.map(a=>[a.lat,a.lon]);
   apRouteLines.push(L.polyline(lls,{color:'#f59e0b',weight:2,dashArray:'6,4'}).addTo(map));
   valid.forEach(a=>apRouteLines.push(L.circleMarker([a.lat,a.lon],{radius:4,color:'#f59e0b',fillColor:'#f59e0b',fillOpacity:1,weight:1}).addTo(map)));
+  for(let i=0;i<valid.length-1;i++){
+    const p1={lat:valid[i].lat,lng:valid[i].lon};
+    const p2={lat:valid[i+1].lat,lng:valid[i+1].lon};
+    const{lbl,rot}=fmtSegLabel(p1,p2);
+    const mid=[(valid[i].lat+valid[i+1].lat)/2,(valid[i].lon+valid[i+1].lon)/2];
+    const lm=L.marker(mid,{
+      icon:L.divIcon({
+        html:`<div style="position:absolute;left:0;top:0;transform:translate(-50%,-50%) rotate(${rot}deg);white-space:nowrap;font-size:9px;font-weight:700;color:#f59e0b;background:rgba(0,0,0,0.88);padding:1px 5px;border-radius:2px;pointer-events:none;font-family:monospace;letter-spacing:.4px;">${lbl}</div>`,
+        iconSize:[0,0],iconAnchor:[0,0],className:''
+      }),
+      interactive:false,zIndexOffset:800
+    }).addTo(map);
+    apRouteLines.push(lm);
+  }
   map.fitBounds(L.latLngBounds(lls),{padding:[50,50]});
 }
 
@@ -2660,7 +2926,16 @@ function recalcDist(){
 }
 
 function resetMeasure(){
-  mapPts.forEach(p=>map.removeLayer(p.marker)); mapPts=[];
+  // 3D cleanup
+  map3dPtMarkers.forEach(m=>m.remove()); map3dPtMarkers=[];
+  if(map3d){
+    const dl=map3d.getSource('dist-line3d');   if(dl) dl.setData({type:'FeatureCollection',features:[]});
+    const ll=map3d.getSource('dist-labels3d'); if(ll) ll.setData({type:'FeatureCollection',features:[]});
+    const al=map3d.getSource('ap-route3d');    if(al) al.setData({type:'FeatureCollection',features:[]});
+    const rl=map3d.getSource('ap-route-labels3d'); if(rl) rl.setData({type:'FeatureCollection',features:[]});
+  }
+  // 2D cleanup
+  mapPts.forEach(p=>{ if(p.marker) map.removeLayer(p.marker); }); mapPts=[];
   if(mapPolyline){map.removeLayer(mapPolyline);mapPolyline=null;}
   mapSegments.forEach(s=>map.removeLayer(s)); mapSegments=[];
   apRouteLines.forEach(l=>map.removeLayer(l)); apRouteLines=[];
@@ -3599,9 +3874,21 @@ function applyResponsive(){
 
 function toggleMobileSidebar(){
   const sb = document.getElementById('sidebar');
-  sb.classList.toggle('mobile-open');
-  sb.classList.toggle('collapsed', !sb.classList.contains('mobile-open'));
+  const isOpen = !sb.classList.contains('mobile-open');
+  sb.classList.toggle('mobile-open', isOpen);
+  sb.classList.toggle('collapsed', !isOpen);
+  document.getElementById('mobileBackdrop').classList.toggle('show', isOpen);
   setTimeout(()=>map.invalidateSize(),260);
+}
+
+function closeMobileOverlays(){
+  const sb = document.getElementById('sidebar');
+  if(sb.classList.contains('mobile-open')){
+    sb.classList.remove('mobile-open');
+    sb.classList.add('collapsed');
+  }
+  if(e6bOpen) toggleE6B();
+  document.getElementById('mobileBackdrop').classList.remove('show');
 }
 
 window.addEventListener('resize', applyResponsive);
@@ -3978,7 +4265,12 @@ function toggleE6B(){
   const tog = document.getElementById('e6bTog');
   sb.classList.toggle('collapsed', !e6bOpen);
   tog.textContent = e6bOpen ? '▶' : '◀';
-  tog.style.right  = e6bOpen ? '290px' : '0';
+  if(isMobile()){
+    tog.style.right = '0';
+    document.getElementById('mobileBackdrop').classList.toggle('show', e6bOpen);
+  } else {
+    tog.style.right = e6bOpen ? '290px' : '0';
+  }
   setTimeout(()=>map.invalidateSize(), 260);
 }
 
@@ -4333,6 +4625,498 @@ function wxHTML(icao){
     </div>
   </div>`;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// 3D MAP MODE  (MapLibre GL JS)
+// ═══════════════════════════════════════════════════════════════
+let map3d = null;
+let is3D  = false;
+
+function toggle3DMode(){
+  is3D = !is3D;
+  const el2d = document.getElementById('map');
+  const el3d = document.getElementById('map3d');
+  const btn  = document.getElementById('btn3D');
+
+  if(is3D){
+    el2d.style.display = 'none';
+    el3d.style.display = 'block';
+    btn.classList.add('active');
+    if(!map3d) init3DMap(); // syncDistMeasureTo3D() called after build3DLayers()
+    else { syncViewTo3D(); syncDistMeasureTo3D(); }
+  } else {
+    el3d.style.display = 'none';
+    el2d.style.display = 'block';
+    btn.classList.remove('active');
+    if(map3d){ syncViewTo2D(); syncDistMeasureTo2D(); }
+    setTimeout(()=>map.invalidateSize(), 100);
+  }
+}
+
+function syncViewTo3D(){
+  const c = map.getCenter();
+  map3d.jumpTo({ center:[c.lng, c.lat], zoom: map.getZoom()-0.5 });
+}
+
+function syncViewTo2D(){
+  const c = map3d.getCenter();
+  map.setView([c.lat, c.lng], map3d.getZoom()+0.5, {animate:false});
+}
+
+function syncDistMeasureTo3D(){
+  // Remove 2D Leaflet markers and lines, rebuild as 3D MapLibre markers
+  mapPts.forEach(p=>{ if(p.marker){ map.removeLayer(p.marker); p.marker=null; } });
+  if(mapPolyline){ map.removeLayer(mapPolyline); mapPolyline=null; }
+  mapSegments.forEach(s=>map.removeLayer(s)); mapSegments=[];
+  apRouteLines.forEach(l=>map.removeLayer(l)); apRouteLines=[];
+  map3dPtMarkers.forEach(m=>m.remove()); map3dPtMarkers=[];
+  mapPts.forEach((p,idx)=>{
+    const el=mk3dNumEl(idx+1);
+    const m3=new maplibregl.Marker({element:el,draggable:true})
+      .setLngLat([p.lng,p.lat]).addTo(map3d);
+    map3dPtMarkers.push(m3);
+    const k=idx;
+    m3.on('drag',()=>{ const ll=m3.getLngLat(); mapPts[k].lat=ll.lat; mapPts[k].lng=ll.lng; updateMapLine(); renderMapPtList(); recalcDist(); });
+  });
+  if(mapPts.length>=2) updateMapLine();
+  updateApLines();
+}
+
+function syncDistMeasureTo2D(){
+  // Remove 3D MapLibre markers and sources, rebuild as 2D Leaflet markers
+  map3dPtMarkers.forEach(m=>m.remove()); map3dPtMarkers=[];
+  ['dist-line3d','dist-labels3d','ap-route3d','ap-route-labels3d'].forEach(id=>{
+    const s=map3d&&map3d.getSource(id); if(s) s.setData({type:'FeatureCollection',features:[]});
+  });
+  mapPts.forEach((p,idx)=>{
+    const m=L.marker([p.lat,p.lng],{draggable:true,icon:mkNumIcon(idx+1),zIndexOffset:1000}).addTo(map);
+    p.marker=m; bindDrag(idx);
+  });
+  if(mapPts.length>=2) updateMapLine();
+  updateApLines();
+}
+
+function init3DMap(){
+  const c = map.getCenter();
+
+  map3d = new maplibregl.Map({
+    container: 'map3d',
+    style: {
+      version: 8,
+      glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+      sources: {
+        'satellite': {
+          type: 'raster',
+          tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+          tileSize: 256,
+          maxzoom: 19,
+          attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics'
+        },
+        'terrain-src': {
+          type: 'raster-dem',
+          tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+          tileSize: 256,
+          encoding: 'terrarium',
+          maxzoom: 14,
+          attribution: '© <a href="https://www.mapzen.com/blog/terrain-tile-service/">Mapzen</a>'
+        }
+      },
+      layers: [
+        { id:'sat-layer', type:'raster', source:'satellite', minzoom:0, maxzoom:20 }
+      ]
+    },
+    center: [c.lng, c.lat],
+    zoom: Math.max(4, map.getZoom() - 0.5),
+    pitch: 55,
+    bearing: 0,
+    antialias: true,
+    maxPitch: 85
+  });
+
+  // Controls
+  map3d.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-left');
+  map3d.addControl(new maplibregl.ScaleControl({ unit: 'nautical' }), 'bottom-left');
+  map3d.addControl(new maplibregl.FullscreenControl(), 'top-left');
+
+  map3d.on('load', ()=>{
+    // Terrain
+    map3d.setTerrain({ source: 'terrain-src', exaggeration: 2.5 });
+
+    // Sky
+    map3d.setSky({
+      'sky-color': '#1a2e50',
+      'sky-horizon-blend': 0.5,
+      'horizon-color': '#7bafd4',
+      'horizon-fog-blend': 0.2,
+      'fog-color': '#a8c8e0',
+      'fog-ground-blend': 0.5
+    });
+
+    loadPin3DImages().then(()=>{ build3DLayers(); show3DHint(); syncDistMeasureTo3D(); });
+  });
+
+  // Distance Measure click handler for 3D map
+  map3d.on('click', e=>{
+    if(!distMode) return;
+    const latlng = { lat: e.lngLat.lat, lng: e.lngLat.lng };
+    if(activeTab==='map') addMapPt(latlng);
+    else if(activeTab==='circle'){
+      if(circPhase===0) setCircCenter(latlng);
+      else if(circPhase===1) setCircRadius(latlng);
+    }
+  });
+
+  // Keyboard shortcut
+  map3d.getCanvas().addEventListener('keydown', e=>{
+    if(e.key==='Escape') toggle3DMode();
+  });
+}
+
+// ── SVG pin generators ───────────────────────────────────────────
+function apPinSVG(color, dark){
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 76" width="56" height="76">
+    <path d="M28 4C13.8 4 2 15.8 2 30C2 44.2 28 72 28 72C28 72 54 44.2 54 30C54 15.8 42.2 4 28 4Z" fill="${dark}" opacity="0.6"/>
+    <path d="M28 7C15.3 7 5 17.3 5 30C5 42.7 28 69 28 69C28 69 51 42.7 51 30C51 17.3 40.7 7 28 7Z" fill="${color}"/>
+    <circle cx="28" cy="28" r="17" fill="white" fill-opacity="0.95"/>
+    <text x="28" y="35" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="${color}">✈</text>
+  </svg>`;
+}
+
+function naPinSVG(color, dark, label){
+  const fs = label.length > 3 ? 7.5 : label.length === 3 ? 8.5 : 10;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 56" width="42" height="56">
+    <path d="M21 3C11 3 3 11 3 21C3 31 21 53 21 53C21 53 39 31 39 21C39 11 31 3 21 3Z" fill="${dark}" opacity="0.6"/>
+    <path d="M21 6C12.7 6 6 12.7 6 21C6 29.3 21 50 21 50C21 50 36 29.3 36 21C36 12.7 29.3 6 21 6Z" fill="${color}"/>
+    <circle cx="21" cy="20" r="12" fill="white" fill-opacity="0.95"/>
+    <text x="21" y="24.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="${fs}" font-weight="bold" fill="${color}">${label}</text>
+  </svg>`;
+}
+
+async function loadPin3DImages(){
+  const load = (name, svg, w, h) => new Promise(res=>{
+    const img = new Image(w, h);
+    img.onload = ()=>{ map3d.addImage(name, img, { pixelRatio:2 }); res(); };
+    img.onerror = res; // skip on error, don't block
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
+  await Promise.all([
+    load('pin-aot',   apPinSVG('#0ea5e9','#0055aa'), 56, 76),
+    load('pin-rtaf',  apPinSVG('#ef4444','#991b1b'), 56, 76),
+    load('pin-navy',  apPinSVG('#8b5cf6','#5b21b6'), 56, 76),
+    load('pin-army',  apPinSVG('#22c55e','#15803d'), 56, 76),
+    load('pin-bkk',   apPinSVG('#f97316','#c2410c'), 56, 76),
+    load('pin-doa',   apPinSVG('#64748b','#334155'), 56, 76),
+    load('na-vor',    naPinSVG('#a78bfa','#6d28d9','VOR'), 42, 56),
+    load('na-ndb',    naPinSVG('#fb923c','#c2410c','NDB'), 42, 56),
+    load('na-ils',    naPinSVG('#34d399','#059669','ILS'), 42, 56),
+    load('na-tacan',  naPinSVG('#06b6d4','#0e7490','TAC'), 42, 56),
+    load('na-dme',    naPinSVG('#94a3b8','#475569','DME'), 42, 56),
+  ]);
+}
+
+function build3DLayers(){
+  // ── Airports GeoJSON ──────────────────────────────────────────
+  const apFeatures = airports.map(ap=>({
+    type:'Feature',
+    geometry:{ type:'Point', coordinates:[ap.lon, ap.lat] },
+    properties:{
+      icao: ap.icao, name: ap.name,
+      city: ap.city||'', op: ap.op||'', elev: ap.elev||'',
+      iconKey: ap.op==='AOT'             ? 'pin-aot'
+             : ap.op==='RTAF'            ? 'pin-rtaf'
+             : ap.op==='Royal Thai Navy' ? 'pin-navy'
+             : ap.op==='Royal Thai Army' ? 'pin-army'
+             : ap.op==='Bangkok Airways' ? 'pin-bkk'
+             :                             'pin-doa',
+      popColor: ap.op==='AOT'             ? '#0ea5e9'
+              : ap.op==='RTAF'            ? '#ef4444'
+              : ap.op==='Royal Thai Navy' ? '#8b5cf6'
+              : ap.op==='Royal Thai Army' ? '#22c55e'
+              : ap.op==='Bangkok Airways' ? '#f97316'
+              :                             '#64748b'
+    }
+  }));
+  map3d.addSource('ap-src',{ type:'geojson', data:{ type:'FeatureCollection', features:apFeatures }});
+
+  // 3D pin symbol — stays upright when map tilts
+  map3d.addLayer({
+    id:'ap-pin', type:'symbol', source:'ap-src',
+    layout:{
+      'icon-image':['get','iconKey'],
+      'icon-size':['interpolate',['exponential',1.4],['zoom'], 3,0.10, 5,0.20, 7,0.35, 9,0.52, 11,0.72, 13,0.95, 15,1.20],
+      'icon-anchor':'bottom',
+      'icon-allow-overlap':true,
+      'icon-pitch-alignment':'viewport',
+      'icon-rotation-alignment':'viewport',
+      'text-field':['step',['zoom'],'',6,['get','icao']],
+      'text-font':['Open Sans Bold'],
+      'text-size':['interpolate',['linear'],['zoom'],6,9,11,13],
+      'text-anchor':'top',
+      'text-offset':[0,0.15],
+      'text-allow-overlap':false,
+      'text-pitch-alignment':'viewport',
+      'text-rotation-alignment':'viewport'
+    },
+    paint:{
+      'text-color':'#ffffff',
+      'text-halo-color':'#000000',
+      'text-halo-width':1.8
+    }
+  });
+
+  // ── Nav Aids GeoJSON ─────────────────────────────────────────
+  const naFeatures = navAids.map(n=>({
+    type:'Feature',
+    geometry:{ type:'Point', coordinates:[n.lon, n.lat] },
+    properties:{
+      id: n.id, name: n.name, type: n.type, freq: n.freq,
+      iconKey: n.type.includes('DVOR')||n.type.includes('VOR') ? 'na-vor'
+             : n.type.includes('NDB')                          ? 'na-ndb'
+             : n.type.includes('ILS')                          ? 'na-ils'
+             : n.type.includes('TACAN')                        ? 'na-tacan'
+             :                                                   'na-dme',
+      popColor: n.type.includes('DVOR')||n.type.includes('VOR') ? '#a78bfa'
+              : n.type.includes('NDB')                          ? '#fb923c'
+              : n.type.includes('ILS')                          ? '#34d399'
+              : n.type.includes('TACAN')                        ? '#06b6d4'
+              :                                                   '#94a3b8'
+    }
+  }));
+  map3d.addSource('na-src',{ type:'geojson', data:{ type:'FeatureCollection', features:naFeatures }});
+
+  map3d.addLayer({
+    id:'na-pin', type:'symbol', source:'na-src', minzoom:6,
+    layout:{
+      'icon-image':['get','iconKey'],
+      'icon-size':['interpolate',['exponential',1.4],['zoom'], 5,0.10, 7,0.22, 9,0.38, 11,0.55, 13,0.75, 15,1.00],
+      'icon-anchor':'bottom',
+      'icon-allow-overlap':false,
+      'icon-pitch-alignment':'viewport',
+      'icon-rotation-alignment':'viewport',
+      'text-field':['step',['zoom'],'',7,['get','id']],
+      'text-font':['Open Sans Bold'],
+      'text-size':9,
+      'text-anchor':'top',
+      'text-offset':[0,0.12],
+      'text-allow-overlap':false,
+      'text-pitch-alignment':'viewport'
+    },
+    paint:{
+      'text-color':['get','popColor'],
+      'text-halo-color':'#000',
+      'text-halo-width':1.2
+    }
+  });
+
+  // ── Popups ───────────────────────────────────────────────────
+  map3d.on('click','ap-pin', e=>{
+    const p = e.features[0].properties;
+    const coords = e.features[0].geometry.coordinates.slice();
+    new maplibregl.Popup({ offset:[0,-32], maxWidth:'220px' })
+      .setLngLat(coords)
+      .setHTML(`
+        <div style="font-size:15px;font-weight:800;color:${p.popColor};letter-spacing:1px;">${p.icao}</div>
+        <div style="font-size:11px;color:var(--text2);margin:3px 0 5px;line-height:1.3;">${p.name}</div>
+        ${p.city?`<div style="font-size:10px;color:var(--muted);">📍 ${p.city}</div>`:''}
+        ${p.op  ?`<div style="font-size:10px;color:var(--muted);">🏢 ${p.op}</div>`:''}
+        ${p.elev?`<div style="font-size:10px;color:var(--muted);">⬆ ${p.elev}</div>`:''}
+        <div style="margin-top:6px;">
+          <button onclick="toggle3DMode();setTimeout(()=>focusAP('${p.icao}'),200)"
+            style="font-size:10px;font-weight:700;background:#0069b4;color:#fff;border:none;border-radius:5px;padding:4px 10px;cursor:pointer;">
+            → ไปหน้า 2D
+          </button>
+        </div>`)
+      .addTo(map3d);
+  });
+  map3d.on('mouseenter','ap-pin',()=>{ map3d.getCanvas().style.cursor='pointer'; });
+  map3d.on('mouseleave','ap-pin',()=>{ map3d.getCanvas().style.cursor=''; });
+
+  map3d.on('click','na-pin', e=>{
+    const p = e.features[0].properties;
+    new maplibregl.Popup({ offset:[0,-24], maxWidth:'200px' })
+      .setLngLat(e.features[0].geometry.coordinates.slice())
+      .setHTML(`
+        <div style="font-size:13px;font-weight:800;color:${p.popColor};">${p.id}</div>
+        <div style="font-size:10px;color:var(--text2);margin:2px 0;">${p.name}</div>
+        <div style="font-size:10px;color:var(--muted);">${p.type} · ${p.freq}</div>`)
+      .addTo(map3d);
+  });
+  map3d.on('mouseenter','na-pin',()=>{ map3d.getCanvas().style.cursor='pointer'; });
+  map3d.on('mouseleave','na-pin',()=>{ map3d.getCanvas().style.cursor=''; });
+
+  // Distance measure line + airport route line sources
+  map3d.addSource('dist-line3d', { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
+  map3d.addLayer({ id:'dist-line3d-layer', type:'line', source:'dist-line3d',
+    layout:{ 'line-join':'round', 'line-cap':'round' },
+    paint:{ 'line-color':'#f59e0b', 'line-width':2.5, 'line-dasharray':[5,4] }
+  });
+  map3d.addSource('dist-labels3d', { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
+  map3d.addLayer({ id:'dist-labels3d-layer', type:'symbol', source:'dist-labels3d',
+    layout:{
+      'text-field':['get','lbl'],
+      'text-font':['Open Sans Bold'],
+      'text-size':11,
+      'text-rotation':['get','rot'],
+      'text-rotation-alignment':'map',
+      'text-allow-overlap':true,
+      'text-ignore-placement':true,
+      'text-anchor':'center'
+    },
+    paint:{
+      'text-color':'#f59e0b',
+      'text-halo-color':'rgba(0,0,0,0.92)',
+      'text-halo-width':4
+    }
+  });
+  map3d.addSource('ap-route3d', { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
+  map3d.addLayer({ id:'ap-route3d-layer', type:'line', source:'ap-route3d',
+    layout:{ 'line-join':'round', 'line-cap':'round' },
+    paint:{ 'line-color':'#f59e0b', 'line-width':2.5, 'line-dasharray':[5,4] }
+  });
+  map3d.addSource('ap-route-labels3d', { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
+  map3d.addLayer({ id:'ap-route-labels3d-layer', type:'symbol', source:'ap-route-labels3d',
+    layout:{
+      'text-field':['get','lbl'],
+      'text-font':['Open Sans Bold'],
+      'text-size':11,
+      'text-rotation':['get','rot'],
+      'text-rotation-alignment':'map',
+      'text-allow-overlap':true,
+      'text-ignore-placement':true,
+      'text-anchor':'center'
+    },
+    paint:{
+      'text-color':'#f59e0b',
+      'text-halo-color':'rgba(0,0,0,0.92)',
+      'text-halo-width':4
+    }
+  });
+}
+
+function show3DHint(){
+  const d = document.getElementById('hint3d');
+  if(!d) return;
+  setTimeout(()=>{ d.style.opacity='0'; setTimeout(()=>d.remove(),1000); }, 4000);
+}
+
+// ── RTAF Weather Modal ───────────────────────────────────────────
+let rtafTimer=null;
+
+function openRtafWeather(){
+  document.getElementById('rtafModal').style.display='flex';
+  fetchRtafData();
+  rtafTimer=setInterval(fetchRtafData,60000);
+}
+function closeRtafWeather(){
+  document.getElementById('rtafModal').style.display='none';
+  if(rtafTimer){clearInterval(rtafTimer);rtafTimer=null;}
+}
+
+function fetchRtafData(){
+  const catCol={'VFR':'#22c55e','MVFR':'#60a5fa','IFR':'#ef4444','LIFR':'#a855f7'};
+  const ts=()=>{ const n=new Date(); return n.getUTCHours().toString().padStart(2,'0')+':'+n.getUTCMinutes().toString().padStart(2,'0')+'Z'; };
+
+  document.getElementById('rtafMetarBody').innerHTML='<div style="color:var(--muted);padding:10px;text-align:center;">Loading…</div>';
+  document.getElementById('rtafTafBody').innerHTML='<div style="color:var(--muted);padding:10px;text-align:center;">Loading…</div>';
+
+  fetch('https://weather.rtaf.mi.th/api/v1/metar/desktop/getMetarAllStationJSON',{method:'POST'})
+    .then(r=>r.text()).then(txt=>{
+      const rows=(JSON.parse(txt.trim()).CURRENT_WEATHER||[])
+        .filter(s=>s.STATION_NAME&&s.STATION_NAME!=='-'&&s.METAR&&s.METAR!=='NIL');
+      const col=s=>catCol[s.STATION_COLOR_NAME]||'var(--muted)';
+      document.getElementById('rtafMetarBody').innerHTML=rows.length
+        ? rows.map(s=>`<tr>
+            <td style="white-space:nowrap;padding:4px 8px;vertical-align:top;">
+              <span style="font-weight:700;color:${col(s)};">${s.STATION_CODE}</span>
+              <div style="font-size:9px;color:var(--muted);">${s.STATION_NAME}</div>
+            </td>
+            <td style="padding:4px 6px;vertical-align:top;color:var(--muted);font-size:9px;white-space:nowrap;">${s.NEWS_TYPE||''}</td>
+            <td style="padding:4px 8px;vertical-align:top;word-break:break-all;color:var(--text1);font-family:monospace;font-size:10px;">${s.METAR}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="3" style="padding:10px;color:var(--muted);text-align:center;">No data</td></tr>';
+      document.getElementById('rtafUpdated').textContent='Updated '+ts();
+    })
+    .catch(()=>{
+      document.getElementById('rtafMetarBody').innerHTML=
+        `<tr><td colspan="3" style="padding:10px;font-size:10px;color:#ef4444;">
+          ⚠ CORS blocked — <a href="https://weather.rtaf.mi.th/wx/wx_new/About/Metar%20Taf/Metar.html" target="_blank" style="color:#60a5fa;">Open METAR page</a>
+        </td></tr>`;
+    });
+
+  fetch('https://weather.rtaf.mi.th/api/v1/taf/desktop/getTafJSON',{method:'POST'})
+    .then(r=>r.text()).then(txt=>{
+      const rows=(JSON.parse(txt.trim()).currentTaf||[])
+        .filter(s=>s.stationCode&&s.stationName&&s.stationName!=='-'&&s.main?.tafString);
+      document.getElementById('rtafTafBody').innerHTML=rows.length
+        ? rows.map(s=>{
+            const taf=(s.main.tafString||'').replace(/\n\s*/g,'<br>');
+            return `<tr>
+              <td style="white-space:nowrap;padding:4px 8px;vertical-align:top;">
+                <span style="font-weight:700;color:var(--accent2);">${s.stationCode}</span>
+                <div style="font-size:9px;color:var(--muted);">${s.stationName}</div>
+              </td>
+              <td style="padding:4px 8px;vertical-align:top;word-break:break-all;color:var(--text1);font-family:monospace;font-size:10px;">${taf}</td>
+            </tr>`;
+          }).join('')
+        : '<tr><td colspan="2" style="padding:10px;color:var(--muted);text-align:center;">No data</td></tr>';
+    })
+    .catch(()=>{
+      document.getElementById('rtafTafBody').innerHTML=
+        `<tr><td colspan="2" style="padding:10px;font-size:10px;color:#ef4444;">
+          ⚠ CORS blocked — <a href="https://weather.rtaf.mi.th/wx/wx_new/About/Metar%20Taf/Taf.html" target="_blank" style="color:#60a5fa;">Open TAF page</a>
+        </td></tr>`;
+    });
+}
 </script>
+
+<!-- RTAF Weather Modal -->
+<div id="rtafModal" style="display:none;position:fixed;inset:0;z-index:3500;background:rgba(0,0,0,0.88);align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;" onclick="if(event.target===this)closeRtafWeather()">
+  <div style="width:100%;max-width:1100px;background:var(--bg2);border-radius:10px;border:1px solid var(--border2);overflow:hidden;">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg1);border-bottom:1px solid var(--border2);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:13px;font-weight:700;color:var(--text1);">🌩 RTAF Weather</span>
+        <span style="font-size:10px;color:var(--muted);">METAR &amp; TAF · Auto-refresh 60s</span>
+        <span id="rtafUpdated" style="font-size:10px;color:var(--accent2);"></span>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="fetchRtafData()" style="font-size:10px;padding:3px 10px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;">⟳ Refresh</button>
+        <button onclick="closeRtafWeather()" style="font-size:10px;padding:3px 10px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;">✕ Close</button>
+      </div>
+    </div>
+    <!-- Body: 2 columns -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:200px;">
+      <!-- METAR -->
+      <div style="border-right:1px solid var(--border2);">
+        <div style="padding:6px 14px;background:var(--bg1);border-bottom:1px solid var(--border2);font-size:10px;font-weight:700;color:#22c55e;letter-spacing:.5px;">METAR / SPECI</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tbody id="rtafMetarBody">
+              <tr><td colspan="3" style="padding:10px;color:var(--muted);text-align:center;font-size:10px;">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- TAF -->
+      <div>
+        <div style="padding:6px 14px;background:var(--bg1);border-bottom:1px solid var(--border2);font-size:10px;font-weight:700;color:#60a5fa;letter-spacing:.5px;">TAF</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tbody id="rtafTafBody">
+              <tr><td colspan="2" style="padding:10px;color:var(--muted);text-align:center;font-size:10px;">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Legend -->
+    <div style="padding:6px 14px;background:var(--bg1);border-top:1px solid var(--border2);display:flex;gap:14px;font-size:9px;">
+      <span style="color:#22c55e;">● VFR</span>
+      <span style="color:#60a5fa;">● MVFR</span>
+      <span style="color:#ef4444;">● IFR</span>
+      <span style="color:#a855f7;">● LIFR</span>
+    </div>
+  </div>
+</div>
 </body>
 </html>
