@@ -1036,8 +1036,8 @@
   <!-- UNIT + RESULT (shared) -->
   <div class="dt-lbl">Unit</div>
   <div class="dt-units">
-    <button class="active" onclick="setUnit('km',this)">km</button>
-    <button onclick="setUnit('nm',this)">NM</button>
+    <button onclick="setUnit('km',this)">km</button>
+    <button class="active" onclick="setUnit('nm',this)">NM</button>
     <button onclick="setUnit('mi',this)">mi</button>
     <button onclick="setUnit('m',this)">m</button>
   </div>
@@ -2517,7 +2517,7 @@ renderList(airports);
 // ═══════════════════════════════════════════
 // DISTANCE TOOL
 // ═══════════════════════════════════════════
-let distMode=false, distUnit='km', activeTab='map';
+let distMode=false, distUnit='nm', activeTab='map';
 const UCONV={km:1,nm:.539957,mi:.621371,m:1000};
 const ULBL={km:'kilometers',nm:'nautical miles',mi:'miles',m:'meters'};
 const MAX_MAP_PTS=12, MAX_AP_ROWS=13;
