@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
@@ -444,7 +444,7 @@
       <div class="lp-header collapsed" id="lph-layers" onclick="togglePanel('layers')"
         <span style="font-size:11px;">🗂</span>
         <span class="lp-title">Layers</span>
-        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">14</span>
+        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">8</span>
         <span class="lp-chevron">▼</span>
       </div>
       <div class="lp-body collapsed" id="lpb-layers">
@@ -463,35 +463,10 @@
           <span class="layer-label">ATS Airspace (CTR/TMA)</span>
           <div class="ltog" id="ltog-ats"></div>
         </div>
-        <div class="layer-row" onclick="toggleLayer('firBoundary')">
-          <div class="layer-dot" style="background:#facc15;border-radius:0;height:2px;"></div>
-          <span class="layer-label">Bangkok FIR Boundary</span>
-          <div class="ltog" id="ltog-firBoundary"></div>
-        </div>
         <div class="layer-row" onclick="toggleLayer('accSectors')">
           <div class="layer-dot" style="background:linear-gradient(135deg,#3b82f6,#ec4899);border-radius:2px;"></div>
           <span class="layer-label">Bangkok ACC Sectors (12)</span>
           <div class="ltog" id="ltog-accSectors"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('tadiz')">
-          <div class="layer-dot" style="background:#22d3ee;border-radius:50%;"></div>
-          <span class="layer-label">TADIZ (ENR 5.2)</span>
-          <div class="ltog" id="ltog-tadiz"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('airways')">
-          <div class="layer-dot" style="background:linear-gradient(90deg,#22c55e,#60a5fa,#facc15,#f87171);border-radius:0;height:3px;"></div>
-          <span class="layer-label">ATS Airways A/B/G/R (ENR 3.1)</span>
-          <div class="ltog" id="ltog-airways"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('rnav')">
-          <div class="layer-dot" style="background:#3b82f6;border-radius:0;height:3px;"></div>
-          <span class="layer-label">RNAV Airways L/M/N/P/Y (ENR 3.3)</span>
-          <div class="ltog" id="ltog-rnav"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('sigPoints')">
-          <div class="layer-dot" style="background:#c084fc;font-size:8px;display:flex;align-items:center;justify-content:center;width:11px;height:11px;">◆</div>
-          <span class="layer-label">Significant Points (ENR 4.4)</span>
-          <div class="ltog" id="ltog-sigPoints"></div>
         </div>
         <div class="layer-row" onclick="toggleLayer('prohibited')">
           <div class="layer-dot" style="background:#ff4444;"></div>
@@ -1054,10 +1029,8 @@
 
 <div class="stats">
   <div>Aerodromes: <span id="stAP">48</span></div>
-  <div>FIR/Sectors: <span>12+1</span></div>
-  <div>TADIZ: <span>1</span></div>
+  <div>ACC Sectors: <span>12</span></div>
   <div>Nav Aids: <span>60</span></div>
-  <div>Airways: <span>48 ATS · 34 RNAV</span></div>
   <div>CTR/TMA: <span>20</span></div>
   <div>PRD/RST/DNG: <span>5/18/49</span></div>
   <div>AIRAC: <span>2026-05-14</span></div>
@@ -1481,624 +1454,13 @@ function flyToNav(lat,lon,id){
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CONVENTIONAL EN-ROUTE AIRWAYS (ENR 3.1) — SkyVector World Lo
-// ═══════════════════════════════════════════════════════════════
-
-LG.airways = L.layerGroup();
-LS.airways  = false;
-// not added to map on startup
-
-// Colors by route family — matches SkyVector/ICAO convention
-const AWY_CLR = { A:'#22c55e', B:'#60a5fa', G:'#facc15', R:'#f87171', W:'#fb923c', Y:'#f59e0b' };
-
-const airways = [
-  // ── A Routes ─────────────────────────────────────────────────
-  { id:'A1',   cat:'A', ul:'FL460', ll:'7,500 ft', dir:'Both',
-    wpts:[['BKKT', '135337N 1003546E'],['ROBKAT','141043N 1012508E'],['SELKAT','142020N 1015311E'],
-          ['TOPPERT','143808N 1024538E'],['SANOTT','145134N 1032548E'],['PASATT','145727N 1034726E'],
-          ['VENPOT','150645N 1042202E'],['UBLT', '151443N 1045157E'],['POTEVT','152153N 1052206E'],
-          ['BUTRAT','152506N 1053546E']]},
-  { id:'A202', cat:'A', ul:'FL460', ll:'FL125',    dir:'Both',
-    wpts:[['RAMEI','150240N 1030040E'],['GUROK','160329N 1041106E'],
-          ['OKENA','161608N 1042533E'],['SAV',  '163342N 1044556E']]},
-  { id:'A334', cat:'A', ul:'FL460', ll:'9,500 ft', dir:'Both',
-    wpts:[['HTY',  '065603N 1002317E'],['TAXEB','064641N 1004645E'],['PASVAT','061529N 1020431E']]},
-  { id:'A457', cat:'A', ul:'FL460', ll:'9,500 ft', dir:'Both',
-    wpts:[['HTY',  '065603N 1002317E'],['TAMOST','063208N 1002407E']]},
-  { id:'A464', cat:'A', ul:'FL460', ll:'3,500 ft', dir:'Both',
-    wpts:[['CMA',  '184558N 0985740E'],['ENBAT', '180941N 0991004E'],['TOPAST','172916N 0992358E'],
-          ['BEKOD','162117N 0994636E'],['SEMBO', '145359N 1001548E'],['BKKT', '135337N 1003546E'],
-          ['POLAK','132106N 1003454E'],['GUTSOT','124820N 1003454E'],['REGOST','120007N 1003454E'],
-          ['DIRAX','110007N 1003248E'],['TUSPUT','101948N 1003108E'],['UPNEP', '094213N 1002936E'],
-          ['APOBI','090147N 1002814E'],['GUPMO', '085012N 1002750E'],['RELIPT','080432N 1002619E'],
-          ['PIMET','073045N 1002449E'],['HTY',   '065603N 1002317E'],['KARMI','062940N 1003121E']]},
-  // ── B Routes ─────────────────────────────────────────────────
-  { id:'B202', cat:'B', ul:'FL460', ll:'FL270',    dir:'Both',
-    wpts:[['UBLT','151443N 1045157E'],['PAK',  '151148N 1054417E']]},
-  { id:'B204', cat:'B', ul:'FL460', ll:'FL140',    dir:'Both',
-    wpts:[['GOMES','132406N 1013506E'],['AGEDO','132419N 1022139E']]},
-  { id:'B205', cat:'B', ul:'FL460', ll:'FL160',    dir:'Both',
-    wpts:[['RYN',  '124643N 1014035E'],['OLDIR','125401N 1021325E'],['BOKAK','125736N 1022947E']]},
-  { id:'B218', cat:'B', ul:'FL460', ll:'4,000 ft', dir:'Both',
-    wpts:[['VTN',  '180037N 1023226E'],['NOGAD','173834N 1020021E'],['LOY', '172649N 1014323E'],
-          ['BOVGO','170740N 1014935E'],['CMP',  '163807N 1015920E']]},
-  { id:'B346', cat:'B', ul:'FL460', ll:'FL110',    dir:'Both',
-    wpts:[['BKKT', '135337N 1003546E'],['NOBERT','151636N 1004006E'],['PCB', '164034N 1011148E'],
-          ['UDIKU','170735N 1011952E'], ['OMGIVT','171709N 1012243E'],['YAKUA','174415N 1013052E']]},
-  { id:'B460', cat:'B', ul:'FL460', ll:'7,000 ft', dir:'Both',
-    wpts:[['KRT',  '145502N 1020823E'],['BODURT','154853N 1032127E'],['ROT', '160701N 1034620E'],
-          ['RURART','161943N 1041436E'],['SAV',  '163342N 1044556E']]},
-  { id:'B579', cat:'B', ul:'FL460', ll:'10,000 ft',dir:'Both',
-    wpts:[['PUT',  '080650N 0981825E'],['REBED','074332N 0983736E'],
-          ['NUTGUT','072803N 0985020E'],['DALANT','062808N 0993920E']]},
-  // ── G Routes ─────────────────────────────────────────────────
-  { id:'G331', cat:'G', ul:'FL460', ll:'7,000 ft', dir:'Both',
-    wpts:[['PADET','100007N 0981719E'],['DADSAT','090713N 0981749E'],
-          ['SUSID','083659N 0981808E'], ['PUT',  '080650N 0981825E']]},
-  { id:'G458', cat:'G', ul:'FL460', ll:'8,000 ft', dir:'Both',
-    wpts:[['BKKT', '135337N 1003546E'],['MOTNAT','131110N 1002306E'],['HOTEL','130006N 1001948E'],
-          ['UKERAT','120207N 1000110E'],['MENEX','110831N 0994543E'],['APRIL','110007N 0994307E'],
-          ['IKERAT','093146N 0991532E'],['STN',  '090746N 0990805E'],['LAMUL','084818N 0985208E'],
-          ['SAVSAT','083016N 0983729E'],['PUT',  '080650N 0981825E']]},
-  { id:'G463', cat:'G', ul:'FL460', ll:'10,000 ft',dir:'Both',
-    wpts:[['BKKT', '135337N 1003546E'],['TARED','142620N 0993129E'],['BETNOT','150554N 0981231E']]},
-  { id:'G473', cat:'G', ul:'FL460', ll:'10,000 ft',dir:'Both',
-    wpts:[['MAKAS','164947N 0982949E'],['PSL',  '164613N 1001729E'],['CMP',  '163807N 1015920E'],
-          ['VESUD','152108N 1043854E'],['OBKIB','151913N 1044249E'],['SAGAL','151757N 1044522E'],
-          ['UBLT','151443N 1045157E']]},
-  { id:'G474', cat:'G', ul:'FL460', ll:'FL150',    dir:'Both',
-    wpts:[['BKKT', '135337N 1003546E'],['ANKOS','135300N 1012742E'],['DOSBUT','135240N 1015002E'],
-          ['ANREN','135212N 1021838E'],['OMURO','135143N 1024559E']]},
-  // ── R Routes ─────────────────────────────────────────────────
-  { id:'R201', cat:'R', ul:'FL460', ll:'7,000 ft', dir:'Both',
-    wpts:[['BKKT','135337N 1003546E'],['BUT', '124000N 1010002E']]},
-  { id:'R202', cat:'R', ul:'FL460', ll:'FL130',    dir:'Both',
-    wpts:[['BIGVO','172830N 0984154E'],['PAE',  '180803N 1000958E'],
-          ['SUNGO','182312N 1002346E'],['NAN',  '184833N 1004657E']]},
-  { id:'R203', cat:'R', ul:'FL460', ll:'7,000 ft', dir:'Both',
-    wpts:[['PUT',  '080650N 0981825E'],['UBNENT','080520N 0974812E'],['SAPAM','080434N 0973300E']]},
-  { id:'R207', cat:'R', ul:'FL460', ll:'10,000 ft',dir:'Both',
-    wpts:[['SISUK','194804N 0980243E'],['MACHI','191306N 0983346E'],['LAMUN','190513N 0984044E'],
-          ['CMA',  '184558N 0985740E'],['MONLO','184702N 0993743E'],['IKISU','184739N 1000349E'],
-          ['BENDY','184752N 1001334E'],['NAN',  '184833N 1004657E'],['ANBOK','183635N 1011248E']]},
-  { id:'R215', cat:'R', ul:'FL460', ll:'10,000 ft',dir:'Both',
-    wpts:[['CTR',  '195656N 0995259E'],['DUBENT','193249N 1001207E'],
-          ['NAN',  '184833N 1004657E'],['TOMIPT','191105N 1011548E']]},
-  { id:'R325', cat:'R', ul:'FL460', ll:'7,000 ft', dir:'Both',
-    wpts:[['IKULA','100007N 0972114E'],['MUDMA','090050N 0975115E'],['UPSAB','083348N 0980452E'],
-          ['PUT',  '080650N 0981825E'],['URGAD','074615N 0984031E'],['OSVIP','074253N 0984409E'],
-          ['UTHAI','070008N 0992949E'],['DUBAX','062556N 1000737E']]},
-  { id:'R334', cat:'R', ul:'FL460', ll:'FL170',    dir:'Both',
-    wpts:[['RYN',  '124643N 1014035E'],['SAKDA','113654N 1030000E']]},
-  { id:'R345', cat:'R', ul:'FL460', ll:'FL220',    dir:'Both',
-    wpts:[['ROT',  '160701N 1034620E'],['GRASO','150917N 1034714E'],['PASATT','145727N 1034726E'],
-          ['PEKBA','144808N 1034733E'],['BIDEM','142154N 1034750E']]},
-  { id:'R468', cat:'R', ul:'FL460', ll:'8,000 ft', dir:'Both',
-    wpts:[['BKKT', '135337N 1003546E'],['UGIPA','134524N 1005221E'],['GORSI','133055N 1012128E'],
-          ['GOMES','132406N 1013506E'],['BERLU','131350N 1015620E'],['BOKAK','125736N 1022947E']]},
-  { id:'R470', cat:'R', ul:'FL460', ll:'7,000 ft', dir:'Both',
-    wpts:[['VTN',  '180037N 1023226E'],['ELNET','174625N 1023746E'],['UDN', '172305N 1024630E'],
-          ['POVEX','165905N 1030530E'],['DOTUS','163103N 1032732E'],['ROT', '160701N 1034620E'],
-          ['ENTEK','154755N 1041024E'],['ENLEP','153353N 1042800E'],['UBLT','151443N 1045157E']]},
-  { id:'R474', cat:'R', ul:'FL460', ll:'4,000 ft', dir:'Both',
-    wpts:[['BKKT', '135337N 1003546E'],['ALBOS','144442N 1010142E'],['CMP', '163807N 1015920E'],
-          ['LEDER','175044N 1022825E'],['VTN',  '180037N 1023226E']]},
-  // ── A581 (previously missing) ────────────────────────────────
-  { id:'A581', cat:'A', ul:'FL460', ll:'FL110',    dir:'Both',
-    wpts:[['BOMAS','172305N 0980549E'],['BIGVO','172830N 0984154E'],['PUMAM','180831N 0985001E'],
-          ['CMA',  '184558N 0985740E'],['ADLUS','190610N 0991320E'],['NUMDO','193243N 0993402E'],
-          ['CTR',  '195656N 0995259E'],['PONUK','201858N 1002306E']]},
-  // ── W Routes (ENR 3.3 / ENR 4.4) ────────────────────────────
-  { id:'W1',  cat:'W', ul:'FL460', ll:'FL140',    dir:'Both',
-    wpts:[['MALKT', '143110N 1011153E'],['UBLOD','143715N 1012612E'],['RAMEFIT','150240N 1030040E'],
-          ['RAMBUT','150554N 1032319E'],['GRASOT','150917N 1034714E'],['ASABOT','151209N 1042102E']]},
-  { id:'W4',  cat:'W', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['POVEXT','165905N 1030530E'],['DOTUST','163103N 1032732E'],
-          ['ENTEKT','154755N 1041024E'],['ENLEPT','153353N 1042800E']]},
-  { id:'W5',  cat:'W', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['ANPUST','165800N 1024651E'],['ALGITT','165300N 1024654E'],
-          ['SEDMOT','161733N 1031707E'],['ENTEKT','154755N 1041024E'],['ENLEPT','153353N 1042800E']]},
-  { id:'W6',  cat:'W', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['AKRETT','164016N 1030856E'],['EMRUTT','160019N 1023533E']]},
-  { id:'W7',  cat:'W', ul:'FL460', ll:'FL110',    dir:'Both',
-    wpts:[['VEGRAT','170334N 0983653E'],['BIGVOT','172830N 0984154E'],['PUMAMT','180831N 0985001E']]},
-  { id:'W9',  cat:'W', ul:'FL460', ll:'FL110',    dir:'Both',
-    wpts:[['BOKIBT','190433N 0982225E'],['VISEST','185811N 0983439E'],['PANTAT','181351N 0991917E'],
-          ['IGNAXT','175144N 0993339E'],['SARIMNT','173029N 0994737E'],['PIBIKT','171130N 1000027E'],
-          ['BLAFFT','151633N 1001751E']]},
-  { id:'W19', cat:'W', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['POLAKT','132106N 1003454E'],['GUTSOR','124820N 1003454E'],['REGOST','120007N 1003454E'],
-          ['DIRAX', '110007N 1003248E'],['TUSPUT','101948N 1003108E'],
-          ['UPNEPT','094213N 1002936E'],['ADNEPT','080344N 1010318E']]},
-  { id:'W20', cat:'W', ul:'FL460', ll:'FL110',    dir:'Both',
-    wpts:[['ADLUST','190610N 0991320E'],['NUMDOT','193243N 0993402E']]},
-  { id:'W32', cat:'W', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['GOKEXT','111815N 1002544E'],['ENRAGT','100223N 1000931E'],['SUPOIJT','101642N 1000120E'],
-          ['DORNAT','092459N 0994614E'],['ADLALT','091810N 0993106E'],['VEGNAT','091427N 0992251E'],
-          ['TEDOST','084833N 0990507E'],['TAVATT','084257N 0990416E'],
-          ['NULMAT','083118N 0990228E'],['LUXIRT','084719N 0990200E'],
-          ['SARERT','082127N 0990057E'],['TUNRAT','074736N 0991904E']]},
-  { id:'W38', cat:'W', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['RAMEFIT','150240N 1030040E'],['ANKIDT','154048N 1033058E']]},
-  { id:'W42', cat:'W', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['RAMEFIT','150240N 1030040E'],['PAKRIT','145202N 1025409E'],['TOPERT','143808N 1024538E'],
-          ['XIKMAT','142236N 1023626E'],['DULEM', '134416N 1021400E'],['ANRENT','135212N 1021838E'],
-          ['BERLUT','131350N 1015620E'],['NUGPAT','130255N 1014959E'],['RUPTAT','125839N 1014732E'],
-          ['ALEMIT','123626N 1012600E'],['PIDELT','122143N 1010514E'],['KIGOBT','130647N 1005106E'],
-          ['REGOST','120007N 1003454E'],['ASEKUT','120305N 1003905E'],
-          ['UPVILT','113836N 1001421E'],['EGUBOT','112838N 1000450E'],['MENEXT','110831N 0994543E']]},
-  { id:'W43', cat:'W', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['OKENAT','161608N 1042533E'],['CMP',   '163807N 1015920E']]},
-  // ── Extra Y Routes (ENR 3.3) ─────────────────────────────────
-  { id:'Y15', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['SANOTT','145134N 1032548E'],['GRASOT','150917N 1034714E'],['GUROKT','160329N 1041106E']]},
-  { id:'Y16', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['UPKUPT','140353N 1012655E'],['LIPLIT','141028N 1015756E'],['XIKMAT','142236N 1023626E'],
-          ['PEKBAT','144808N 1034733E']]},
-  { id:'Y17', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['OLBAGT','095849N 1001852E'],['APUSAT','100057N 1002007E'],['DONSIT','100738N 1002401E']]},
-  { id:'Y18', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['KENNET','064339N 1004132E'],['TONUVT','062319N 1011127E'],['PETACT','061740N 1011945E']]},
-  { id:'Y19', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['POXUNT','064718N 1010853E'],['LERNIT','062706N 1011618E'],['PETACT','061740N 1011945E']]},
-  { id:'Y20', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['MALKT', '143110N 1011153E'],['UBLOD','143715N 1012612E'],['RAMBUT','150554N 1032319E'],
-          ['GRASOT','150917N 1034714E'],['ASABOT','151209N 1042102E']]},
-  { id:'Y21', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['DOTUST','163103N 1032732E'],['ENTEKT','154755N 1041024E'],['ENLEPT','153353N 1042800E']]},
-  { id:'Y22', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['ANPUST','165800N 1024651E'],['ALGITT','165300N 1024654E'],
-          ['SEDMOT','161733N 1031707E'],['ENTEKT','154755N 1041024E'],['ENLEPT','153353N 1042800E']]},
-  { id:'Y35', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['YAKUAT','174415N 1013052E']]},
-  { id:'Y36', cat:'Y', ul:'FL460', ll:'FL155',    dir:'Both',
-    wpts:[['NAN', '184833N 1004657E'],['TOMINT','191105N 1011548E']]},
-];
-
-airways.forEach(rte => {
-  const clr = AWY_CLR[rte.cat] || '#94a3b8';
-  const pts = rte.wpts.map(([,dms]) => parseDMS(dms)).filter(Boolean);
-  if (pts.length < 2) return;
-
-  // Route line
-  const line = L.polyline(pts, { color:clr, weight:2, opacity:0.9 });
-
-  const wptRows = rte.wpts.map(([name,dms]) => {
-    const p = parseDMS(dms); if(!p)return'';
-    return `<div style="display:flex;gap:6px;align-items:center;padding:1px 0;">
-      <span style="font-size:10px;font-weight:700;color:${clr};min-width:54px;">${name}</span>
-      <span style="font-size:9px;color:var(--text2);font-family:monospace;">${p[0].toFixed(4)}°N ${p[1].toFixed(4)}°E</span>
-    </div>`;
-  }).join('');
-
-  line.bindPopup(`
-    <div class="as-hdr" style="background:linear-gradient(135deg,#0a1a0e,#0e2818);border-bottom-color:${clr}50;">
-      <div class="as-type" style="color:${clr};">ATS ROUTE · ENR 3.1</div>
-      <div class="as-des" style="color:${clr};">${rte.id}</div>
-    </div>
-    <div class="as-body">
-      <div class="as-row"><span class="as-lbl">Direction</span><span class="as-val">${rte.dir}</span></div>
-      <div class="as-row"><span class="as-lbl">Upper</span><span class="as-val">${rte.ul}</span></div>
-      <div class="as-row"><span class="as-lbl">Lower</span><span class="as-val">${rte.ll}</span></div>
-      <div class="as-row"><span class="as-lbl">Waypoints</span><span class="as-val">${rte.wpts.length}</span></div>
-      <div style="margin-top:6px;max-height:150px;overflow-y:auto;">${wptRows}</div>
-    </div>`, { maxWidth:320 });
-
-  LG.airways.addLayer(line);
-
-  // Route label at midpoint
-  const mid = pts[Math.floor(pts.length/2)];
-  LG.airways.addLayer(L.marker(mid, {
-    icon: L.divIcon({
-      html:`<div style="background:${clr};color:#000;font-size:8px;font-weight:800;padding:1px 4px;border-radius:3px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.5);opacity:.9;">${rte.id}</div>`,
-      iconSize:null, className:'', iconAnchor:[0,0]
-    }), interactive:false, zIndexOffset:-50
-  }));
-
-  // Waypoint dots
-  pts.forEach(pt => LG.airways.addLayer(
-    L.circleMarker(pt, {radius:3, color:clr, fillColor:clr, fillOpacity:1, weight:1})
-  ));
-});
-
-// ═══════════════════════════════════════════════════════════════
-// SIGNIFICANT POINTS (ENR 4.4) + RNAV AIRWAYS (ENR 3.3)
-// ═══════════════════════════════════════════════════════════════
-
-// ── Waypoint database (unique fixes incl. VOR positions) ───────
-const sigPoints = [
-  // VOR / DME positions (also used as RNAV fixes)
-  {id:'BKKT',  lat:13.8936, lon:100.5961, type:'VOR Fix',  routes:['L301','L507','L524','L880','M502','M633','M751','M757','M769','M904','N506','N891','P629','P646','Y7','Y8','Y13']},
-  {id:'PUT',   lat:8.1139,  lon:98.3069,  type:'VOR Fix',  routes:['L515','L645','L759','G458','P627','Y3','Y4','Y5','Y8']},
-  {id:'UDN',   lat:17.3847, lon:102.7750, type:'VOR Fix',  routes:['M648','Y1']},
-  {id:'KKN',   lat:16.4708, lon:102.7881, type:'VOR Fix',  routes:['Y2']},
-  {id:'RYN',   lat:12.7786, lon:101.6764, type:'VOR Fix',  routes:['M644','N891']},
-  {id:'BUT',   lat:12.6667, lon:101.0006, type:'VOR Fix',  routes:['M904','Y11']},
-  {id:'CPN',   lat:10.7111, lon:99.3656,  type:'VOR Fix',  routes:['Y5']},
-  {id:'STN',   lat:9.1294,  lon:99.1347,  type:'VOR Fix',  routes:['Y8']},
-  {id:'SMU',   lat:9.5469,  lon:100.0617, type:'VOR Fix',  routes:['Y4']},
-  {id:'CMA',   lat:18.7661, lon:98.9611,  type:'VOR Fix',  routes:['Y7']},
-  {id:'KBI',   lat:8.1075,  lon:98.9775,  type:'VOR Fix',  routes:['Y4']},
-  {id:'HTY',   lat:6.9342,  lon:100.3881, type:'VOR Fix',  routes:['Y9','Y10']},
-  // RNAV Fixes
-  {id:'PASTO', lat:14.0014, lon:99.5019,  type:'RNAV Fix', routes:['L301']},
-  {id:'TANEK', lat:14.0517, lon:98.9719,  type:'RNAV Fix', routes:['L301','M633']},
-  {id:'IGONIT',lat:14.4425, lon:99.9083,  type:'RNAV Fix', routes:['L507']},
-  {id:'NUNLIT',lat:14.8575, lon:99.3844,  type:'RNAV Fix', routes:['L507']},
-  {id:'LUDVIT',lat:15.4803, lon:98.5917,  type:'RNAV Fix', routes:['L507']},
-  {id:'IKULAT',lat:10.0019, lon:97.3539,  type:'RNAV Fix', routes:['L515']},
-  {id:'MUDMAT',lat:9.0139,  lon:97.8542,  type:'RNAV Fix', routes:['L515']},
-  {id:'UPSABT',lat:8.5633,  lon:98.0811,  type:'RNAV Fix', routes:['L515']},
-  {id:'IBETOT',lat:14.1767, lon:99.4961,  type:'RNAV Fix', routes:['L524']},
-  {id:'MIGRAT',lat:14.3064, lon:98.9853,  type:'RNAV Fix', routes:['L524','L877']},
-  {id:'NURDAT',lat:14.4142, lon:98.5561,  type:'RNAV Fix', routes:['L524']},
-  {id:'UBNENT',lat:8.0889,  lon:97.8033,  type:'RNAV Fix', routes:['L645']},
-  {id:'SAPAM', lat:8.0761,  lon:97.5500,  type:'RNAV Fix', routes:['L645']},
-  {id:'SATVAT',lat:8.4839,  lon:97.9656,  type:'RNAV Fix', routes:['L759']},
-  {id:'ANPANT',lat:8.8544,  lon:97.6222,  type:'RNAV Fix', routes:['L759']},
-  {id:'TAVUNT',lat:10.0000, lon:96.5533,  type:'RNAV Fix', routes:['L759']},
-  {id:'PUMORT',lat:14.2389, lon:98.7300,  type:'RNAV Fix', routes:['L877']},
-  {id:'ANKOST',lat:13.8833, lon:101.4617, type:'RNAV Fix', routes:['L880']},
-  {id:'DOSBUT',lat:13.8778, lon:101.8339, type:'RNAV Fix', routes:['L880']},
-  {id:'ANRENT',lat:13.8700, lon:102.3106, type:'RNAV Fix', routes:['L880']},
-  {id:'OMUROT',lat:13.8619, lon:102.7664, type:'RNAV Fix', routes:['L880']},
-  {id:'BONVOT',lat:13.7361, lon:99.7686,  type:'RNAV Fix', routes:['M502']},
-  {id:'AKATOT',lat:13.6211, lon:99.1719,  type:'RNAV Fix', routes:['M502']},
-  {id:'EKAVOT',lat:11.6269, lon:99.5069,  type:'RNAV Fix', routes:['M626']},
-  {id:'MENEXT',lat:11.1419, lon:99.7619,  type:'RNAV Fix', routes:['M626','Y3','Y5','Y8']},
-  {id:'NONELT',lat:10.8836, lon:99.8936,  type:'RNAV Fix', routes:['M626','Y4']},
-  {id:'APUSAT',lat:10.0158, lon:100.3353, type:'RNAV Fix', routes:['M626']},
-  {id:'SORTOT',lat:9.8981,  lon:100.3950, type:'RNAV Fix', routes:['M626','M769']},
-  {id:'UPNEPT',lat:9.7036,  lon:100.4933, type:'RNAV Fix', routes:['M626']},
-  {id:'VALSIT',lat:9.5189,  lon:100.5883, type:'RNAV Fix', routes:['M626','M757']},
-  {id:'SUPINT',lat:8.5764,  lon:101.0719, type:'RNAV Fix', routes:['M626']},
-  {id:'IKOGAT',lat:7.6597,  lon:101.5431, type:'RNAV Fix', routes:['M626']},
-  {id:'KADAXT',lat:6.2672,  lon:102.2617, type:'RNAV Fix', routes:['M626']},
-  {id:'MUBUST',lat:13.7583, lon:100.7283, type:'RNAV Fix', routes:['M633','P629']},
-  {id:'UGIPAT',lat:13.7567, lon:100.8725, type:'RNAV Fix', routes:['M633','N506']},
-  {id:'OLTUM', lat:13.7442, lon:101.8322, type:'RNAV Fix', routes:['M633']},
-  {id:'DULEM', lat:13.7378, lon:102.2333, type:'RNAV Fix', routes:['M633']},
-  {id:'TUPGO', lat:13.7303, lon:102.6550, type:'RNAV Fix', routes:['M633']},
-  {id:'ALUMOT',lat:10.7650, lon:101.8564, type:'RNAV Fix', routes:['M644','Y12']},
-  {id:'TONIK', lat:9.2933,  lon:101.9853, type:'RNAV Fix', routes:['M644','M904']},
-  {id:'DUGON', lat:8.0236,  lon:102.0969, type:'RNAV Fix', routes:['M644']},
-  {id:'ABTOK', lat:6.3050,  lon:102.2956, type:'RNAV Fix', routes:['M644']},
-  {id:'MUGNOT',lat:17.8519, lon:102.9647, type:'RNAV Fix', routes:['M648']},
-  {id:'BOPNU', lat:17.9739, lon:103.0144, type:'RNAV Fix', routes:['M648']},
-  {id:'POLAK', lat:13.3517, lon:100.5817, type:'RNAV Fix', routes:['M751']},
-  {id:'GUTSOT',lat:12.8056, lon:100.5817, type:'RNAV Fix', routes:['M751']},
-  {id:'REGOST',lat:12.0019, lon:100.5817, type:'RNAV Fix', routes:['M751']},
-  {id:'IDAGAT',lat:11.0019, lon:100.8967, type:'RNAV Fix', routes:['M751']},
-  {id:'EMELAT',lat:10.2136, lon:101.1247, type:'RNAV Fix', routes:['M751']},
-  {id:'MUBAN', lat:8.9114,  lon:101.4978, type:'RNAV Fix', routes:['M751']},
-  {id:'TIKAL', lat:8.0389,  lon:101.7467, type:'RNAV Fix', routes:['M751','Y11']},
-  {id:'GOLUD', lat:6.2850,  lon:102.2775, type:'RNAV Fix', routes:['M751']},
-  {id:'KASNIT',lat:13.0806, lon:100.6783, type:'RNAV Fix', routes:['M757']},
-  {id:'ASEKUT',lat:12.0517, lon:100.6514, type:'RNAV Fix', routes:['M757']},
-  {id:'NULBOT',lat:10.4886, lon:100.6119, type:'RNAV Fix', routes:['M757']},
-  {id:'MABKOT',lat:9.8025,  lon:100.5953, type:'RNAV Fix', routes:['M757']},
-  {id:'ROBDAT',lat:9.4328,  lon:100.5864, type:'RNAV Fix', routes:['M757']},
-  {id:'LOSDAT',lat:8.8989,  lon:100.5736, type:'RNAV Fix', routes:['M757']},
-  {id:'OBLEXT',lat:7.4967,  lon:100.5411, type:'RNAV Fix', routes:['M757','Y10']},
-  {id:'KARMIT',lat:6.4944,  lon:100.5225, type:'RNAV Fix', routes:['M757']},
-  {id:'LEBIM', lat:13.0875, lon:100.4736, type:'RNAV Fix', routes:['M769']},
-  {id:'SURMAT',lat:11.8561, lon:100.4425, type:'RNAV Fix', routes:['M769','Y5']},
-  {id:'GOKEXT',lat:11.3042, lon:100.4289, type:'RNAV Fix', routes:['M769']},
-  {id:'DONSIT',lat:10.1272, lon:100.4003, type:'RNAV Fix', routes:['M769']},
-  {id:'PINUNT',lat:9.4736,  lon:100.3850, type:'RNAV Fix', routes:['M769']},
-  {id:'RIPMUT',lat:9.1478,  lon:100.3772, type:'RNAV Fix', routes:['M769']},
-  {id:'DOXAST',lat:8.7825,  lon:100.3689, type:'RNAV Fix', routes:['M769']},
-  {id:'DANDOT',lat:7.5150,  lon:100.3400, type:'RNAV Fix', routes:['M769','Y9']},
-  {id:'RIGTOT',lat:6.7078,  lon:100.2511, type:'RNAV Fix', routes:['M769']},
-  {id:'KIGOBT',lat:13.1128, lon:100.8517, type:'RNAV Fix', routes:['M904','Y11']},
-  {id:'PIDELT',lat:12.3619, lon:101.0872, type:'RNAV Fix', routes:['M904','Y11']},
-  {id:'DIPUNT',lat:12.0825, lon:101.1697, type:'RNAV Fix', routes:['M904']},
-  {id:'SIRATT',lat:10.5806, lon:101.6111, type:'RNAV Fix', routes:['M904']},
-  {id:'TIDART',lat:6.8750,  lon:102.8333, type:'RNAV Fix', routes:['M904']},
-  {id:'GORSIT',lat:13.5153, lon:101.3578, type:'RNAV Fix', routes:['N506']},
-  {id:'GOMEST',lat:13.4017, lon:101.5850, type:'RNAV Fix', routes:['N506']},
-  {id:'BERLUT',lat:13.2306, lon:101.9389, type:'RNAV Fix', routes:['N506']},
-  {id:'BOKAKT',lat:12.9600, lon:102.4964, type:'RNAV Fix', routes:['N506']},
-  {id:'DOLNIT',lat:13.2944, lon:101.1800, type:'RNAV Fix', routes:['N891','P629','Y12']},
-  {id:'ANOBOT',lat:11.0564, lon:102.2450, type:'RNAV Fix', routes:['N891']},
-  {id:'BENSAT',lat:10.4419, lon:102.4417, type:'RNAV Fix', routes:['N891']},
-  {id:'ANPUBT',lat:7.8614,  lon:97.8711,  type:'RNAV Fix', routes:['P627']},
-  {id:'RUSETT',lat:7.7711,  lon:97.7158,  type:'RNAV Fix', routes:['P627']},
-  {id:'NUGPAT',lat:13.0483, lon:101.8333, type:'RNAV Fix', routes:['P629']},
-  {id:'OLDIRT',lat:12.9003, lon:102.2236, type:'RNAV Fix', routes:['P629']},
-  {id:'VAPVUT',lat:12.7836, lon:102.5303, type:'RNAV Fix', routes:['P629']},
-  {id:'TAREDT',lat:14.4389, lon:99.5247,  type:'RNAV Fix', routes:['P646']},
-  {id:'BETNOT',lat:15.0983, lon:98.2086,  type:'RNAV Fix', routes:['P646']},
-  {id:'TERCOT',lat:16.9306, lon:102.5522, type:'RNAV Fix', routes:['Y1']},
-  {id:'UBLOD', lat:14.6208, lon:101.4367, type:'RNAV Fix', routes:['Y1','Y2']},
-  {id:'PIPOBT',lat:14.3767, lon:101.3206, type:'RNAV Fix', routes:['Y1','Y2','Y13']},
-  {id:'NEMTET',lat:16.0625, lon:102.4869, type:'RNAV Fix', routes:['Y2']},
-  {id:'DORNAT',lat:9.4164,  lon:99.7706,  type:'RNAV Fix', routes:['Y3']},
-  {id:'TEDOST',lat:8.8094,  lon:99.0853,  type:'RNAV Fix', routes:['Y3']},
-  {id:'MONBUT',lat:8.4497,  lon:98.6822,  type:'RNAV Fix', routes:['Y3']},
-  {id:'MESEM', lat:9.1219,  lon:99.8044,  type:'RNAV Fix', routes:['Y4']},
-  {id:'RECNOT',lat:8.5736,  lon:99.4736,  type:'RNAV Fix', routes:['Y4']},
-  {id:'BITENT',lat:8.4497,  lon:99.3414,  type:'RNAV Fix', routes:['Y4']},
-  {id:'OSPEXT',lat:8.3375,  lon:99.2219,  type:'RNAV Fix', routes:['Y4']},
-  {id:'IGEVIT',lat:8.6111,  lon:98.3889,  type:'RNAV Fix', routes:['Y5']},
-  {id:'ANDAX', lat:9.0781,  lon:98.5958,  type:'RNAV Fix', routes:['Y5']},
-  {id:'NOMEKT',lat:9.5678,  lon:98.8097,  type:'RNAV Fix', routes:['Y5']},
-  {id:'EGUBOT',lat:11.4772, lon:100.0806, type:'RNAV Fix', routes:['Y5']},
-  {id:'UPVILT',lat:11.6433, lon:100.2392, type:'RNAV Fix', routes:['Y5']},
-  {id:'PANTAT',lat:18.2308, lon:99.3214,  type:'RNAV Fix', routes:['Y7']},
-  {id:'KEXILT',lat:17.7011, lon:99.4983,  type:'RNAV Fix', routes:['Y7']},
-  {id:'IGPOPT',lat:16.8339, lon:99.7856,  type:'RNAV Fix', routes:['Y7']},
-  {id:'PAKMOT',lat:16.3369, lon:99.9489,  type:'RNAV Fix', routes:['Y7']},
-  {id:'BLAFF', lat:15.2758, lon:100.2975, type:'RNAV Fix', routes:['Y7']},
-  {id:'MOTNAT',lat:13.1861, lon:100.3850, type:'RNAV Fix', routes:['Y8']},
-  {id:'SABIST',lat:12.9997, lon:100.1903, type:'RNAV Fix', routes:['Y8']},
-  {id:'VANKOT',lat:12.5864, lon:99.7606,  type:'RNAV Fix', routes:['Y8']},
-  {id:'BUXELT',lat:11.7283, lon:99.7611,  type:'RNAV Fix', routes:['Y8']},
-  {id:'IKERAT',lat:9.5294,  lon:99.2589,  type:'RNAV Fix', routes:['Y8']},
-  {id:'LAMULT',lat:8.8050,  lon:98.8689,  type:'RNAV Fix', routes:['Y8']},
-  {id:'SAVSAT',lat:8.5044,  lon:98.6247,  type:'RNAV Fix', routes:['Y8']},
-  {id:'NOMEPT',lat:11.6417, lon:101.0817, type:'RNAV Fix', routes:['Y11']},
-  {id:'ANBUXT',lat:10.3603, lon:101.3189, type:'RNAV Fix', routes:['Y11']},
-  {id:'OSROGT',lat:8.9722,  lon:101.5753, type:'RNAV Fix', routes:['Y11']},
-  {id:'PASVAT',lat:6.2581,  lon:102.0753, type:'RNAV Fix', routes:['Y11']},
-  {id:'ALEMIT',lat:12.6072, lon:101.4333, type:'RNAV Fix', routes:['Y12']},
-  {id:'RUKSAT',lat:14.5642, lon:101.9200, type:'RNAV Fix', routes:['Y13']},
-  {id:'PAKRIT',lat:14.8672, lon:102.9025, type:'RNAV Fix', routes:['Y13']},
-  {id:'GRASOT',lat:15.1547, lon:103.7872, type:'RNAV Fix', routes:['Y13']},
-  {id:'SELKAT',lat:14.3389, lon:101.8864, type:'RNAV Fix', routes:['Y14']},
-  {id:'ADLAL', lat:9.3028,  lon:99.5183,  type:'RNAV Fix', routes:['W32']},
-  {id:'ADLUS', lat:19.1028, lon:99.2222,  type:'RNAV Fix', routes:['A581','W20']},
-  {id:'ADNEP', lat:8.0622,  lon:101.0550, type:'RNAV Fix', routes:['W19']},
-  {id:'YAKUA', lat:17.7375, lon:101.5144, type:'RNAV Fix', routes:['B346','Y35']},
-];
-
-// ── RNAV Route definitions (using sigPoints IDs) ────────────────
-const rnavRoutes = [
-  {id:'L301', ul:'FL460', ll:'7,500 ft', dir:'Both',   cat:'L',
-   pts:['BKKT','PASTO','TANEK']},
-  {id:'L507', ul:'FL460', ll:'9,500 ft', dir:'Both',   cat:'L',
-   pts:['BKKT','IGONIT','NUNLIT','LUDVIT']},
-  {id:'L515', ul:'FL460', ll:'10,500 ft',dir:'Both',   cat:'L',
-   pts:['IKULAT','MUDMAT','UPSABT','PUT']},
-  {id:'L524', ul:'FL460', ll:'9,500 ft', dir:'S',      cat:'L',
-   pts:['BKKT','IBETOT','MIGRAT','NURDAT']},
-  {id:'L645', ul:'FL460', ll:'6,500 ft', dir:'Both',   cat:'L',
-   pts:['PUT','UBNENT','SAPAM']},
-  {id:'L759', ul:'FL460', ll:'6,500 ft', dir:'Both',   cat:'L',
-   pts:['PUT','SATVAT','ANPANT','TAVUNT']},
-  {id:'L877', ul:'FL460', ll:'9,500 ft', dir:'S',      cat:'L',
-   pts:['MIGRAT','PUMORT']},
-  {id:'L880', ul:'FL460', ll:'10,500 ft',dir:'N',      cat:'L',
-   pts:['BKKT','ANKOST','DOSBUT','ANRENT','OMUROT']},
-  {id:'M502', ul:'FL460', ll:'10,000 ft',dir:'E',      cat:'M',
-   pts:['BKKT','BONVOT','AKATOT']},
-  {id:'M626', ul:'FL460', ll:'9,500 ft', dir:'N',      cat:'M',
-   pts:['EKAVOT','MENEXT','NONELT','APUSAT','SORTOT','UPNEPT','VALSIT','SUPINT','IKOGAT','KADAXT']},
-  {id:'M633', ul:'FL460', ll:'FL255',    dir:'E',      cat:'M',
-   pts:['TANEK','MUBUST','UGIPAT','OLTUM','DULEM','TUPGO']},
-  {id:'M644', ul:'FL460', ll:'FL285',    dir:'N',      cat:'M',
-   pts:['RYN','ALUMOT','TONIK','DUGON','ABTOK']},
-  {id:'M648', ul:'FL460', ll:'6,500 ft', dir:'S',      cat:'M',
-   pts:['UDN','MUGNOT','BOPNU']},
-  {id:'M751', ul:'FL460', ll:'6,500 ft', dir:'N',      cat:'M',
-   pts:['BKKT','POLAK','GUTSOT','REGOST','IDAGAT','EMELAT','MUBAN','TIKAL','GOLUD']},
-  {id:'M757', ul:'FL460', ll:'FL155',    dir:'S',      cat:'M',
-   pts:['BKKT','KASNIT','ASEKUT','NULBOT','MABKOT','VALSIT','ROBDAT','LOSDAT','OBLEXT','KARMIT']},
-  {id:'M769', ul:'FL460', ll:'FL155',    dir:'N',      cat:'M',
-   pts:['BKKT','LEBIM','SURMAT','GOKEXT','DONSIT','SORTOT','PINUNT','RIPMUT','DOXAST','DANDOT','RIGTOT']},
-  {id:'M904', ul:'FL460', ll:'6,500 ft', dir:'S',      cat:'M',
-   pts:['BKKT','KIGOBT','BUT','PIDELT','DIPUNT','SIRATT','TONIK','TIDART']},
-  {id:'N506', ul:'FL460', ll:'7,500 ft', dir:'E',      cat:'N',
-   pts:['BKKT','UGIPAT','GORSIT','GOMEST','BERLUT','BOKAKT']},
-  {id:'N891', ul:'FL460', ll:'FL160',    dir:'Both',   cat:'N',
-   pts:['BKKT','DOLNIT','RYN','ANOBOT','BENSAT']},
-  {id:'P627', ul:'FL460', ll:'6,500 ft', dir:'W',      cat:'P',
-   pts:['PUT','ANPUBT','RUSETT']},
-  {id:'P629', ul:'FL460', ll:'7,500 ft', dir:'W',      cat:'P',
-   pts:['BKKT','MUBUST','DOLNIT','NUGPAT','OLDIRT','VAPVUT']},
-  {id:'P646', ul:'FL460', ll:'9,500 ft', dir:'Both',   cat:'P',
-   pts:['BKKT','TAREDT','BETNOT']},
-  {id:'Y1',  ul:'FL460', ll:'12,000 ft',dir:'Both',   cat:'Y',
-   pts:['UDN','TERCOT','UBLOD','PIPOBT']},
-  {id:'Y2',  ul:'FL460', ll:'12,000 ft',dir:'Both',   cat:'Y',
-   pts:['KKN','NEMTET','UBLOD','PIPOBT']},
-  {id:'Y3',  ul:'FL460', ll:'7,000 ft', dir:'S',      cat:'Y',
-   pts:['MENEXT','DORNAT','TEDOST','MONBUT','PUT']},
-  {id:'Y4',  ul:'FL460', ll:'7,000 ft', dir:'Both',   cat:'Y',
-   pts:['NONELT','SMU','MESEM','RECNOT','BITENT','OSPEXT','KBI']},
-  {id:'Y5',  ul:'FL460', ll:'6,500 ft', dir:'N',      cat:'Y',
-   pts:['PUT','IGEVIT','ANDAX','NOMEKT','CPN','MENEXT','EGUBOT','UPVILT','SURMAT']},
-  {id:'Y7',  ul:'FL460', ll:'6,500 ft', dir:'S',      cat:'Y',
-   pts:['CMA','PANTAT','KEXILT','IGPOPT','PAKMOT','BLAFF','BKKT']},
-  {id:'Y8',  ul:'FL460', ll:'7,500 ft', dir:'S',      cat:'Y',
-   pts:['BKKT','MOTNAT','SABIST','VANKOT','BUXELT','MENEXT','IKERAT','STN','LAMULT','SAVSAT','PUT']},
-  {id:'Y9',  ul:'FL460', ll:'6,500 ft', dir:'Both',   cat:'Y',
-   pts:['DANDOT','HTY']},
-  {id:'Y10', ul:'FL460', ll:'6,500 ft', dir:'Both',   cat:'Y',
-   pts:['OBLEXT','HTY']},
-  {id:'Y11', ul:'FL460', ll:'FL155',    dir:'S',      cat:'Y',
-   pts:['KIGOBT','BUT','PIDELT','NOMEPT','ANBUXT','OSROGT','TIKAL','PASVAT']},
-  {id:'Y12', ul:'FL460', ll:'FL155',    dir:'N',      cat:'Y',
-   pts:['DOLNIT','ALEMIT','ALUMOT']},
-  {id:'Y13', ul:'FL460', ll:'6,500 ft', dir:'W',      cat:'Y',
-   pts:['BKKT','PIPOBT','RUKSAT','PAKRIT','GRASOT']},
-];
-
-// ── Layer Groups ────────────────────────────────────────────────
-LG.sigPoints = L.layerGroup();
-LG.rnav      = L.layerGroup();
-LS.sigPoints = false;
-LS.rnav      = false;
-// not added on startup
-
-// ── Route colours by category ───────────────────────────────────
-const RNAV_CLR = { L:'#3b82f6', M:'#a855f7', N:'#06b6d4', P:'#10b981', Y:'#f59e0b', W:'#ef4444' };
-const DIR_LABEL = { N:'Northbound', S:'Southbound', E:'Eastbound', W:'Westbound', Both:'Bi-directional' };
-
-// ── Build sigPoints index by ID ─────────────────────────────────
-const spIdx = {};
-sigPoints.forEach(p => spIdx[p.id] = p);
-
-// ── Render RNAV airways first (below waypoints) ─────────────────
-const rnavMarkers = []; // {marker, data}
-
-rnavRoutes.forEach(rte => {
-  const pts = rte.pts.map(id => spIdx[id]).filter(Boolean);
-  if (pts.length < 2) return;
-  const clr = RNAV_CLR[rte.cat] || '#94a3b8';
-  const latlngs = pts.map(p => [p.lat, p.lon]);
-
-  const line = L.polyline(latlngs, {
-    color: clr, weight: 2, opacity: 0.9, dashArray: rte.dir !== 'Both' ? '8,4' : null
-  });
-
-  const wptList = pts.map(p =>
-    `<div style="display:flex;gap:6px;align-items:center;padding:1px 0;">
-       <span style="font-size:9px;font-weight:700;color:${clr};min-width:52px;">${p.id}</span>
-       <span style="font-size:9px;color:var(--text2);font-family:monospace;">${p.lat.toFixed(4)}°N ${p.lon.toFixed(4)}°E</span>
-     </div>`).join('');
-
-  line.bindPopup(`
-    <div class="as-hdr" style="background:linear-gradient(135deg,#0a1a2e,#102040);border-bottom-color:${clr}50;">
-      <div class="as-type" style="color:${clr};">RNAV ROUTE · ENR 3.3</div>
-      <div class="as-des" style="color:${clr};">${rte.id}</div>
-    </div>
-    <div class="as-body">
-      <div class="as-row"><span class="as-lbl">Direction</span><span class="as-val">${DIR_LABEL[rte.dir]||rte.dir}</span></div>
-      <div class="as-row"><span class="as-lbl">Upper</span><span class="as-val">${rte.ul}</span></div>
-      <div class="as-row"><span class="as-lbl">Lower</span><span class="as-val">${rte.ll}</span></div>
-      <div class="as-row"><span class="as-lbl">Waypoints</span><span class="as-val">${pts.length}</span></div>
-      <div style="margin-top:6px;max-height:140px;overflow-y:auto;">${wptList}</div>
-    </div>`, { maxWidth: 310 });
-
-  LG.rnav.addLayer(line);
-
-  // Route label at midpoint
-  const mid = latlngs[Math.floor(latlngs.length / 2)];
-  const lbl = L.marker(mid, {
-    icon: L.divIcon({
-      html: `<div style="background:${clr};color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.4);">${rte.id}</div>`,
-      iconSize: null, className: '', iconAnchor: [0, 0]
-    }),
-    interactive: false, zIndexOffset: -100
-  });
-  LG.rnav.addLayer(lbl);
-});
-
-// ── Render significant points ────────────────────────────────────
-const SP_TYPE_CFG = {
-  'VOR Fix':  { color:'#c084fc', symbol:'✦', size:18 },
-  'RNAV Fix': { color:'#94a3b8', symbol:'◆', size:14 },
-};
-
-sigPoints.forEach(p => {
-  const cfg = SP_TYPE_CFG[p.type] || SP_TYPE_CFG['RNAV Fix'];
-  const isVor = p.type === 'VOR Fix';
-  const routeTags = p.routes.map(r => {
-    const clr = RNAV_CLR[r[0]] || '#94a3b8';
-    return `<span style="background:${clr}22;color:${clr};border:1px solid ${clr}55;border-radius:3px;padding:1px 5px;font-size:9px;font-weight:700;">${r}</span>`;
-  }).join(' ');
-
-  const icon = L.divIcon({
-    html: `<div style="width:${cfg.size}px;height:${cfg.size}px;display:flex;align-items:center;justify-content:center;font-size:${isVor?11:9}px;color:${cfg.color};text-shadow:0 0 4px rgba(0,0,0,.8);">${cfg.symbol}</div>`,
-    iconSize: [cfg.size, cfg.size], iconAnchor: [cfg.size/2, cfg.size/2], className: ''
-  });
-
-  const m = L.marker([p.lat, p.lon], { icon, zIndexOffset: 50 });
-  m.bindPopup(`
-    <div class="as-hdr" style="background:linear-gradient(135deg,#0d1230,#1a1060);border-bottom-color:${cfg.color}50;">
-      <div class="as-type" style="color:${cfg.color};">${p.type} · ENR 4.4</div>
-      <div class="as-des" style="color:${cfg.color};font-size:18px;">${p.id}</div>
-    </div>
-    <div class="as-body">
-      <div class="as-row"><span class="as-lbl">Lat/Lon</span><span class="as-val">${p.lat.toFixed(4)}°N ${p.lon.toFixed(4)}°E</span></div>
-      <div class="as-row" style="flex-wrap:wrap;gap:3px;"><span class="as-lbl">Routes</span><span style="display:flex;gap:3px;flex-wrap:wrap;">${routeTags}</span></div>
-    </div>`, { maxWidth: 270 });
-
-  m.bindTooltip(p.id, { permanent: false, direction: 'top', offset: [0, -4], className: '', opacity: 0.92 });
-  LG.sigPoints.addLayer(m);
-  rnavMarkers.push({ marker: m, data: p });
-});
-
-// ═══════════════════════════════════════════════════════════════
-// FIR / ACC SECTORS / TADIZ  (ENR 2.1, ENR 5.2)
+// ACC SECTORS  (ENR 2.1)
 // ═══════════════════════════════════════════════════════════════
 
 // ── Layer groups ────────────────────────────────────────────────
-LG.firBoundary = L.layerGroup();
 LG.accSectors  = L.layerGroup();
-LG.tadiz       = L.layerGroup();
-LS.firBoundary = false;
 LS.accSectors  = false;
-LS.tadiz       = false;
 // not added on startup
-
-// ── TADIZ Boundary (ENR 5.2) ────────────────────────────────────
-// Follows Thai land border on north/west; sea boundary below
-const TADIZ_PTS = [
-  // East/Gulf coast turning points
-  [11.65,102.9167],[9.8139,101.7806],[9.7167,101.8139],[9.7,101.8167],
-  [9.4806,101.8972],[9.2167,101.9806],[9.1833,101.9833],[8.8667,102.2167],
-  [8.7833,102.2806],[8.7,102.4417],[8.55,102.6333],[8.4833,102.7167],
-  [7.825,103.0917],[7.3667,103.7083],
-  // South/KL FIR boundary
-  [6.8333,102.3533],[6.4633,102.16],[6.4583,102.1667],[6.2417,102.0933],
-  // Malaysia/west coast
-  [6.475,99.6533],[6.5033,99.5567],[6.4817,99.5117],[6.3067,99.4583],
-  [6.2717,99.3217],[6.3,99.1117],[5.95,98.025],[6.3633,97.9],
-  // Andaman Sea (far west)
-  [7.0967,96.6083],[7.7683,95.5517],[7.7833,95.53],[7.8,95.5467],
-  [7.9583,95.6967],[8.165,95.6544],[8.2297,95.6531],[8.7531,95.6283],
-  [8.8011,95.6278],[9.2883,95.6086],[9.6333,95.5903],
-  // Turn north
-  [9.7583,96.4931],[9.6764,97.4433],[9.6233,97.6267],[9.6006,97.7247],
-  [9.5942,97.7581],[9.5817,97.8533],[9.5747,97.8694],[9.5375,97.9389],
-  // Continue along FIR north boundary (simplified – follows Thai border)
-  [10.0019,97.8217],[10.0019,96.4972],
-];
-
-L.polygon(TADIZ_PTS,{
-  color:'#22d3ee', weight:1.5, fillColor:'#22d3ee', fillOpacity:0.06, dashArray:'10,6'
-}).bindPopup(`<div class="as-hdr" style="background:linear-gradient(135deg,#0a2030,#103050);border-bottom:1px solid #22d3ee40;">
-  <div class="as-type" style="color:#22d3ee;">ADIZ · ENR 5.2</div>
-  <div class="as-des" style="color:#22d3ee;">TADIZ</div>
-  <div class="as-name">Thailand Air Defense Identification Zone</div>
-</div><div class="as-body">
-  <div class="as-row"><span class="as-lbl">Lower</span><span class="as-val">Surface (land &amp; sea)</span></div>
-  <div class="as-row"><span class="as-lbl">Note</span><span class="as-val">Report to ATC when entering</span></div>
-</div>`,{maxWidth:280}).addTo(LG.tadiz);
-
-// ── Bangkok FIR Boundary (ENR 2.1) ──────────────────────────────
-// Follows national borders on land — key vertices for the sea/south portion
-const FIR_SEA_PTS = [
-  // NW corner (land border with Myanmar, simplified)
-  [20.45,99.893],[20.36,99.53],[20.178,99.05],[19.942,99.02],[19.601,98.661],
-  [19.354,98.498],[19.11,97.98],[18.804,98.002],[18.41,98.198],[17.93,97.976],
-  [17.201,98.191],[16.63,98.002],[16.054,98.216],[15.4,98.49],[15.183,98.245],
-  [14.75,98.034],[14.233,98.48],[13.765,98.488],
-  // West coast Gulf
-  [13.601,99.395],[13.437,99.978],[12.59,99.95],[11.773,99.84],
-  [11.4,99.55],[10.82,99.33],[10.397,99.176],[10.068,99.183],
-  [9.69,99.034],[9.212,99.207],[8.838,98.993],
-  // Andaman coast
-  [8.628,98.302],[8.123,98.302],[7.819,98.33],[7.488,98.531],
-  [7.188,99.661],[6.82,100.22],[6.528,100.505],
-  // FIR south sea boundary
-  [6.5022,99.4969],[7.2522,97.9972],[10.0019,96.4972],
-  // FIR west boundary (north along Myanmar FIR border — simplified)
-  // ... back to 20.45,99.893
-];
-
-L.polygon(FIR_SEA_PTS,{
-  color:'#facc15', weight:2, fillColor:'transparent', fillOpacity:0, dashArray:'12,6', interactive:false
-}).bindTooltip('Bangkok FIR',{permanent:false,direction:'center',opacity:.8})
-  .addTo(LG.firBoundary);
-
-// FIR label
-L.marker([14.5,102.0],{icon:L.divIcon({
-  html:`<div style="font-size:11px;font-weight:800;color:#facc15;text-shadow:0 1px 4px rgba(0,0,0,.8);letter-spacing:2px;opacity:.7;pointer-events:none;">BANGKOK FIR</div>`,
-  className:'', iconAnchor:[50,10]
-}), interactive:false}).addTo(LG.firBoundary);
 
 // ── Bangkok ACC Sectors (ENR 2.1) ───────────────────────────────
 const ACC_SECTORS = [
@@ -3907,6 +3269,38 @@ const TAF_BULK_CACHE    = {};  // { ICAO: raw TAF string }
 let METAR_BULK_TS = 0;
 let TAF_BULK_TS   = 0;
 
+// RTAF airports that report weather under a different station ID
+const RTAF_WX_MAP = {
+  VTBL:'VTML', VTPI:'VTMI', VTBK:'VTMK',
+  VTBW:'VTMW', VTUZ:'VTEZ', VTBP:'VTMP', VTSK:'VTDT',
+  VTPP:'VTNP', VTUD:'VTED', VTUU:'VTEU', VTCC:'VTNC',
+  VTSS:'VTDS', VTSB:'VTDB',
+  VTBD:'VTMD'
+};
+const RTAF_METAR_CACHE = {};  // { STATION_CODE: raw METAR string }
+const RTAF_TAF_CACHE   = {};  // { STATION_CODE: raw TAF string }
+let RTAF_TS = 0;
+
+async function fetchAllRTAFData(){
+  const now = Date.now();
+  if(now - RTAF_TS < 600000 && Object.keys(RTAF_METAR_CACHE).length) return;
+  await Promise.all([
+    fetch('https://weather.rtaf.mi.th/api/v1/metar/desktop/getMetarAllStationJSON',{method:'POST'})
+      .then(r=>r.text()).then(txt=>{
+        (JSON.parse(txt.trim()).CURRENT_WEATHER||[])
+          .filter(s=>s.STATION_CODE&&s.METAR&&s.METAR!=='NIL')
+          .forEach(s=>{ RTAF_METAR_CACHE[s.STATION_CODE.toUpperCase()]=s.METAR; });
+      }).catch(()=>{}),
+    fetch('https://weather.rtaf.mi.th/api/v1/taf/desktop/getTafJSON',{method:'POST'})
+      .then(r=>r.text()).then(txt=>{
+        (JSON.parse(txt.trim()).currentTaf||[])
+          .filter(s=>s.stationCode&&s.main?.tafString)
+          .forEach(s=>{ RTAF_TAF_CACHE[s.stationCode]=s.main.tafString; });
+      }).catch(()=>{})
+  ]);
+  RTAF_TS = now;
+}
+
 // ── METAR: VATSIM bulk (CORS ✅, reliable for Thai VT airports) ─────────────
 async function fetchAllMETARs(){
   const now = Date.now();
@@ -3962,7 +3356,19 @@ async function fetchWX(icao){
   const cache = WX_CACHE[key];
   if(cache && (now - cache.ts) < 600000) return cache;
 
-  // METAR (VATSIM) + TAF (NOAA) in parallel — both required
+  const wxKey = RTAF_WX_MAP[key] || key;
+
+  if(RTAF_WX_MAP[key]){
+    // Mapped RTAF airports: use RTAF API (VTML/VTMI/… not on VATSIM)
+    await fetchAllRTAFData().catch(()=>{});
+    const metar = RTAF_METAR_CACHE[wxKey] || null;
+    const taf   = RTAF_TAF_CACHE[wxKey]   || null;
+    const result = { metar, taf, ts: now };
+    WX_CACHE[key] = result;
+    return result;
+  }
+
+  // Regular airports: METAR (VATSIM) + TAF (NOAA) in parallel
   await Promise.all([
     fetchAllMETARs().catch(()=>{}),
     fetchAllTAFs().catch(()=>{})
@@ -3970,8 +3376,8 @@ async function fetchWX(icao){
   // NOAA decoded (fltCat + structured) — best-effort background, never blocks display
   fetchNoaaMetarDecoded().catch(()=>{});
 
-  const metar = METAR_BULK_CACHE[key] || null;
-  const taf   = TAF_BULK_CACHE[key]   || null;
+  const metar = METAR_BULK_CACHE[wxKey] || null;
+  const taf   = TAF_BULK_CACHE[wxKey]   || null;
 
   const result = { metar, taf, ts: now };
   WX_CACHE[key] = result;
@@ -4191,7 +3597,9 @@ async function loadWXIntoPopup(icao, force=false){
     Object.keys(METAR_BULK_CACHE).forEach(k=>delete METAR_BULK_CACHE[k]);
     Object.keys(METAR_DECODED_CACHE).forEach(k=>delete METAR_DECODED_CACHE[k]);
     Object.keys(TAF_BULK_CACHE).forEach(k=>delete TAF_BULK_CACHE[k]);
-    METAR_BULK_TS=0; TAF_BULK_TS=0;
+    Object.keys(RTAF_METAR_CACHE).forEach(k=>delete RTAF_METAR_CACHE[k]);
+    Object.keys(RTAF_TAF_CACHE).forEach(k=>delete RTAF_TAF_CACHE[k]);
+    METAR_BULK_TS=0; TAF_BULK_TS=0; RTAF_TS=0;
   }
   const el = document.getElementById('wx-block-'+icao);
   if(!el) return;
@@ -4210,8 +3618,11 @@ async function loadWXIntoPopup(icao, force=false){
     const metarHtml = metar
       ? `<div class="wx-block"><div class="wx-label">METAR</div><div class="wx-raw">${metar}</div></div>`
       : `<div class="wx-block"><div class="wx-label">METAR</div><div class="wx-raw wx-na">No METAR available</div></div>`;
+    const tafHtml = taf
+      ? `<div class="wx-block"><div class="wx-label">TAF</div><div class="wx-raw">${taf}</div></div>`
+      : '';
 
-    el.innerHTML = metarHtml;
+    el.innerHTML = metarHtml + tafHtml;
     const stEl = document.getElementById('wx-status-'+icao);
     const tsEl = document.getElementById('wx-ts-'+icao);
     if(stEl){ stEl.className=`wx-status ${sc}`; stEl.textContent=sl; }
@@ -4998,6 +4409,7 @@ function show3DHint(){
   if(!d) return;
   setTimeout(()=>{ d.style.opacity='0'; setTimeout(()=>d.remove(),1000); }, 4000);
 }
+
 
 // ── RTAF Weather Modal ───────────────────────────────────────────
 let rtafTimer=null;
