@@ -488,11 +488,7 @@
           <span class="layer-label" id="lbl-hospitals">Hospitals (OSM)</span>
           <div class="ltog" id="ltog-hospitals"></div>
         </div>
-        <div class="layer-row" onclick="toggleLayer('liveFlights')">
-          <div class="layer-dot" style="background:#22c55e;border-radius:50%;box-shadow:0 0 5px #22c55e;"></div>
-          <span class="layer-label" id="lbl-liveFlights">Live Flights ✈</span>
-          <div class="ltog" id="ltog-liveFlights"></div>
-        </div>
+
       </div>
     </div>
 
@@ -1267,10 +1263,10 @@ const LG={
       iconSize:[28,28],iconAnchor:[14,14],className:''
     })
   }),
-  liveFlights: L.layerGroup(),
+
 };
 // Default: only Aerodromes ON; all others OFF
-const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false,liveFlights:false};
+const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false};
 // Add only active layers to map on startup
 Object.entries(LG).forEach(([k,g])=>{ if(LS[k]!==false) g.addTo(map); });
 
@@ -1292,7 +1288,7 @@ function toggleLayer(k){
   LS[k]=!LS[k];
   document.getElementById('ltog-'+k).classList.toggle('on',LS[k]);
   if(k==='hospitals'&&LS[k]&&!hospitalsLoaded){fetchHospitals();return;}
-  if(k==='liveFlights'){LS[k]?startLiveFlights():stopLiveFlights();return;}
+
   LS[k] ? LG[k].addTo(map) : map.removeLayer(LG[k]);
 }
 
@@ -1362,90 +1358,6 @@ async function fetchHospitals(){
   }
 }
 
-// ── Live Flights (OpenSky Network via proxy) ─────────────────────────
-const FLIGHTS_PROXY = (location.hostname==='localhost'||location.hostname==='127.0.0.1')
-  ? 'http://localhost:5000'
-  : 'https://aip-th2-proxy.onrender.com';
-
-let liveFlightsInterval = null;
-
-function flightIcon(heading, onGround){
-  const color = onGround ? '#64748b' : '#22c55e';
-  const stroke = onGround ? '#94a3b8' : '#86efac';
-  const deg = Math.round(heading || 0);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="28" height="28"
-    style="transform:rotate(${deg}deg);filter:drop-shadow(0 1px 4px rgba(0,0,0,.6));display:block;">
-    <path d="M50,5 C50,5 56,16 58,36 L92,52 L58,68 L56,88 L50,78 L44,88 L42,68 L8,52 L42,36 C44,16 50,5 50,5Z"
-      fill="${color}" stroke="${stroke}" stroke-width="2.5"/>
-  </svg>`;
-  return L.divIcon({ html:svg, iconSize:[28,28], iconAnchor:[14,14], popupAnchor:[0,-16], className:'' });
-}
-
-async function fetchLiveFlights(){
-  const lbl = document.getElementById('lbl-liveFlights');
-  if(lbl) lbl.textContent = '⏳ Loading…';
-  try{
-    const res = await fetch(FLIGHTS_PROXY + '/flights');
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
-    LG.liveFlights.clearLayers();
-    const states = data.states || [];
-    let count = 0;
-    states.forEach(s=>{
-      const lon=s[5], lat=s[6];
-      if(lat==null||lon==null) return;
-      const icao     = (s[0]||'').toUpperCase();
-      const callsign = (s[1]||'').trim() || icao;
-      const country  = s[2]||'';
-      const altM     = s[7];
-      const altFt    = altM!=null ? Math.round(altM*3.28084) : null;
-      const speedKt  = s[9]!=null ? Math.round(s[9]*1.94384) : null;
-      const heading  = s[10]||0;
-      const vrFpm    = s[11]!=null ? Math.round(s[11]*196.85) : null;
-      const onGround = !!s[8];
-      const squawk   = s[13]||'';
-      const vrColor  = vrFpm>200?'#22c55e':vrFpm<-200?'#ef4444':'var(--muted)';
-      const vrText   = vrFpm!=null ? `${vrFpm>0?'+':''}${vrFpm} fpm` : '—';
-      const m = L.marker([lat,lon],{icon:flightIcon(heading,onGround)});
-      m.bindPopup(`
-        <div style="min-width:205px;font-family:'Segoe UI',Arial,sans-serif;">
-          <div style="font-size:13px;font-weight:700;color:#22c55e;margin-bottom:5px;">✈ ${callsign}</div>
-          <table style="font-size:10px;border-collapse:collapse;width:100%;">
-            <tr><td style="color:var(--muted);padding:1px 8px 1px 0;">ICAO24</td><td style="font-family:monospace;">${icao}</td></tr>
-            <tr><td style="color:var(--muted);padding:1px 8px 1px 0;">Country</td><td>${country}</td></tr>
-            ${altFt!=null?`<tr><td style="color:var(--muted);padding:1px 8px 1px 0;">Altitude</td><td>${altFt.toLocaleString()} ft</td></tr>`:''}
-            ${speedKt!=null?`<tr><td style="color:var(--muted);padding:1px 8px 1px 0;">Speed</td><td>${speedKt} kt</td></tr>`:''}
-            <tr><td style="color:var(--muted);padding:1px 8px 1px 0;">Track</td><td>${Math.round(heading)}°</td></tr>
-            ${vrFpm!=null?`<tr><td style="color:var(--muted);padding:1px 8px 1px 0;">V/S</td><td style="color:${vrColor};">${vrText}</td></tr>`:''}
-            ${squawk?`<tr><td style="color:var(--muted);padding:1px 8px 1px 0;">Squawk</td><td style="font-family:monospace;">${squawk}</td></tr>`:''}
-            ${onGround?`<tr><td colspan="2" style="color:#64748b;padding-top:3px;font-style:italic;">On Ground</td></tr>`:''}
-          </table>
-          <div style="font-size:9px;color:var(--muted);margin-top:5px;font-family:monospace;">${lat.toFixed(4)}°N  ${lon.toFixed(4)}°E</div>
-        </div>`);
-      LG.liveFlights.addLayer(m);
-      count++;
-    });
-    LG.liveFlights.addTo(map);
-    if(lbl) lbl.textContent = `Live Flights (${count}) ✈`;
-  }catch(e){
-    if(lbl) lbl.textContent = 'Live Flights ✈ (error)';
-    console.warn('OpenSky fetch failed:',e);
-  }
-}
-
-function startLiveFlights(){
-  fetchLiveFlights();
-  liveFlightsInterval = setInterval(fetchLiveFlights, 30000);
-}
-
-function stopLiveFlights(){
-  clearInterval(liveFlightsInterval);
-  liveFlightsInterval = null;
-  LG.liveFlights.clearLayers();
-  map.removeLayer(LG.liveFlights);
-  const lbl = document.getElementById('lbl-liveFlights');
-  if(lbl) lbl.textContent = 'Live Flights ✈';
-}
 
 // ═══════════════════════════════════════════
 // RADIO NAVIGATION AIDS LAYER
