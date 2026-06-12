@@ -1207,9 +1207,12 @@ function toggleTheme(){
   currentTheme = themes[(themes.indexOf(currentTheme)+1) % themes.length];
   document.documentElement.setAttribute('data-theme', currentTheme);
   document.getElementById('themeBtn').textContent = icons[currentTheme];
-  // swap tile layer — fui reuses dark tile
-  [darkTile,lightTile].forEach(t=>map.removeLayer(t));
-  (currentTheme==='light' ? lightTile : darkTile).addTo(map);
+  // Only swap CARTO tiles — leave satellite/hybrid/OSM untouched if active
+  const cartoActive = map.hasLayer(darkTile) || map.hasLayer(lightTile);
+  if(cartoActive){
+    [darkTile,lightTile].forEach(t=>map.removeLayer(t));
+    (currentTheme==='light' ? lightTile : darkTile).addTo(map);
+  }
 }
 // keep isDark as alias for any legacy references
 Object.defineProperty(window,'isDark',{get:()=>currentTheme==='dark'});
@@ -1394,11 +1397,12 @@ L.control.zoom({position:'bottomright'}).addTo(map);
 // maxNativeZoom = tile provider's actual limit; maxZoom = Leaflet upscales beyond native
 const darkTile  = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxNativeZoom:19,maxZoom:23});
 const lightTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxNativeZoom:19,maxZoom:23});
-const satTile   = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'Esri',maxNativeZoom:20,maxZoom:23});
+const satTile   = L.tileLayer('https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{attribution:'&copy; Google',subdomains:['0','1','2','3'],maxNativeZoom:22,maxZoom:23});
+const satHybrid = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',{attribution:'&copy; Google',subdomains:['0','1','2','3'],maxNativeZoom:22,maxZoom:23});
 const osmTile   = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OSM',maxNativeZoom:19,maxZoom:23});
 
-darkTile.addTo(map);
-L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite":satTile,"🗺 OSM":osmTile},{},{position:'bottomright'}).addTo(map);
+satTile.addTo(map);
+L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite":satTile,"🛰 Hybrid":satHybrid,"🗺 OSM":osmTile},{},{position:'bottomright'}).addTo(map);
 
 map.on('mousemove',e=>{
   document.getElementById('coordDisp').textContent=`Lat: ${e.latlng.lat.toFixed(4)}  Lon: ${e.latlng.lng.toFixed(4)}`;
