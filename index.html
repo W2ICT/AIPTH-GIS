@@ -5008,10 +5008,8 @@ function build3DLayers(){
           <a href="${ap.url}" target="_blank" class="pu-link">✈ View AIP Aerodrome Data</a>
           ${wxHTML(ap.icao)}
         </div>`);
-    popup.on('open', () => {
-      requestAnimationFrame(()=>requestAnimationFrame(()=>loadWXIntoPopup(ap.icao)));
-    });
     popup.addTo(map3d);
+    setTimeout(() => loadWXIntoPopup(ap.icao), 80);
   });
   map3d.on('mouseenter','ap-pin',()=>{ map3d.getCanvas().style.cursor='pointer'; });
   map3d.on('mouseleave','ap-pin',()=>{ map3d.getCanvas().style.cursor=''; });
