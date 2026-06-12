@@ -42,6 +42,22 @@
       --shadow:    rgba(0,0,0,.2);
       --map-filter: brightness(1.05) saturate(0.85);
     }
+    [data-theme="fui"] {
+      --bg:        #03090d;
+      --surface:   #061420;
+      --surface2:  #0a1e2e;
+      --border:    #00637a;
+      --border2:   #004050;
+      --text:      #a8eeff;
+      --text2:     #5dc8e8;
+      --muted:     #2e6a7a;
+      --accent:    #00e5ff;
+      --accent2:   #00b8d9;
+      --header-bg: linear-gradient(135deg,#020e18,#041828);
+      --tog-off:   #0d3040;
+      --shadow:    rgba(0,229,255,.18);
+      --map-filter: hue-rotate(155deg) saturate(2) brightness(0.68) contrast(1.1);
+    }
 
     *{margin:0;padding:0;box-sizing:border-box;transition:background-color .2s,color .2s,border-color .2s;}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
@@ -389,6 +405,111 @@
       .theme-btn{width:30px;height:30px;font-size:14px;}
       .htitle{display:none;}
     }
+
+    /* ══ FUI THEME OVERRIDES ══ */
+    [data-theme="fui"] body{font-family:'Courier New',monospace,'Segoe UI',sans-serif;}
+    [data-theme="fui"] header{
+      border-bottom:1px solid var(--accent);
+      box-shadow:0 0 18px rgba(0,229,255,.25),0 2px 12px var(--shadow);
+    }
+    [data-theme="fui"] .hlogo{
+      background:transparent;
+      border:1px solid var(--accent);
+      box-shadow:0 0 10px rgba(0,229,255,.4);
+    }
+    [data-theme="fui"] .htitle h1{
+      color:var(--accent);
+      text-shadow:0 0 10px rgba(0,229,255,.6);
+      letter-spacing:1.5px;
+    }
+    [data-theme="fui"] .htitle p{color:var(--text2);}
+    [data-theme="fui"] .ql-btn{
+      border-color:rgba(0,229,255,.3);
+      color:var(--text2);
+      background:rgba(0,229,255,.06);
+    }
+    [data-theme="fui"] .ql-btn:hover{
+      background:rgba(0,229,255,.15);
+      border-color:var(--accent);
+      color:var(--accent);
+    }
+    [data-theme="fui"] .hbadge{
+      background:rgba(0,229,255,.12);
+      border-color:rgba(0,229,255,.5);
+      color:var(--accent);
+      text-shadow:0 0 6px rgba(0,229,255,.5);
+    }
+    [data-theme="fui"] .sidebar{
+      border-right:1px solid var(--accent);
+      box-shadow:2px 0 12px rgba(0,229,255,.1);
+    }
+    [data-theme="fui"] #searchInput{
+      font-family:'Courier New',monospace;
+      border-color:var(--border);
+    }
+    [data-theme="fui"] #searchInput:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 8px rgba(0,229,255,.25);
+    }
+    [data-theme="fui"] .lp-header:hover{background:rgba(0,229,255,.06);}
+    [data-theme="fui"] .lp-title{color:var(--accent);letter-spacing:1.5px;}
+    [data-theme="fui"] .ltog.on{
+      background:var(--accent);
+      box-shadow:0 0 8px rgba(0,229,255,.5);
+    }
+    [data-theme="fui"] .ap-item:hover{
+      background:rgba(0,229,255,.06);
+      border-color:var(--border);
+    }
+    [data-theme="fui"] .ap-item.active{
+      background:rgba(0,229,255,.12);
+      border-color:var(--accent);
+      box-shadow:0 0 10px rgba(0,229,255,.2);
+    }
+    [data-theme="fui"] .ap-icao{color:var(--accent);}
+    [data-theme="fui"] #airportCount{
+      background:rgba(0,229,255,.12);
+      color:var(--accent);
+    }
+    [data-theme="fui"] .leaflet-popup-content-wrapper{
+      border-color:var(--accent) !important;
+      box-shadow:0 0 20px rgba(0,229,255,.25),0 8px 30px var(--shadow) !important;
+    }
+    [data-theme="fui"] .dt-result{
+      background:rgba(0,229,255,.08);
+      border-color:rgba(0,229,255,.3);
+      box-shadow:0 0 12px rgba(0,229,255,.15);
+    }
+    [data-theme="fui"] .dt-dist{
+      color:var(--accent);
+      text-shadow:0 0 10px rgba(0,229,255,.6);
+    }
+    [data-theme="fui"] .dt-tab.active{
+      background:var(--accent);
+      box-shadow:0 0 8px rgba(0,229,255,.4);
+      color:#03090d;
+    }
+    [data-theme="fui"] .dt-btn.pri{
+      background:transparent;
+      border:1px solid var(--accent);
+      color:var(--accent);
+      box-shadow:0 0 8px rgba(0,229,255,.3);
+    }
+    [data-theme="fui"] .dt-btn.pri:hover{background:rgba(0,229,255,.15);}
+    [data-theme="fui"] #distTool{
+      border-color:var(--accent);
+      box-shadow:0 0 20px rgba(0,229,255,.2),0 4px 20px var(--shadow);
+    }
+    [data-theme="fui"] .sb-toggle{background:#001f2a;border-color:var(--accent);box-shadow:2px 0 8px rgba(0,229,255,.3);}
+    [data-theme="fui"] .theme-btn{
+      background:rgba(0,229,255,.08);
+      border-color:rgba(0,229,255,.3);
+      color:var(--accent);
+    }
+    [data-theme="fui"] .theme-btn:hover{
+      background:rgba(0,229,255,.18);
+      box-shadow:0 0 8px rgba(0,229,255,.4);
+    }
   </style>
 </head>
 <body>
@@ -419,7 +540,7 @@
     <button class="theme-btn" id="btn3D" onclick="toggle3DMode()" title="3D Globe View">🌐</button>
     <button class="theme-btn" id="btnDist" onclick="toggleDist()" title="Distance Measure (M)">📏</button>
     <button class="theme-btn" onclick="map.setView([13,101],6)" title="Reset View">🏠</button>
-    <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark/Light mode" id="themeBtn">🌙</button>
+    <button class="theme-btn" onclick="toggleTheme()" title="Theme: Dark / Light / FUI" id="themeBtn">🌙</button>
     <button class="theme-btn" id="btnWxRefresh" onclick="openAIP()" title="AIP Thailand — checking…">🔄</button>
     <span id="wxGlobalDot" title="Weather: not fetched yet"></span>
     <div class="hbadge">eAIP Thailand</div>
@@ -487,6 +608,11 @@
           <div class="layer-dot" style="background:#ef4444;border-radius:2px;font-size:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;">+</div>
           <span class="layer-label" id="lbl-hospitals">Hospitals (OSM)</span>
           <div class="ltog" id="ltog-hospitals"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('flights')">
+          <div class="layer-dot" style="background:#f59e0b;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;color:#fff;">✈</div>
+          <span class="layer-label" id="lbl-flights">Live Flights</span>
+          <div class="ltog" id="ltog-flights"></div>
         </div>
 
       </div>
@@ -1047,15 +1173,19 @@
 // ═══════════════════════════════════════════
 // THEME
 // ═══════════════════════════════════════════
-let isDark = true;
+let currentTheme = 'dark';
 function toggleTheme(){
-  isDark = !isDark;
-  document.documentElement.setAttribute('data-theme', isDark?'dark':'light');
-  document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
-  // swap tile layer
-  if(isDark){ map.removeLayer(lightTile); darkTile.addTo(map); }
-  else       { map.removeLayer(darkTile);  lightTile.addTo(map); }
+  const themes = ['dark','light','fui'];
+  const icons  = {dark:'🌙', light:'☀️', fui:'⚡'};
+  currentTheme = themes[(themes.indexOf(currentTheme)+1) % themes.length];
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.getElementById('themeBtn').textContent = icons[currentTheme];
+  // swap tile layer — fui reuses dark tile
+  [darkTile,lightTile].forEach(t=>map.removeLayer(t));
+  (currentTheme==='light' ? lightTile : darkTile).addTo(map);
 }
+// keep isDark as alias for any legacy references
+Object.defineProperty(window,'isDark',{get:()=>currentTheme==='dark'});
 
 // ═══════════════════════════════════════════
 // SIDEBAR COLLAPSE
@@ -1263,10 +1393,10 @@ const LG={
       iconSize:[28,28],iconAnchor:[14,14],className:''
     })
   }),
-
+  flights: L.layerGroup(),
 };
 // Default: only Aerodromes ON; all others OFF
-const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false};
+const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false,flights:false};
 // Add only active layers to map on startup
 Object.entries(LG).forEach(([k,g])=>{ if(LS[k]!==false) g.addTo(map); });
 
@@ -1288,6 +1418,7 @@ function toggleLayer(k){
   LS[k]=!LS[k];
   document.getElementById('ltog-'+k).classList.toggle('on',LS[k]);
   if(k==='hospitals'&&LS[k]&&!hospitalsLoaded){fetchHospitals();return;}
+  if(k==='flights'){ LS[k] ? startFlightTracking() : stopFlightTracking(); return; }
 
   LS[k] ? LG[k].addTo(map) : map.removeLayer(LG[k]);
 }
@@ -1358,6 +1489,189 @@ async function fetchHospitals(){
   }
 }
 
+// ── Live Flights ──────────────────────────────────────────────────────────
+// file:// origin → ADSB.lol (CORS-open, no auth)
+// http:// origin → OpenSky Network OAuth2 (your credentials, higher fidelity)
+const OS_API   = 'https://opensky-network.org/api/states/all?lamin=5.0&lomin=97.0&lamax=21.5&lomax=106.0';
+const OS_TOKEN = 'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token';
+const OS_ID    = 'designer.5259-api-client';
+const OS_SEC   = 'BR9ogwZbLjob4xHMuYMe7SLVNtTPLpcd';
+const ADSL_URL = 'https://api.adsb.lol/v2/lat/13.5/lon/101.5/dist/600';
+// file:// → 30 s; http:// OpenSky → 60 s (3 credits/call, 4000 credits/day)
+const FLIGHT_REFRESH_MS = location.protocol === 'file:' ? 30000 : 60000;
+let flightTimer   = null;
+let flightMarkers = {};
+let _osToken      = null;
+let _osTokenExp   = 0;
+
+async function getOSToken() {
+  if (_osToken && Date.now() < _osTokenExp - 60000) return _osToken;
+  const res = await fetch(OS_TOKEN, {
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({grant_type:'client_credentials', client_id:OS_ID, client_secret:OS_SEC})
+  });
+  if (!res.ok) throw new Error('OAuth2 '+res.status);
+  const j = await res.json();
+  _osToken   = j.access_token;
+  _osTokenExp = Date.now() + j.expires_in * 1000;
+  return _osToken;
+}
+
+function makeFlightIcon(heading, onGround, vRateMs) {
+  const color = onGround     ? '#94a3b8'
+              : vRateMs >  1  ? '#22c55e'
+              : vRateMs < -1  ? '#f87171'
+              :                 '#38bdf8';
+  const rot = heading != null ? heading : 0;
+  return L.divIcon({
+    html:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="26" height="26"
+            style="filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))">
+            <g transform="rotate(${rot},16,16)">
+              <polygon points="16,3 19,23 16,21 13,23" fill="${color}" stroke="#000" stroke-width=".6" stroke-linejoin="round"/>
+              <polygon points="4,15 28,15 26,18 6,18"  fill="${color}" stroke="#000" stroke-width=".6" stroke-linejoin="round"/>
+              <polygon points="11,23 21,23 20,28 12,28" fill="${color}" stroke="#000" stroke-width=".6" stroke-linejoin="round"/>
+            </g>
+          </svg>`,
+    iconSize:[26,26], iconAnchor:[13,13], className:''
+  });
+}
+
+// Unified popup — detects OpenSky array vs ADSB.lol object automatically
+function buildFlightPopup(d) {
+  let id, cs, altFt, spdKt, hdg, vsFpm, squawk, src, country, onGround;
+  if (Array.isArray(d)) {
+    // OpenSky state vector
+    id      = d[0].toUpperCase();
+    cs      = (d[1]||'').trim() || id;
+    altFt   = d[7]  != null ? Math.round(d[7]  * 3.28084) : null;
+    spdKt   = d[9]  != null ? Math.round(d[9]  * 1.94384) : null;
+    hdg     = d[10] != null ? Math.round(d[10])            : null;
+    vsFpm   = d[11] != null ? Math.round(d[11] * 196.85)   : null;
+    squawk  = d[14];
+    src     = (['ADS-B','ASTERIX','MLAT','FLARM'])[d[16]] || '?';
+    country = d[2];
+    onGround = d[8];
+  } else {
+    // ADSB.lol object
+    id      = (d.hex||'').toUpperCase();
+    cs      = (d.flight||'').trim() || id;
+    onGround = d.alt_baro === 'ground';
+    altFt   = onGround ? null : (d.alt_baro != null ? Number(d.alt_baro) : null);
+    spdKt   = d.gs        != null ? Math.round(d.gs)        : null;
+    hdg     = d.track     != null ? Math.round(d.track)     : null;
+    vsFpm   = d.baro_rate != null ? Math.round(d.baro_rate) : null;
+    squawk  = d.squawk;
+    src     = (d.type||'ADS-B').replace('adsb_icao','ADS-B').replace('mlat','MLAT').replace('tisb_icao','TIS-B');
+    country = d.r ? `REG: ${d.r}${d.t?' · TYPE: '+d.t:''}` : null;
+  }
+  const altStr = onGround ? 'On Ground' : (altFt != null ? altFt.toLocaleString()+' ft' : 'N/A');
+  const gndBadge = onGround ? '<span style="color:#f59e0b;font-weight:700">ON GROUND</span>'
+                             : '<span style="color:#22c55e;font-weight:700">AIRBORNE</span>';
+  return `<div style="font-size:11px">
+    <div style="font-size:15px;font-weight:800;letter-spacing:1.5px;color:var(--accent2);margin-bottom:4px">${cs}</div>
+    <div style="color:var(--muted);font-size:9px;margin-bottom:6px">${id} &nbsp;·&nbsp; ${gndBadge}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px">
+      <div><div style="font-size:8px;color:var(--muted)">ALTITUDE</div><b>${altStr}</b></div>
+      <div><div style="font-size:8px;color:var(--muted)">SPEED GS</div><b>${spdKt!=null?spdKt+' kt':'N/A'}</b></div>
+      <div><div style="font-size:8px;color:var(--muted)">HEADING</div><b>${hdg!=null?hdg+'°':'N/A'}</b></div>
+      <div><div style="font-size:8px;color:var(--muted)">VERT RATE</div><b>${vsFpm!=null?(vsFpm>=0?'+':'')+vsFpm+' fpm':'N/A'}</b></div>
+      <div><div style="font-size:8px;color:var(--muted)">SQUAWK</div><b>${squawk||'----'}</b></div>
+      <div><div style="font-size:8px;color:var(--muted)">SOURCE</div><b>${src}</b></div>
+    </div>
+    ${country?`<div style="margin-top:6px;font-size:9px;color:var(--muted)">${Array.isArray(d)?'🌍 ':''} ${country}</div>`:''}
+  </div>`;
+}
+
+// ── Shared marker update logic ─────────────────────────────────────────────
+function _applyFlightData(id, lat, lon, heading, onGround, vRateMs, rawData, lbl, seen) {
+  seen.add(id);
+  const icon = makeFlightIcon(heading, onGround, vRateMs);
+  if (flightMarkers[id]) {
+    flightMarkers[id].setLatLng([lat, lon]).setIcon(icon);
+    flightMarkers[id]._fData = rawData;
+  } else {
+    const m = L.marker([lat, lon], {icon, zIndexOffset:500});
+    m._fData = rawData;
+    m.bindPopup(()=>buildFlightPopup(m._fData), {maxWidth:240});
+    flightMarkers[id] = m;
+    LG.flights.addLayer(m);
+  }
+}
+
+function _pruneAndLabel(seen, count, lbl, source) {
+  Object.keys(flightMarkers).forEach(id => {
+    if (!seen.has(id)) { LG.flights.removeLayer(flightMarkers[id]); delete flightMarkers[id]; }
+  });
+  if (lbl) lbl.textContent = `Live Flights (${count}) · ${source}`;
+}
+
+// ── OpenSky fetch (HTTP origin) ────────────────────────────────────────────
+async function _fetchOpenSky(lbl) {
+  const token = await getOSToken();
+  let res = await fetch(OS_API, {headers:{'Authorization':'Bearer '+token}});
+  if (res.status === 401) {
+    _osToken = null;
+    res = await fetch(OS_API, {headers:{'Authorization':'Bearer '+(await getOSToken())}});
+  }
+  if (res.status === 429) {
+    if(lbl) lbl.textContent = 'Live Flights (rate limited ⏳)';
+    stopFlightTracking(true); return;
+  }
+  if (!res.ok) throw new Error('HTTP '+res.status);
+  const data   = await res.json();
+  const states = (data.states||[]).filter(s => s[5]!=null && s[6]!=null);
+  const seen   = new Set();
+  states.forEach(s => _applyFlightData(s[0], s[6], s[5], s[10], s[8], s[11], s, lbl, seen));
+  _pruneAndLabel(seen, states.length, lbl, 'OpenSky');
+}
+
+// ── ADSB.lol fetch (file:// origin) ───────────────────────────────────────
+async function _fetchADSBLOL(lbl) {
+  const res = await fetch(ADSL_URL);
+  if (res.status === 429) {
+    if(lbl) lbl.textContent = 'Live Flights (rate limited ⏳)';
+    stopFlightTracking(true); return;
+  }
+  if (!res.ok) throw new Error('HTTP '+res.status);
+  const data    = await res.json();
+  const aircraft = (data.ac||[]).filter(a => a.lat!=null && a.lon!=null);
+  const seen    = new Set();
+  aircraft.forEach(a => {
+    const onGround = a.alt_baro === 'ground';
+    const vMs      = (a.baro_rate||0) / 196.85; // fpm → m/s for icon colour
+    _applyFlightData(a.hex, a.lat, a.lon, a.track, onGround, vMs, a, lbl, seen);
+  });
+  _pruneAndLabel(seen, aircraft.length, lbl, 'ADSB.lol');
+}
+
+async function fetchFlights() {
+  const lbl = document.getElementById('lbl-flights');
+  try {
+    if (location.protocol === 'file:') await _fetchADSBLOL(lbl);
+    else                                await _fetchOpenSky(lbl);
+  } catch(e) {
+    console.warn('Live Flights error:', e);
+    if(lbl) lbl.textContent = 'Live Flights (error ⚠)';
+  }
+}
+
+function startFlightTracking() {
+  LG.flights.addTo(map);
+  fetchFlights();
+  flightTimer = setInterval(fetchFlights, FLIGHT_REFRESH_MS);
+}
+
+function stopFlightTracking(rateLimited) {
+  clearInterval(flightTimer); flightTimer = null;
+  LG.flights.clearLayers(); flightMarkers = {};
+  map.removeLayer(LG.flights);
+  if (rateLimited) {
+    LS.flights = false;
+    document.getElementById('ltog-flights').classList.remove('on');
+    document.getElementById('lbl-flights').textContent = 'Live Flights (rate limited ⏳)';
+  }
+}
 
 // ═══════════════════════════════════════════
 // RADIO NAVIGATION AIDS LAYER
