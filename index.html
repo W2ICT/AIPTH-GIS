@@ -1593,8 +1593,8 @@ async function fetchHotels(){
   const lbl=document.getElementById('lbl-hotels');
   const tog=document.getElementById('ltog-hotels');
   if(lbl) lbl.textContent='⏳ Loading…';
-  // Bounding box ไทย (เร็วกว่า area filter มาก) + ["name"] filter ตัด entry ไม่มีชื่อ
-  const query=`[out:json][timeout:30];(node["tourism"~"^(hotel|resort|guest_house|motel)$"]["name"](5.6,97.3,20.5,105.7);way["tourism"~"^(hotel|resort|guest_house|motel)$"]["name"](5.6,97.3,20.5,105.7););out center;`;
+  // Exact match (เร็วกว่า regex), ไม่ filter ด้วย name (โรงแรมไทยหลายแห่งใช้ name:th ไม่มี plain name)
+  const query=`[out:json][timeout:40];(node["tourism"="hotel"](5.6,97.3,20.5,105.7);way["tourism"="hotel"](5.6,97.3,20.5,105.7);node["tourism"="resort"](5.6,97.3,20.5,105.7);way["tourism"="resort"](5.6,97.3,20.5,105.7);node["tourism"="guest_house"](5.6,97.3,20.5,105.7);way["tourism"="guest_house"](5.6,97.3,20.5,105.7););out center;`;
   const SERVERS=['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'];
   try{
     let data=null;
@@ -1645,6 +1645,7 @@ async function fetchHotels(){
       LG.hotels.addLayer(m);
       count++;
     });
+    if(count===0){ hotelsLoaded=false; LS.hotels=false; if(tog) tog.classList.remove('on'); if(lbl) lbl.textContent='Hotels (ไม่พบข้อมูล — ลองใหม่)'; return; }
     hotelsLoaded=true;
     LG.hotels.addTo(map);
     if(lbl) lbl.textContent=`Hotels (${count})`;
