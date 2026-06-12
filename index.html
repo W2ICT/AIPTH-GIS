@@ -1645,11 +1645,27 @@ async function _fetchADSBLOL(lbl) {
   _pruneAndLabel(seen, aircraft.length, lbl, 'ADSB.lol');
 }
 
+let _osCorsFailed = false; // set true once OpenSky CORS is blocked
+
 async function fetchFlights() {
   const lbl = document.getElementById('lbl-flights');
   try {
-    if (location.protocol === 'file:') await _fetchADSBLOL(lbl);
-    else                                await _fetchOpenSky(lbl);
+    if (location.protocol === 'file:' || _osCorsFailed) {
+      await _fetchADSBLOL(lbl);
+    } else {
+      try {
+        await _fetchOpenSky(lbl);
+      } catch(e) {
+        if (e instanceof TypeError) {
+          // CORS block (origin not whitelisted by OpenSky) — switch permanently
+          _osCorsFailed = true;
+          console.info('OpenSky CORS blocked, switching to ADSB.lol');
+          await _fetchADSBLOL(lbl);
+        } else {
+          throw e;
+        }
+      }
+    }
   } catch(e) {
     console.warn('Live Flights error:', e);
     if(lbl) lbl.textContent = 'Live Flights (error ⚠)';
