@@ -1496,7 +1496,11 @@ const OS_API   = 'https://opensky-network.org/api/states/all?lamin=5.0&lomin=97.
 const OS_TOKEN = 'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token';
 const OS_ID    = 'designer.5259-api-client';
 const OS_SEC   = 'BR9ogwZbLjob4xHMuYMe7SLVNtTPLpcd';
-const ADSL_URL = 'https://api.adsb.lol/v2/lat/13.5/lon/101.5/dist/600';
+const _ADSL_DIRECT = 'https://api.adsb.lol/v2/lat/13.5/lon/101.5/dist/600';
+// localhost → direct; อื่นๆ → ผ่าน CORS proxy เพราะ ADSB.lol ไม่มี CORS header
+const ADSL_URL = ['localhost','127.0.0.1'].includes(location.hostname)
+  ? _ADSL_DIRECT
+  : 'https://corsproxy.io/?' + encodeURIComponent(_ADSL_DIRECT);
 // file:// → 30 s; http:// OpenSky → 60 s (3 credits/call, 4000 credits/day)
 const FLIGHT_REFRESH_MS = location.protocol === 'file:' ? 30000 : 60000;
 let flightTimer   = null;
