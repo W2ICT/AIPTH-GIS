@@ -171,6 +171,10 @@
     .ap3d-popup .maplibregl-popup-close-button{position:absolute;top:7px;right:8px;color:rgba(255,255,255,.55);font-size:17px;padding:1px 5px;border-radius:4px;z-index:10;}
     .ap3d-popup .maplibregl-popup-close-button:hover{color:#fff;background:rgba(255,255,255,.12);}
     .ap3d-popup .pu-hdr{padding-right:28px;}
+    .flt3d-popup .maplibregl-popup-content{padding:0 !important;min-width:265px;}
+    .flt3d-popup .maplibregl-popup-content>div{margin:0 !important;}
+    .flt3d-popup .maplibregl-popup-close-button{color:var(--muted);font-size:16px;padding:2px 6px;z-index:10;}
+    .flt3d-popup .maplibregl-popup-close-button:hover{color:var(--text);background:var(--surface2);}
     .maplibregl-ctrl-group{background:var(--surface) !important;border:1px solid var(--border) !important;border-radius:8px !important;}
     .maplibregl-ctrl button{color:var(--text) !important;}
     /* 3D mode hint banner */
@@ -1763,7 +1767,9 @@ function _pruneAndLabel(seen, count, lbl, source) {
   Object.keys(flightMarkers).forEach(id => {
     if (!seen.has(id)) { LG.flights.removeLayer(flightMarkers[id]); delete flightMarkers[id]; }
   });
-  if (lbl) lbl.textContent = `Live Flights (${count}) · ${source}`;
+  const ts = new Date().toTimeString().slice(0,8);
+  if (lbl) lbl.textContent = `Live Flights (${count}) · ${ts}`;
+  update3DFlights();
 }
 
 // ── OpenSky fetch (HTTP origin) ────────────────────────────────────────────
@@ -1788,7 +1794,7 @@ async function _fetchOpenSky(lbl) {
 
 // ── ADSB.lol fetch (file:// origin) ───────────────────────────────────────
 async function _fetchADSBLOL(lbl) {
-  const res = await fetch(ADSL_URL);
+  const res = await fetch(ADSL_URL, { cache:'no-cache' });
   if (res.status === 429) {
     if(lbl) lbl.textContent = 'Live Flights (rate limited ⏳)';
     stopFlightTracking(true); return;
@@ -1857,11 +1863,16 @@ function startFlightInterp() {
       const [nlat, nlon] = deadReckon(m._lat, m._lon, m._track, m._gsMs * dt);
       m.setLatLng([nlat, nlon]);
     });
+    // Sync positions to 3D map
+    update3DFlights();
     // Auto-pan if tracking a specific flight
     if (_trackingHex) {
       const tm = flightMarkers[_trackingHex];
-      if (tm) map.panTo(tm.getLatLng(), {animate:true, duration:0.5});
-      else clearFlightTrack();
+      if (tm) {
+        const ll = tm.getLatLng();
+        if (!is3D) map.panTo(ll, {animate:true, duration:0.5});
+        else if (map3d) map3d.panTo([ll.lng, ll.lat]);
+      } else clearFlightTrack();
     }
   }, 1000);
 }
@@ -1962,6 +1973,7 @@ function stopFlightTracking(rateLimited) {
   stopFlightInterp();
   LG.flights.clearLayers(); flightMarkers = {};
   map.removeLayer(LG.flights);
+  if (map3d) { const s = map3d.getSource('flights3d'); if (s) s.setData({type:'FeatureCollection',features:[]}); }
   if (rateLimited) {
     LS.flights = false;
     document.getElementById('ltog-flights').classList.remove('on');
@@ -4822,6 +4834,42 @@ function naPinSVG(color, dark, label){
   </svg>`;
 }
 
+// ── 3D Live Flights helpers ────────────────────────────────────────────────
+const _AC3D_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="2.2" ry="10" fill="white"/><path d="M20,16 L4,24 L8,24 L20,20 L32,24 L36,24 Z" fill="white"/><path d="M20,27 L13,31 L15,31 L20,29 L25,31 L27,31 Z" fill="white"/></svg>`;
+const _HELO3D_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="5.5" ry="6.5" fill="white"/><rect x="18.5" y="27" width="3" height="8" rx="1.5" fill="white"/><rect x="5" y="18.5" width="30" height="3" rx="1.5" fill="white"/><rect x="16.5" y="34" width="7" height="2.5" rx="1.25" fill="white"/><rect x="18" y="11" width="4" height="9" rx="2" fill="white"/></svg>`;
+
+function _svgToImgData(svg, size=40) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, size, size);
+      res(ctx.getImageData(0, 0, size, size));
+    };
+    img.onerror = () => res(null);
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
+}
+
+function update3DFlights() {
+  if (!map3d || !is3D) return;
+  const src = map3d.getSource('flights3d');
+  if (!src) return;
+  const features = Object.entries(flightMarkers).map(([hex, m]) => {
+    const ll = m.getLatLng();
+    const d  = m._fData;
+    const cs = ((Array.isArray(d) ? (d[1]||hex) : (d.flight||hex))||hex).trim().toUpperCase();
+    const isHelo = !!((!Array.isArray(d)) && d.category === 'A7');
+    return { type:'Feature',
+      geometry: { type:'Point', coordinates:[ll.lng, ll.lat] },
+      properties: { hex, cs, heading: m._track||0, onGround: !!m._onGround, isHelo }
+    };
+  });
+  src.setData({ type:'FeatureCollection', features });
+}
+
 async function loadPin3DImages(){
   const load = (name, svg, w, h) => new Promise(res=>{
     const img = new Image(w, h);
@@ -4959,11 +5007,11 @@ function build3DLayers(){
           <div class="pu-row"><span class="pu-lbl">Operator</span><span class="pu-val"><span class="pu-op" style="background:${opBg(ap.op)};color:${c};">${ap.op}</span></span></div>
           <a href="${ap.url}" target="_blank" class="pu-link">✈ View AIP Aerodrome Data</a>
           ${wxHTML(ap.icao)}
-        </div>`)
-      .addTo(map3d);
+        </div>`);
     popup.on('open', () => {
       requestAnimationFrame(()=>requestAnimationFrame(()=>loadWXIntoPopup(ap.icao)));
     });
+    popup.addTo(map3d);
   });
   map3d.on('mouseenter','ap-pin',()=>{ map3d.getCanvas().style.cursor='pointer'; });
   map3d.on('mouseleave','ap-pin',()=>{ map3d.getCanvas().style.cursor=''; });
@@ -5027,6 +5075,58 @@ function build3DLayers(){
       'text-halo-color':'rgba(0,0,0,0.92)',
       'text-halo-width':4
     }
+  });
+
+  // ── Live Flights 3D layer ────────────────────────────────────────
+  map3d.addSource('flights3d', { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
+  Promise.all([_svgToImgData(_AC3D_SVG, 40), _svgToImgData(_HELO3D_SVG, 40)]).then(([acData, heloData]) => {
+    if (!acData || !heloData) return;
+    if (!map3d.hasImage('flt-ac'))   map3d.addImage('flt-ac',   acData,   { sdf:true });
+    if (!map3d.hasImage('flt-helo')) map3d.addImage('flt-helo', heloData, { sdf:true });
+    map3d.addLayer({
+      id: 'flight-layer',
+      type: 'symbol',
+      source: 'flights3d',
+      layout: {
+        'icon-image': ['case', ['get','isHelo'], 'flt-helo', 'flt-ac'],
+        'icon-size': 0.65,
+        'icon-rotate': ['get','heading'],
+        'icon-rotation-alignment': 'map',
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true,
+        'text-field': ['get','cs'],
+        'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+        'text-size': 9,
+        'text-offset': [0, 1.4],
+        'text-anchor': 'top',
+        'text-allow-overlap': false,
+        'text-optional': true
+      },
+      paint: {
+        'icon-color': ['case',
+          ['get','onGround'], '#94a3b8',
+          ['get','isHelo'],   '#67e8f9',
+          '#f59e0b'
+        ],
+        'icon-opacity': 1,
+        'text-color': '#e2e8f0',
+        'text-halo-color': '#000000',
+        'text-halo-width': 1.5,
+        'text-opacity': 0.9
+      }
+    });
+    map3d.on('click', 'flight-layer', e => {
+      const props = e.features[0].properties;
+      const m = flightMarkers[props.hex];
+      if (!m) return;
+      new maplibregl.Popup({ offset:[0,-12], maxWidth:'280px', className:'flt3d-popup' })
+        .setLngLat(e.features[0].geometry.coordinates.slice())
+        .setHTML(buildFlightPopup(m._fData))
+        .addTo(map3d);
+    });
+    map3d.on('mouseenter', 'flight-layer', () => { map3d.getCanvas().style.cursor = 'pointer'; });
+    map3d.on('mouseleave', 'flight-layer', () => { map3d.getCanvas().style.cursor = ''; });
+    if (LS.flights) update3DFlights();
   });
 }
 
