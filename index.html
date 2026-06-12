@@ -568,7 +568,7 @@
       <div class="lp-header collapsed" id="lph-layers" onclick="togglePanel('layers')"
         <span style="font-size:11px;">🗂</span>
         <span class="lp-title">Layers</span>
-        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">8</span>
+        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/9</span>
         <span class="lp-chevron">▼</span>
       </div>
       <div class="lp-body collapsed" id="lpb-layers">
@@ -635,6 +635,30 @@
         </div>
         <div id="navTypeFilter" style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:4px;"></div>
         <div id="navResultList" style="max-height:120px;overflow-y:auto;"></div>
+      </div>
+    </div>
+
+    <!-- FLIGHT SEARCH (collapsible) -->
+    <div class="layer-panel">
+      <div class="lp-header collapsed" id="lph-fltsearch" onclick="togglePanel('fltsearch')">
+        <span style="font-size:11px;">✈</span>
+        <span class="lp-title">Flight Search</span>
+        <span class="lp-chevron">▼</span>
+      </div>
+      <div class="lp-body collapsed" id="lpb-fltsearch">
+        <div class="search-wrap" style="margin-bottom:5px;">
+          <span class="si">🔍</span>
+          <input type="text" id="fltSearch" placeholder="Callsign, Flight No. or Squawk…" oninput="filterFlights()" style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 9px 5px 27px;font-size:11px;outline:none;box-sizing:border-box;"/>
+        </div>
+        <div id="fltResultList" style="max-height:140px;overflow-y:auto;font-size:11px;">
+          <div style="color:var(--muted);font-size:10px;padding:3px 2px">Enable Live Flights layer then type to search</div>
+        </div>
+        <div id="fltTrackBadge" style="display:none;padding:5px 9px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:6px;font-size:10px;color:#f59e0b;margin-top:5px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span>🎯 Tracking: <span id="fltTrackCS" style="font-weight:800;font-family:monospace;letter-spacing:.5px"></span></span>
+            <span onclick="clearFlightTrack()" style="cursor:pointer;opacity:.6;font-size:12px;padding:0 2px" title="Stop tracking">✕</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1367,10 +1391,11 @@ const NM=1852;
 const map=L.map('map',{center:[13,101],zoom:6,zoomControl:false});
 L.control.zoom({position:'bottomright'}).addTo(map);
 
-const darkTile  = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxZoom:19});
-const lightTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxZoom:19});
-const satTile   = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'Esri',maxZoom:19});
-const osmTile   = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OSM',maxZoom:19});
+// maxNativeZoom = tile provider's actual limit; maxZoom = Leaflet upscales beyond native
+const darkTile  = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxNativeZoom:19,maxZoom:23});
+const lightTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxNativeZoom:19,maxZoom:23});
+const satTile   = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'Esri',maxNativeZoom:20,maxZoom:23});
+const osmTile   = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OSM',maxNativeZoom:19,maxZoom:23});
 
 darkTile.addTo(map);
 L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite":satTile,"🗺 OSM":osmTile},{},{position:'bottomright'}).addTo(map);
@@ -1417,9 +1442,18 @@ function togglePanel(id){
   panelState[id] = isCollapsed; // true = open
 }
 
+function updateLayerCount(){
+  const el = document.getElementById('lp-count-layers');
+  if(!el) return;
+  const total = Object.keys(LS).length;
+  const on    = Object.values(LS).filter(Boolean).length;
+  el.textContent = on+'/'+total;
+}
+
 function toggleLayer(k){
   LS[k]=!LS[k];
   document.getElementById('ltog-'+k).classList.toggle('on',LS[k]);
+  updateLayerCount();
   if(k==='hospitals'&&LS[k]&&!hospitalsLoaded){fetchHospitals();return;}
   if(k==='flights'){ LS[k] ? startFlightTracking() : stopFlightTracking(); return; }
 
@@ -1796,12 +1830,97 @@ function startFlightInterp() {
       const [nlat, nlon] = deadReckon(m._lat, m._lon, m._track, m._gsMs * dt);
       m.setLatLng([nlat, nlon]);
     });
+    // Auto-pan if tracking a specific flight
+    if (_trackingHex) {
+      const tm = flightMarkers[_trackingHex];
+      if (tm) map.panTo(tm.getLatLng(), {animate:true, duration:0.5});
+      else clearFlightTrack();
+    }
   }, 1000);
 }
 
 function stopFlightInterp() {
   clearInterval(flightInterpTimer);
   flightInterpTimer = null;
+}
+
+// ── Flight Search & Track ──────────────────────────────────────────────────
+let _trackingHex = null;
+
+function filterFlights() {
+  const q    = (document.getElementById('fltSearch')?.value || '').toLowerCase().trim();
+  const list = document.getElementById('fltResultList');
+  if (!list) return;
+  if (!q) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:10px;padding:3px 2px">Enable Live Flights layer then type to search</div>';
+    return;
+  }
+  const matches = Object.entries(flightMarkers).filter(([hex, m]) => {
+    const d  = m._fData;
+    if (!d) return false;
+    const cs = (Array.isArray(d) ? (d[1]||'') : (d.flight||'')).trim().toLowerCase();
+    const sq = (Array.isArray(d) ? (d[14]||'') : (d.squawk||'')).toLowerCase();
+    return cs.includes(q) || sq.includes(q) || hex.toLowerCase().includes(q);
+  });
+  if (!matches.length) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:10px;padding:3px 2px">No flights found</div>';
+    return;
+  }
+  list.innerHTML = matches.slice(0,15).map(([hex, m]) => {
+    const d   = m._fData;
+    const cs  = ((Array.isArray(d) ? (d[1]||hex) : (d.flight||hex))).trim().toUpperCase() || hex.toUpperCase();
+    const alt = m._onGround ? 'GND'
+              : Array.isArray(d)
+                ? (d[7]!=null ? Math.round(d[7]*3.28084).toLocaleString()+' ft' : '—')
+                : (d.alt_baro!=null&&d.alt_baro!=='ground' ? Math.round(Number(d.alt_baro)).toLocaleString()+' ft' : '—');
+    const spd = Array.isArray(d)
+              ? (d[9]!=null ? Math.round(d[9]*1.94384)+' kt' : '—')
+              : (d.gs!=null ? Math.round(d.gs)+' kt' : '—');
+    const sq  = (Array.isArray(d) ? d[14] : d.squawk) || '';
+    const isTrk = hex === _trackingHex;
+    return `<div onclick="selectFlight('${hex}')"
+      style="padding:5px 7px;border-radius:5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;
+             background:${isTrk?'rgba(245,158,11,.1)':'transparent'};
+             border:1px solid ${isTrk?'rgba(245,158,11,.3)':'transparent'};margin-bottom:2px">
+      <div>
+        <span style="font-weight:700;font-family:monospace;font-size:12px;color:${isTrk?'#f59e0b':'var(--text)'}">${cs}</span>
+        ${sq?`<span style="font-size:9px;color:var(--muted);margin-left:5px">▣ ${sq}</span>`:''}
+        <div style="font-size:9px;color:var(--muted);margin-top:1px">${alt} · ${spd}</div>
+      </div>
+      <span onclick="event.stopPropagation();trackFlight('${hex}')"
+            title="${isTrk?'Stop tracking':'Track this flight'}"
+            style="font-size:16px;cursor:pointer;opacity:${isTrk?1:.3};flex-shrink:0;margin-left:6px">🎯</span>
+    </div>`;
+  }).join('');
+}
+
+function selectFlight(hex) {
+  const m = flightMarkers[hex];
+  if (!m) return;
+  map.setView(m.getLatLng(), Math.max(map.getZoom(), 8), {animate:true});
+  m.openPopup();
+}
+
+function trackFlight(hex) {
+  if (_trackingHex === hex) { clearFlightTrack(); return; }
+  const m = flightMarkers[hex];
+  if (!m) return;
+  _trackingHex = hex;
+  const d  = m._fData;
+  const cs = ((Array.isArray(d) ? (d[1]||hex) : (d.flight||hex))).trim().toUpperCase() || hex.toUpperCase();
+  const badge = document.getElementById('fltTrackBadge');
+  const csEl  = document.getElementById('fltTrackCS');
+  if (badge) badge.style.display = 'block';
+  if (csEl)  csEl.textContent = cs;
+  filterFlights();
+  selectFlight(hex);
+}
+
+function clearFlightTrack() {
+  _trackingHex = null;
+  const badge = document.getElementById('fltTrackBadge');
+  if (badge) badge.style.display = 'none';
+  filterFlights();
 }
 
 function startFlightTracking() {
