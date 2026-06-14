@@ -42,22 +42,6 @@
       --shadow:    rgba(0,0,0,.2);
       --map-filter: brightness(1.05) saturate(0.85);
     }
-    [data-theme="fui"] {
-      --bg:        #03090d;
-      --surface:   #061420;
-      --surface2:  #0a1e2e;
-      --border:    #00637a;
-      --border2:   #004050;
-      --text:      #a8eeff;
-      --text2:     #5dc8e8;
-      --muted:     #2e6a7a;
-      --accent:    #00e5ff;
-      --accent2:   #00b8d9;
-      --header-bg: linear-gradient(135deg,#020e18,#041828);
-      --tog-off:   #0d3040;
-      --shadow:    rgba(0,229,255,.18);
-      --map-filter: hue-rotate(155deg) saturate(2) brightness(0.68) contrast(1.1);
-    }
 
     *{margin:0;padding:0;box-sizing:border-box;transition:background-color .2s,color .2s,border-color .2s;}
     body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
@@ -74,7 +58,7 @@
     .ql-btn:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);}
     .ql-sep{width:1px;height:20px;background:rgba(255,255,255,.15);margin:0 2px;}
 
-    .header-right{display:flex;align-items:center;gap:7px;margin-left:auto;}
+    .header-right{display:flex;align-items:center;gap:7px;margin-left:auto;order:1;}
     .theme-btn{width:30px;height:30px;border-radius:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;transition:background .15s;}
     .theme-btn:hover{background:rgba(255,255,255,.2);}
     .hbadge{background:rgba(14,165,233,.2);border:1px solid rgba(14,165,233,.5);color:#38bdf8;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;white-space:nowrap;}
@@ -346,28 +330,32 @@
 
     /* Mobile (iPhone ≤ 640px) */
     @media (max-width:640px){
-      /* Header */
-      header{padding:6px 10px;gap:6px;flex-wrap:nowrap;}
+      /* Header — row 1: logo+title+buttons, row 2: quicklinks (natural HTML order, no 'order' needed) */
+      header{padding:6px 10px 0;gap:6px;flex-wrap:wrap;}
+      .htitle{flex:1;}
+      .header-right{order:0;gap:5px;}
       .htitle h1{font-size:11px;white-space:nowrap;}
       .htitle p{display:none;}
       .hbadge{display:none;}
 
-      /* Quick links — icon-only, scrollable */
+      /* Quick links — row 2, full-width scrollable bar */
       .quicklinks{
-        overflow-x:auto;flex-wrap:nowrap;gap:4px;margin-left:4px;
+        width:100%;margin-left:0;
+        overflow-x:auto;flex-wrap:nowrap;gap:5px;
         -webkit-overflow-scrolling:touch;scrollbar-width:none;
-        flex-shrink:1;min-width:0;
+        padding:5px 0 7px;
+        border-top:1px solid rgba(255,255,255,.12);
+        flex-shrink:0;
       }
       .quicklinks::-webkit-scrollbar{display:none;}
       .ql-sep{display:none;}
-      .ql-text{display:none;}
+      .ql-text{display:inline;}
       .ql-btn{
-        padding:0;width:34px;height:34px;border-radius:8px;
-        font-size:16px;justify-content:center;flex-shrink:0;
+        padding:4px 10px;height:30px;border-radius:15px;
+        font-size:11px;justify-content:center;flex-shrink:0;
       }
 
       /* Header-right buttons — touch-friendly */
-      .header-right{gap:5px;}
       .theme-btn{width:34px;height:34px;font-size:15px;}
 
       /* Left sidebar — hidden by default, slide in */
@@ -418,114 +406,9 @@
 
     /* Very small phones (≤380px) */
     @media (max-width:380px){
-      .ql-btn{width:30px;height:30px;font-size:14px;}
+      .ql-btn{height:28px;padding:3px 8px;font-size:10px;}
       .theme-btn{width:30px;height:30px;font-size:14px;}
       .htitle{display:none;}
-    }
-
-    /* ══ FUI THEME OVERRIDES ══ */
-    [data-theme="fui"] body{font-family:'Courier New',monospace,'Segoe UI',sans-serif;}
-    [data-theme="fui"] header{
-      border-bottom:1px solid var(--accent);
-      box-shadow:0 0 18px rgba(0,229,255,.25),0 2px 12px var(--shadow);
-    }
-    [data-theme="fui"] .hlogo{
-      background:transparent;
-      border:1px solid var(--accent);
-      box-shadow:0 0 10px rgba(0,229,255,.4);
-    }
-    [data-theme="fui"] .htitle h1{
-      color:var(--accent);
-      text-shadow:0 0 10px rgba(0,229,255,.6);
-      letter-spacing:1.5px;
-    }
-    [data-theme="fui"] .htitle p{color:var(--text2);}
-    [data-theme="fui"] .ql-btn{
-      border-color:rgba(0,229,255,.3);
-      color:var(--text2);
-      background:rgba(0,229,255,.06);
-    }
-    [data-theme="fui"] .ql-btn:hover{
-      background:rgba(0,229,255,.15);
-      border-color:var(--accent);
-      color:var(--accent);
-    }
-    [data-theme="fui"] .hbadge{
-      background:rgba(0,229,255,.12);
-      border-color:rgba(0,229,255,.5);
-      color:var(--accent);
-      text-shadow:0 0 6px rgba(0,229,255,.5);
-    }
-    [data-theme="fui"] .sidebar{
-      border-right:1px solid var(--accent);
-      box-shadow:2px 0 12px rgba(0,229,255,.1);
-    }
-    [data-theme="fui"] #searchInput{
-      font-family:'Courier New',monospace;
-      border-color:var(--border);
-    }
-    [data-theme="fui"] #searchInput:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 8px rgba(0,229,255,.25);
-    }
-    [data-theme="fui"] .lp-header:hover{background:rgba(0,229,255,.06);}
-    [data-theme="fui"] .lp-title{color:var(--accent);letter-spacing:1.5px;}
-    [data-theme="fui"] .ltog.on{
-      background:var(--accent);
-      box-shadow:0 0 8px rgba(0,229,255,.5);
-    }
-    [data-theme="fui"] .ap-item:hover{
-      background:rgba(0,229,255,.06);
-      border-color:var(--border);
-    }
-    [data-theme="fui"] .ap-item.active{
-      background:rgba(0,229,255,.12);
-      border-color:var(--accent);
-      box-shadow:0 0 10px rgba(0,229,255,.2);
-    }
-    [data-theme="fui"] .ap-icao{color:var(--accent);}
-    [data-theme="fui"] #airportCount{
-      background:rgba(0,229,255,.12);
-      color:var(--accent);
-    }
-    [data-theme="fui"] .leaflet-popup-content-wrapper{
-      border-color:var(--accent) !important;
-      box-shadow:0 0 20px rgba(0,229,255,.25),0 8px 30px var(--shadow) !important;
-    }
-    [data-theme="fui"] .dt-result{
-      background:rgba(0,229,255,.08);
-      border-color:rgba(0,229,255,.3);
-      box-shadow:0 0 12px rgba(0,229,255,.15);
-    }
-    [data-theme="fui"] .dt-dist{
-      color:var(--accent);
-      text-shadow:0 0 10px rgba(0,229,255,.6);
-    }
-    [data-theme="fui"] .dt-tab.active{
-      background:var(--accent);
-      box-shadow:0 0 8px rgba(0,229,255,.4);
-      color:#03090d;
-    }
-    [data-theme="fui"] .dt-btn.pri{
-      background:transparent;
-      border:1px solid var(--accent);
-      color:var(--accent);
-      box-shadow:0 0 8px rgba(0,229,255,.3);
-    }
-    [data-theme="fui"] .dt-btn.pri:hover{background:rgba(0,229,255,.15);}
-    [data-theme="fui"] #distTool{
-      border-color:var(--accent);
-      box-shadow:0 0 20px rgba(0,229,255,.2),0 4px 20px var(--shadow);
-    }
-    [data-theme="fui"] .sb-toggle{background:#001f2a;border-color:var(--accent);box-shadow:2px 0 8px rgba(0,229,255,.3);}
-    [data-theme="fui"] .theme-btn{
-      background:rgba(0,229,255,.08);
-      border-color:rgba(0,229,255,.3);
-      color:var(--accent);
-    }
-    [data-theme="fui"] .theme-btn:hover{
-      background:rgba(0,229,255,.18);
-      box-shadow:0 0 8px rgba(0,229,255,.4);
     }
   </style>
 </head>
@@ -541,7 +424,18 @@
     <p>Civil Aviation Authority of Thailand (CAAT) · AIRAC 2026-06-11</p>
   </div>
 
-  <!-- QUICK LINKS -->
+  <div class="header-right">
+    <button class="theme-btn" id="mobileSbBtn" onclick="toggleMobileSidebar()" title="Menu" style="display:none;">☰</button>
+    <button class="theme-btn" id="btn3D" onclick="toggle3DMode()" title="3D Globe View">🌐</button>
+    <button class="theme-btn" id="btnDist" onclick="toggleDist()" title="Distance Measure (M)">📏</button>
+    <button class="theme-btn" onclick="map.setView([13,101],6)" title="Reset View">🏠</button>
+    <button class="theme-btn" onclick="toggleTheme()" title="Theme: Dark / Light" id="themeBtn">🌙</button>
+    <button class="theme-btn" id="btnWxRefresh" onclick="openAIP()" title="AIP Thailand — checking…">🔄</button>
+    <span id="wxGlobalDot" title="Weather: not fetched yet"></span>
+    <div class="hbadge">eAIP Thailand</div>
+  </div>
+
+  <!-- QUICK LINKS — last in HTML so mobile flex-wrap naturally puts it on row 2 (no 'order' needed) -->
   <div class="quicklinks">
     <div class="ql-sep"></div>
     <a class="ql-btn" href="https://aip.caat.or.th/" target="_blank">🛫<span class="ql-text"> AIP Thailand</span></a>
@@ -550,17 +444,7 @@
     <a class="ql-btn" href="https://www.flightradar24.com/14.76,101.85/7" target="_blank">✈<span class="ql-text"> FlightRadar24</span></a>
     <button class="ql-btn" onclick="openRtafWeather()">🌩<span class="ql-text"> RTAF Weather</span></button>
     <a class="ql-btn" href="https://sofia-briefing.aviation-civile.gouv.fr/sofia/pages/prepavol.html" target="_blank">📋<span class="ql-text"> NOTAM</span></a>
-  </div>
-
-  <div class="header-right">
-    <button class="theme-btn" id="mobileSbBtn" onclick="toggleMobileSidebar()" title="Menu" style="display:none;">☰</button>
-    <button class="theme-btn" id="btn3D" onclick="toggle3DMode()" title="3D Globe View">🌐</button>
-    <button class="theme-btn" id="btnDist" onclick="toggleDist()" title="Distance Measure (M)">📏</button>
-    <button class="theme-btn" onclick="map.setView([13,101],6)" title="Reset View">🏠</button>
-    <button class="theme-btn" onclick="toggleTheme()" title="Theme: Dark / Light / FUI" id="themeBtn">🌙</button>
-    <button class="theme-btn" id="btnWxRefresh" onclick="openAIP()" title="AIP Thailand — checking…">🔄</button>
-    <span id="wxGlobalDot" title="Weather: not fetched yet"></span>
-    <div class="hbadge">eAIP Thailand</div>
+    <a class="ql-btn" href="https://w2ict.github.io/Flight-Plan/" target="_blank">🗺<span class="ql-text"> FlightPlan</span></a>
   </div>
 </header>
 
@@ -1216,8 +1100,8 @@
 // ═══════════════════════════════════════════
 let currentTheme = 'dark';
 function toggleTheme(){
-  const themes = ['dark','light','fui'];
-  const icons  = {dark:'🌙', light:'☀️', fui:'⚡'};
+  const themes = ['dark','light'];
+  const icons  = {dark:'🌙', light:'☀️'};
   currentTheme = themes[(themes.indexOf(currentTheme)+1) % themes.length];
   document.documentElement.setAttribute('data-theme', currentTheme);
   document.getElementById('themeBtn').textContent = icons[currentTheme];
