@@ -953,14 +953,14 @@
     <div id="cr-direct">
       <div style="display:flex;gap:4px;margin-bottom:4px;">
         <div style="flex:1;">
-          <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Latitude (°N)</div>
-          <input id="cr_lat" type="number" step="0.00001" placeholder="13.6858" oninput="calcCoordRef()"
-            style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 6px;font-size:10px;outline:none;"/>
+          <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Latitude <span style="color:var(--accent2);">DDM</span> / decimal</div>
+          <input id="cr_lat" type="text" placeholder="N13°45.378'" oninput="calcCoordRef()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 6px;font-size:10px;outline:none;font-family:monospace;"/>
         </div>
         <div style="flex:1;">
-          <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Longitude (°E)</div>
-          <input id="cr_lon" type="number" step="0.00001" placeholder="100.7489" oninput="calcCoordRef()"
-            style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 6px;font-size:10px;outline:none;"/>
+          <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Longitude <span style="color:var(--accent2);">DDM</span> / decimal</div>
+          <input id="cr_lon" type="text" placeholder="E100°30.084'" oninput="calcCoordRef()"
+            style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 6px;font-size:10px;outline:none;font-family:monospace;"/>
         </div>
       </div>
     </div>
@@ -1284,6 +1284,38 @@ function parseDMS(s){
   if(m){let la=+m[1]+(m[2]?+m[2]/60:0)+(m[3]?+m[3]/3600:0);if(/s/i.test(m[4]))la=-la;let lo=+m[5]+(m[6]?+m[6]/60:0)+(m[7]?+m[7]/3600:0);if(/w/i.test(m[8]))lo=-lo;return[la,lo];}
   return null;
 }
+// Universal coord parser: decimal / DDM / AIP-DMS
+function parseCoordInput(s){
+  s=s.trim();
+  let m=s.match(/^(-?\d+(?:\.\d+)?)[,\s]+(-?\d+(?:\.\d+)?)$/);
+  if(m){const la=+m[1],lo=+m[2];if(Math.abs(la)<=90&&Math.abs(lo)<=180)return{lat:la,lng:lo};}
+  const dms=parseDMS(s);
+  if(dms)return{lat:dms[0],lng:dms[1]};
+  m=s.match(/^([NS]?)\s*(\d{1,3})[°\s]+(\d{1,2}(?:\.\d+)?)['\s]*([NS]?)[\s,]+([EW]?)\s*(\d{1,3})[°\s]+(\d{1,2}(?:\.\d+)?)['\s]*([EW]?)$/i);
+  if(m){
+    let la=+m[2]+ +m[3]/60,lo=+m[6]+ +m[7]/60;
+    if(/s/i.test(m[1]||m[4]))la=-la;
+    if(/w/i.test(m[5]||m[8]))lo=-lo;
+    if(Math.abs(la)<=90&&Math.abs(lo)<=180)return{lat:la,lng:lo};
+  }
+  return null;
+}
+// Single-field DDM parser: "N13°45.378'" or "13 45.378" or "13.7563" or "134530N"
+function parseDDMPart(s){
+  s=s.trim();
+  if(/^-?\d+(\.\d+)?$/.test(s))return parseFloat(s);
+  let m=s.match(/^([NSEW]?)\s*(\d{1,3})[°\s]+(\d{1,2}(?:\.\d+)?)['\s]*([NSEW]?)$/i);
+  if(m){let v=+m[2]+ +m[3]/60;if(/[SW]/i.test(m[1]||m[4]))v=-v;return v;}
+  m=s.match(/^(\d{2,3})(\d{2})(\d{0,2}(?:\.\d+)?)([NSEW])$/i);
+  if(m){let v=+m[1]+(+m[2]/60)+(m[3]?+m[3]/3600:0);if(/[SW]/i.test(m[4]))v=-v;return v;}
+  return NaN;
+}
+// Format single decimal-degree value as DDM part: "N13°45.378'"
+function toDDMPart(val,isLat){
+  const h=isLat?(val>=0?'N':'S'):(val>=0?'E':'W');
+  const a=Math.abs(val),d=Math.floor(a),m=((a-d)*60).toFixed(3);
+  return `${h}${String(d).padStart(isLat?2:3,'0')}°${m.padStart(6,'0')}'`;
+}
 const NM=1852;
 
 // ═══════════════════════════════════════════
@@ -1303,7 +1335,7 @@ satTile.addTo(map);
 L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite":satTile,"🛰 Hybrid":satHybrid,"🗺 OSM":osmTile},{},{position:'bottomright'}).addTo(map);
 
 map.on('mousemove',e=>{
-  document.getElementById('coordDisp').textContent=`Lat: ${e.latlng.lat.toFixed(4)}  Lon: ${e.latlng.lng.toFixed(4)}`;
+  document.getElementById('coordDisp').textContent=`${toDDM(e.latlng.lat,true)} ${toDDM(e.latlng.lng,false)}`;
 });
 
 // ═══════════════════════════════════════════
@@ -1423,7 +1455,7 @@ async function fetchHospitals(){
             ${tel?`<div class="hosp-row"><span class="hosp-lbl">Phone</span><a href="tel:${tel}" class="hosp-val" style="color:#38bdf8;text-decoration:none" onclick="event.stopPropagation()">${tel}</a></div>`:''}
             <div class="hosp-row" style="border-bottom:none;padding-top:6px">
               <span class="hosp-lbl">Coords</span>
-              <span class="hosp-val" style="font-family:monospace;font-size:10px;color:var(--muted)">${lat.toFixed(5)}°N&nbsp;&nbsp;${lon.toFixed(5)}°E</span>
+              <span class="hosp-val" style="font-family:monospace;font-size:10px;color:var(--muted)">${toDDM(lat,true)} ${toDDM(lon,false)}</span>
             </div>
           </div>
         </div>`,{className:'hosp-popup', maxWidth:260});
@@ -1894,7 +1926,7 @@ function navPopup(n){
     <div class="as-name">${n.name}</div>
   </div><div class="as-body">
     <div class="as-row"><span class="as-lbl">Frequency</span><span class="as-val">${n.freq}${n.ch?' / '+n.ch:''}</span></div>
-    <div class="as-row"><span class="as-lbl">Position</span><span class="as-val">${n.lat.toFixed(4)}N ${n.lon.toFixed(4)}E</span></div>
+    <div class="as-row"><span class="as-lbl">Position</span><span class="as-val">${toDDM(n.lat,true)} ${toDDM(n.lon,false)}</span></div>
     <div class="as-row"><span class="as-lbl">Elevation</span><span class="as-val">${n.elev}</span></div>
     ${rwy}
     ${n.ap?`<div class="as-row"><span class="as-lbl">Airport</span><span class="as-val">${n.ap}</span></div>`:''}
@@ -2304,7 +2336,7 @@ airports.forEach(ap=>{
     <div class="pu-name">${ap.name}</div>
   </div><div class="pu-body">
     <div class="pu-row"><span class="pu-lbl">City</span><span class="pu-val">${ap.city}</span></div>
-    <div class="pu-row"><span class="pu-lbl">Lat/Lon</span><span class="pu-val">${ap.lat.toFixed(4)}°N, ${ap.lon.toFixed(4)}°E</span></div>
+    <div class="pu-row"><span class="pu-lbl">Lat/Lon</span><span class="pu-val">${toDDM(ap.lat,true)} ${toDDM(ap.lon,false)}</span></div>
     <div class="pu-row"><span class="pu-lbl">Elevation</span><span class="pu-val">${ap.elev}</span></div>
     <div class="pu-row"><span class="pu-lbl">Operator</span><span class="pu-val"><span class="pu-op" style="background:${opBg(ap.op)};color:${c};">${ap.op}</span></span></div>
     <a href="${ap.url}" target="_blank" class="pu-link">✈ View AIP Aerodrome Data</a>
@@ -2383,7 +2415,21 @@ function renderList(data){
   }).join('');
 }
 function filterAP(){
-  const q=document.getElementById('searchInput').value.toLowerCase().trim();
+  const raw=document.getElementById('searchInput').value.trim();
+  const q=raw.toLowerCase();
+  if(raw.length>3){
+    const coord=parseCoordInput(raw);
+    if(coord){
+      const icon=L.divIcon({html:'<div style="width:16px;height:16px;background:#f59e0b;border:2px solid #fff;border-radius:50%;box-shadow:0 0 8px rgba(245,158,11,.8);"></div>',iconSize:[16,16],iconAnchor:[8,8],className:''});
+      if(!coordSearchMarker)coordSearchMarker=L.marker([coord.lat,coord.lng],{icon,zIndexOffset:2000}).addTo(map);
+      else coordSearchMarker.setLatLng([coord.lat,coord.lng]);
+      coordSearchMarker.bindPopup(`<div style="font-family:monospace;font-size:10px;line-height:1.6;"><b>📍 พิกัด</b><br>${toDDM(coord.lat,true)} ${toDDM(coord.lng,false)}<br><span style="color:var(--muted)">${coord.lat.toFixed(6)}, ${coord.lng.toFixed(6)}</span></div>`).openPopup();
+      map.setView([coord.lat,coord.lng],11);
+      renderList(airports.filter(ap=>activeOps.has(ap.op)));
+      return;
+    }
+  }
+  if(coordSearchMarker){map.removeLayer(coordSearchMarker);coordSearchMarker=null;}
   renderList(airports.filter(ap=>activeOps.has(ap.op)&&(!q||(ap.icao.toLowerCase().includes(q)||ap.name.toLowerCase().includes(q)||ap.city.toLowerCase().includes(q)))));
 }
 renderList(airports);
@@ -2398,6 +2444,7 @@ const MAX_MAP_PTS=12, MAX_AP_ROWS=13;
 
 // Map click state
 let mapPts=[], mapPolyline=null, mapSegments=[];
+let coordSearchMarker=null;
 
 // Airport route state
 let apRows=['',''], apRouteLines=[];
@@ -2611,7 +2658,8 @@ function renderMapPtList(){
   el.innerHTML=mapPts.map((p,i)=>`
     <div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid var(--border2);">
       <div style="width:16px;height:16px;background:#0ea5e9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;">${i+1}</div>
-      <span style="font-size:9px;font-family:monospace;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;">${p.lat.toFixed(4)}°N ${p.lng.toFixed(4)}°E</span>
+      <span id="mc-${i}" onclick="editMapPt(${i})" title="คลิกเพื่อแก้พิกัด"
+        style="font-size:9px;font-family:monospace;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;cursor:text;">${toDDM(p.lat,true)} ${toDDM(p.lng,false)}</span>
       <div style="display:flex;flex-direction:column;gap:0;flex-shrink:0;">
         <span onclick="moveMapPt(${i},-1)" title="Move up"
           style="cursor:${i===0?'default':'pointer'};color:${i===0?'var(--border2)':'var(--muted)'};font-size:9px;line-height:1.2;padding:0 2px;display:block;">▲</span>
@@ -2624,6 +2672,28 @@ function renderMapPtList(){
   document.getElementById('distHint').textContent=mapPts.length>=MAX_MAP_PTS
     ?'Max points reached. Drag to reposition.'
     :`Click map to add Point ${mapPts.length+1}`;
+}
+
+function editMapPt(i){
+  const span=document.getElementById('mc-'+i);
+  if(!span)return;
+  const cur=`${mapPts[i].lat.toFixed(6)}, ${mapPts[i].lng.toFixed(6)}`;
+  span.outerHTML=`<input id="mc-edit-${i}" type="text"
+    style="font-size:9px;font-family:monospace;flex:1;min-width:0;background:var(--bg);border:1px solid var(--accent);border-radius:3px;color:var(--text);padding:1px 4px;outline:none;"
+    value="${cur}"
+    onblur="applyMapPtEdit(${i},this.value)"
+    onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape')renderMapPtList();" />`;
+  const inp=document.getElementById('mc-edit-'+i);
+  if(inp){inp.focus();inp.select();}
+}
+function applyMapPtEdit(i,val){
+  const coord=parseCoordInput(val);
+  if(!coord){renderMapPtList();return;}
+  mapPts[i].lat=coord.lat; mapPts[i].lng=coord.lng;
+  if(mapPts[i].marker)mapPts[i].marker.setLatLng([coord.lat,coord.lng]);
+  if(is3D&&map3dPtMarkers[i])map3dPtMarkers[i].setLngLat([coord.lng,coord.lat]);
+  updateMapLine(); renderMapPtList(); recalcDist();
+  map.panTo([coord.lat,coord.lng]);
 }
 
 function moveMapPt(i, dir){
@@ -3084,7 +3154,7 @@ async function exportDistPDF(btn){
       doc.autoTable({
         startY:y,margin:{left:mg,right:mg},
         head:[['#','Latitude','Longitude']],
-        body:mapPts.map((p,i)=>[i+1,`${p.lat.toFixed(5)}°N`,`${p.lng.toFixed(5)}°E`]),
+        body:mapPts.map((p,i)=>[i+1,toDDM(p.lat,true),toDDM(p.lng,false)]),
         styles:TS,headStyles:HS,
         columnStyles:{0:{cellWidth:12,halign:'center'},1:{halign:'center'},2:{halign:'center'}},
       });
@@ -3160,8 +3230,8 @@ async function exportDistPDF(btn){
 
     // ── NEARBY / COORD ─────────────────────────────────────────────────────
     }else{
-      const lat=parseFloat(document.getElementById('cr_lat').value);
-      const lon=parseFloat(document.getElementById('cr_lon').value);
+      const lat=parseDDMPart(document.getElementById('cr_lat').value);
+      const lon=parseDDMPart(document.getElementById('cr_lon').value);
       if(isNaN(lat)||isNaN(lon)){
         doc.setFontSize(10);doc.text('Set a coordinate first.',mg,y);
         doc.save('distance-nearby.pdf');return;
@@ -3339,8 +3409,8 @@ map.on('click',e=>{
   if(!distMode)return;
   if(activeTab==='map') addMapPt(e.latlng);
   else if(activeTab==='coord'&&crMode==='direct'){
-    document.getElementById('cr_lat').value=e.latlng.lat.toFixed(5);
-    document.getElementById('cr_lon').value=e.latlng.lng.toFixed(5);
+    document.getElementById('cr_lat').value=toDDMPart(e.latlng.lat,true);
+    document.getElementById('cr_lon').value=toDDMPart(e.latlng.lng,false);
     calcCoordRef();
   } else if(activeTab==='circle'){
     if(circPhase===0) setCircCenter(e.latlng);
@@ -3363,7 +3433,7 @@ function setCircCenter(latlng){
   const h=document.getElementById('circHint');
   if(h) h.textContent='Click map to set radius point, or enter radius below';
   document.getElementById('circCenBox').style.display='';
-  document.getElementById('circCenVal').textContent=`${latlng.lat.toFixed(5)}°N  ${latlng.lng.toFixed(5)}°E`;
+  document.getElementById('circCenVal').textContent=`${toDDM(latlng.lat,true)} ${toDDM(latlng.lng,false)}`;
   document.getElementById('circManualWrap').style.display='';
   document.getElementById('circStatsBox').style.display='none';
   document.getElementById('distRes').textContent='—';
@@ -3392,7 +3462,7 @@ function updateCircle(){
   const r=(km*UCONV[distUnit]),ul=distUnit.toUpperCase();
   document.getElementById('circHint').textContent='Drag ⬤ center or ⬤ edge to adjust';
   document.getElementById('circCenBox').style.display='';
-  document.getElementById('circCenVal').textContent=`${cll.lat.toFixed(5)}°N  ${cll.lng.toFixed(5)}°E`;
+  document.getElementById('circCenVal').textContent=`${toDDM(cll.lat,true)} ${toDDM(cll.lng,false)}`;
   document.getElementById('circStatsBox').style.display='';
   document.getElementById('circRval').textContent=`${r.toFixed(2)} ${ul}`;
   document.getElementById('circCval').textContent=`${(2*Math.PI*r).toFixed(2)} ${ul}`;
@@ -3448,8 +3518,8 @@ function mkPinIcon(color='#e11d48'){
 }
 
 function calcCoordRef(){
-  const lat=parseFloat(document.getElementById('cr_lat').value);
-  const lon=parseFloat(document.getElementById('cr_lon').value);
+  const lat=parseDDMPart(document.getElementById('cr_lat').value);
+  const lon=parseDDMPart(document.getElementById('cr_lon').value);
   if(!document.getElementById('cr-results'))return;
 
   if(isNaN(lat)||isNaN(lon)){
@@ -3465,11 +3535,11 @@ function calcCoordRef(){
 
     crMarker.on('drag',()=>{
       const ll=crMarker.getLatLng();
-      const latEl=document.getElementById('cr_lat'); if(latEl) latEl.value=ll.lat.toFixed(5);
-      const lonEl=document.getElementById('cr_lon'); if(lonEl) lonEl.value=ll.lng.toFixed(5);
+      const latEl=document.getElementById('cr_lat'); if(latEl) latEl.value=toDDMPart(ll.lat,true);
+      const lonEl=document.getElementById('cr_lon'); if(lonEl) lonEl.value=toDDMPart(ll.lng,false);
       if(crMode!=='direct') setCrMode('direct');
       const hint=document.getElementById('cr-hint');
-      if(hint) hint.textContent=`${ll.lat.toFixed(5)}°N, ${ll.lng.toFixed(5)}°E — dragging…`;
+      if(hint) hint.textContent=`${toDDM(ll.lat,true)} ${toDDM(ll.lng,false)} — dragging…`;
       showWptFormats(ll.lat,ll.lng,`${toDDM(ll.lat,true)}  ${toDDM(ll.lng,false)}`);
       _renderCrNearby(ll.lat,ll.lng);
     });
@@ -3477,14 +3547,14 @@ function calcCoordRef(){
     crMarker.on('dragend',()=>{
       const ll=crMarker.getLatLng();
       const hint=document.getElementById('cr-hint');
-      if(hint) hint.textContent=`${ll.lat.toFixed(5)}°N, ${ll.lng.toFixed(5)}°E — drag pin to reposition`;
+      if(hint) hint.textContent=`${toDDM(ll.lat,true)} ${toDDM(ll.lng,false)} — drag pin to reposition`;
     });
   } else {
     crMarker.setLatLng([lat,lon]);
   }
 
   const hint=document.getElementById('cr-hint');
-  if(hint) hint.textContent=`${lat.toFixed(5)}°N, ${lon.toFixed(5)}°E — drag pin to reposition`;
+  if(hint) hint.textContent=`${toDDM(lat,true)} ${toDDM(lon,false)} — drag pin to reposition`;
 
   if(crMode==='direct') showWptFormats(lat,lon,`${toDDM(lat,true)}  ${toDDM(lon,false)}`);
 
@@ -3616,7 +3686,7 @@ function selectPbdRef(type,id,lat,lon,name){
   if(info){
     info.style.display='block';
     info.innerHTML=`<strong style="color:var(--accent2);">${id}</strong>  ${name}<br>`+
-      `<span style="font-family:monospace;">${lat.toFixed(5)}°N  ${lon.toFixed(5)}°E</span>`;
+      `<span style="font-family:monospace;">${toDDM(lat,true)} ${toDDM(lon,false)}</span>`;
   }
   calcPBDWpt();
 }
@@ -3641,8 +3711,8 @@ function calcPBDWpt(){
   const wLon=((lon2*180/Math.PI)+540)%360-180;
 
   // Feed into lat/lon inputs so calcCoordRef picks them up
-  document.getElementById('cr_lat').value=wLat.toFixed(5);
-  document.getElementById('cr_lon').value=wLon.toFixed(5);
+  document.getElementById('cr_lat').value=toDDMPart(wLat,true);
+  document.getElementById('cr_lon').value=toDDMPart(wLon,false);
 
   const radStr=Math.round(radial).toString().padStart(3,'0');
   const distStr=dist.toFixed(1);
@@ -4888,7 +4958,7 @@ function build3DLayers(){
         </div>
         <div class="pu-body">
           <div class="pu-row"><span class="pu-lbl">City</span><span class="pu-val">${ap.city}</span></div>
-          <div class="pu-row"><span class="pu-lbl">Lat/Lon</span><span class="pu-val">${ap.lat.toFixed(4)}°N, ${ap.lon.toFixed(4)}°E</span></div>
+          <div class="pu-row"><span class="pu-lbl">Lat/Lon</span><span class="pu-val">${toDDM(ap.lat,true)} ${toDDM(ap.lon,false)}</span></div>
           <div class="pu-row"><span class="pu-lbl">Elevation</span><span class="pu-val">${ap.elev}</span></div>
           <div class="pu-row"><span class="pu-lbl">Operator</span><span class="pu-val"><span class="pu-op" style="background:${opBg(ap.op)};color:${c};">${ap.op}</span></span></div>
           <a href="${ap.url}" target="_blank" class="pu-link">✈ View AIP Aerodrome Data</a>
