@@ -1528,6 +1528,29 @@ function initMapRotation(){
   }
   map.on('rotate', _fixPopupRot);
   map.on('popupopen', _fixPopupRot);
+
+  // Two-finger rotation for touch devices (iPhone/iPad)
+  if(!map.setBearing) return;
+  (function(){
+    const mapEl = map.getContainer();
+    let _t0 = null, _b0 = 0;
+    function ang(e){
+      return Math.atan2(e.touches[1].clientY - e.touches[0].clientY,
+                        e.touches[1].clientX - e.touches[0].clientX) * 180 / Math.PI;
+    }
+    mapEl.addEventListener('touchstart', function(e){
+      if(e.touches.length === 2){ _t0 = ang(e); _b0 = map.getBearing(); }
+    }, {passive:true});
+    mapEl.addEventListener('touchmove', function(e){
+      if(e.touches.length === 2 && _t0 !== null && !rotLocked){
+        const delta = ang(e) - _t0;
+        map.setBearing(((_b0 + delta) % 360 + 360) % 360);
+      }
+    }, {passive:true});
+    mapEl.addEventListener('touchend', function(e){
+      if(e.touches.length < 2) _t0 = null;
+    }, {passive:true});
+  })();
 }
 
 function toggleRotationLock(){
