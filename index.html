@@ -4181,6 +4181,12 @@ function applyResponsive(){
 function toggleMobileSidebar(){
   const sb = document.getElementById('sidebar');
   const isOpen = !sb.classList.contains('mobile-open');
+  if(isOpen){
+    const hdr = document.querySelector('header');
+    sb.style.top = (hdr ? hdr.offsetHeight : 0) + 'px';
+  } else {
+    sb.style.top = '';
+  }
   sb.classList.toggle('mobile-open', isOpen);
   sb.classList.toggle('collapsed', !isOpen);
   document.getElementById('mobileBackdrop').classList.toggle('show', isOpen);
