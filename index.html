@@ -132,6 +132,15 @@
     #btnDist.active{background:rgba(14,165,233,.25) !important;}
     #btn3D.active{background:rgba(14,165,233,.25) !important;}
 
+    /* ══ ROTATION CONTROL (2D) — as Leaflet control ══ */
+    .leaflet-rot-ctrl{display:flex;flex-direction:column;overflow:hidden;}
+    .leaflet-rot-ctrl button{width:30px;height:28px;background:transparent;border:none;border-bottom:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;padding:0;}
+    .leaflet-rot-ctrl button:last-child{border-bottom:none;}
+    .leaflet-rot-ctrl button:hover{background:var(--surface2);}
+    #rotNeedle{display:flex;align-items:center;justify-content:center;transition:transform .15s ease;}
+    #rotLockBtn.unlocked{background:rgba(14,165,233,.15) !important;}
+    #rotResetBtn{font-size:8px !important;font-weight:700;color:var(--accent) !important;letter-spacing:-.3px;}
+
     /* ══ MAP 3D CONTAINER ══ */
     #map3d{
       flex:1;display:none;position:relative;
@@ -466,7 +475,7 @@
       <div class="lp-header collapsed" id="lph-layers" onclick="togglePanel('layers')"
         <span style="font-size:11px;">🗂</span>
         <span class="lp-title">Layers</span>
-        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/9</span>
+        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/10</span>
         <span class="lp-chevron">▼</span>
       </div>
       <div class="lp-body collapsed" id="lpb-layers">
@@ -514,6 +523,11 @@
           <div class="layer-dot" style="background:#f59e0b;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;color:#fff;">✈</div>
           <span class="layer-label" id="lbl-flights">Live Flights</span>
           <div class="ltog" id="ltog-flights"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('bn2')">
+          <div class="layer-dot" style="background:#f97316;border-radius:2px;"></div>
+          <span class="layer-label">พท.การฝึก บน.2 (Active)</span>
+          <div class="ltog" id="ltog-bn2"></div>
         </div>
 
       </div>
@@ -1091,6 +1105,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/@map-controls/leaflet-rotate/dist/leaflet-rotate-src.js"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -1321,7 +1336,7 @@ const NM=1852;
 // ═══════════════════════════════════════════
 // MAP
 // ═══════════════════════════════════════════
-const map=L.map('map',{center:[13,101],zoom:6,zoomControl:false});
+const map=L.map('map',{center:[13,101],zoom:6,zoomControl:false,rotate:true,touchRotate:true,rotateControl:false,bearing:0});
 L.control.zoom({position:'bottomright'}).addTo(map);
 
 // maxNativeZoom = tile provider's actual limit; maxZoom = Leaflet upscales beyond native
@@ -1337,6 +1352,222 @@ L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite"
 map.on('mousemove',e=>{
   document.getElementById('coordDisp').textContent=`${toDDM(e.latlng.lat,true)} ${toDDM(e.latlng.lng,false)}`;
 });
+
+// ═══════════════════════════════════════════
+// MAP ROTATION (2D)
+// ═══════════════════════════════════════════
+let rotLocked = true;
+
+function initMapRotation(){
+  if(map.rotate) map.rotate.disable();
+  if(map.touchRotate) map.touchRotate.disable();
+
+  // ── Fallback bearing (ถ้า leaflet-rotate plugin โหลดไม่ได้) ──
+  if(!map.setBearing){
+    let _fb = 0;
+    const _mp = map.getPanes().mapPane;
+
+    function _doApply(){
+      const pos = L.DomUtil.getPosition(_mp) || L.point(0,0);
+      const s   = map.getSize();
+      if(_fb === 0){
+        _mp.style.transformOrigin = '';
+        _mp.style[L.DomUtil.TRANSFORM] = `translate3d(${pos.x}px,${pos.y}px,0)`;
+      } else {
+        _mp.style.transformOrigin = `${s.x/2-pos.x}px ${s.y/2-pos.y}px`;
+        _mp.style[L.DomUtil.TRANSFORM] = `translate3d(${pos.x}px,${pos.y}px,0) rotate(${_fb}deg)`;
+      }
+    }
+
+    map.getBearing = () => _fb;
+    map.setBearing = function(b){
+      _fb = ((b % 360) + 360) % 360;
+      _doApply();
+      map.fire('rotate');
+    };
+
+    // MutationObserver จับทุก style change บน mapPane (รวม zoom animation)
+    // → re-apply rotation ทันทีที่ Leaflet reset transform
+    let _obsBusy = false;
+    new MutationObserver(function(){
+      if(_obsBusy || !_fb) return;
+      const t = _mp.style[L.DomUtil.TRANSFORM] || '';
+      if(!t.includes('rotate')){
+        _obsBusy = true;
+        _doApply();
+        _obsBusy = false;
+      }
+    }).observe(_mp, {attributes:true, attributeFilter:['style']});
+
+    // แก้ drag direction: rotate drag delta ให้ตรงมุม map
+    // ถ้าไม่แปลง: ลากขวาบนจอ → map เลื่อนผิดทิศเพราะ transform-origin เปลี่ยน
+    const _drag = map.dragging && map.dragging._draggable;
+    if(_drag){
+      _drag.on('predrag', function(){
+        if(!_fb) return;
+        const θ = _fb * Math.PI / 180;
+        const cos = Math.cos(θ), sin = Math.sin(θ);
+        const sp = this._startPos, np = this._newPos;
+        const dx = np.x - sp.x, dy = np.y - sp.y;
+        this._newPos = L.point(
+          sp.x + cos*dx + sin*dy,
+          sp.y - sin*dx + cos*dy
+        );
+      });
+    }
+
+    // แก้ coordinate conversion → คลิกถูกตำแหน่งแม้ map หมุน
+    const _origCPtoLP = map.containerPointToLayerPoint.bind(map);
+    map._rotOrigCPtoLP = _origCPtoLP; // เก็บไว้ให้ renderer patch ใช้
+    map.containerPointToLayerPoint = function(pt){
+      if(!_fb) return _origCPtoLP(pt);
+      const s=this.getSize(), cx=s.x/2, cy=s.y/2, a=-_fb*Math.PI/180;
+      const dx=pt.x-cx, dy=pt.y-cy;
+      return _origCPtoLP(L.point(
+        dx*Math.cos(a)-dy*Math.sin(a)+cx,
+        dx*Math.sin(a)+dy*Math.cos(a)+cy
+      ));
+    };
+  }
+
+  // ── Patch tile bounds → โหลด tiles ครอบพื้นที่ที่หมุนแล้ว ไม่มีมุมโล่ง ──
+  const _origGTBP = L.GridLayer.prototype._getTiledPixelBounds;
+  L.GridLayer.prototype._getTiledPixelBounds = function(center){
+    const bounds = _origGTBP.call(this, center);
+    const b = map.getBearing ? map.getBearing() : 0;
+    if(!b) return bounds;
+    const s = map.getSize(), w = s.x, h = s.y;
+    const a = Math.abs(b) * Math.PI / 180;
+    const cos = Math.cos(a), sin = Math.sin(a);
+    const pad = Math.max((cos + (h/w)*sin - 1)/2, ((w/h)*sin + cos - 1)/2, 0) + 0.15;
+    return bounds.pad(pad);
+  };
+
+  // ── Patch SVG/Canvas renderer bounds → layer polygon/polyline ไม่ถูก clip ──
+  // ปัญหา: _update ใช้ containerPointToLayerPoint ที่ patch แล้ว → SVG bounds ผิดตำแหน่ง
+  // แก้: swap กลับ original ชั่วคราวตอนคำนวณ bounds เท่านั้น
+  const _origRU = L.Renderer.prototype._update;
+  L.Renderer.prototype._update = function(){
+    if(!this._map){ _origRU.call(this); return; }
+    const b = this._map.getBearing ? this._map.getBearing() : 0;
+    if(!b){ this.options.padding=0.1; _origRU.call(this); return; }
+    const s=this._map.getSize(), w=s.x, h=s.y;
+    const a=Math.abs(b)*Math.PI/180, cos=Math.cos(a), sin=Math.sin(a);
+    this.options.padding=Math.max((cos+(h/w)*sin-1)/2,((w/h)*sin+cos-1)/2,0)+0.15;
+    const origFn=this._map._rotOrigCPtoLP;
+    if(origFn){
+      const saved=this._map.containerPointToLayerPoint;
+      this._map.containerPointToLayerPoint=origFn;
+      _origRU.call(this);
+      this._map.containerPointToLayerPoint=saved;
+    } else {
+      _origRU.call(this);
+    }
+  };
+
+  // Right-click drag rotation (desktop)
+  let _rDrag=false, _rStartX=0, _rStartBearing=0;
+  const mapEl = map.getContainer();
+  mapEl.addEventListener('mousedown', function(e){
+    if(rotLocked || e.button !== 2) return;
+    _rDrag=true; _rStartX=e.clientX;
+    _rStartBearing = map.getBearing ? map.getBearing() : 0;
+    mapEl.style.cursor = 'ew-resize';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e){
+    if(!_rDrag) return;
+    if(map.setBearing) map.setBearing(_rStartBearing + (e.clientX-_rStartX)*0.4);
+  });
+  document.addEventListener('mouseup', function(e){
+    if(e.button !== 2 || !_rDrag) return;
+    _rDrag=false; mapEl.style.cursor='';
+    // Reload tiles หลัง rotation หยุด เพื่อเติมมุมที่ยังไม่มี tile
+    setTimeout(function(){
+      map.eachLayer(function(l){ if(l._update) l._update(); });
+    }, 80);
+  });
+  mapEl.addEventListener('contextmenu', function(e){
+    if(!rotLocked) e.preventDefault();
+  });
+
+  // Leaflet Control — stack เข้าคอลัมน์เดียวกับ zoom
+  const RotCtrl = L.Control.extend({
+    options: { position: 'bottomright' },
+    onAdd: function(){
+      const div = L.DomUtil.create('div','leaflet-bar leaflet-control leaflet-rot-ctrl');
+      div.id = 'rotCtrl';
+      div.innerHTML =
+        `<button id="rotCompassBtn" onclick="rotCompassClick()" title="ทิศเหนือ">`+
+          `<div id="rotNeedle">`+
+            `<svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">`+
+              `<path d="M12 3 L14.5 12 L12 10.5 L9.5 12 Z" fill="#ef4444"/>`+
+              `<path d="M12 21 L14.5 12 L12 13.5 L9.5 12 Z" fill="rgba(180,180,180,.55)"/>`+
+              `<circle cx="12" cy="12" r="2.2" fill="rgba(255,255,255,.85)"/>`+
+            `</svg>`+
+          `</div>`+
+        `</button>`+
+        `<button id="rotLockBtn" onclick="toggleRotationLock()" title="ปลดล็อค: คลิกขวาค้างแล้วลากเพื่อหมุน">🔒</button>`+
+        `<button id="rotResetBtn" onclick="resetNorth()" title="รีเซ็ตทิศเหนือ" style="display:none;">↑N</button>`;
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    }
+  });
+  new RotCtrl().addTo(map);
+
+  map.on('rotate', updateCompassUI);
+  updateCompassUI();
+
+  // Keep popups upright when map is rotated
+  function _fixPopupRot(){
+    const b = map.getBearing ? map.getBearing() : 0;
+    document.querySelectorAll('.leaflet-popup-content-wrapper, .leaflet-popup-tip-container').forEach(function(el){
+      el.style.transform = b ? 'rotate('+(-b)+'deg)' : '';
+      el.style.transformOrigin = b ? '50% 100%' : '';
+    });
+  }
+  map.on('rotate', _fixPopupRot);
+  map.on('popupopen', _fixPopupRot);
+}
+
+function toggleRotationLock(){
+  rotLocked = !rotLocked;
+  if(rotLocked){
+    if(map.touchRotate) map.touchRotate.disable();
+    if(map.setBearing) map.setBearing(0);
+  } else {
+    if(map.touchRotate) map.touchRotate.enable();
+  }
+  updateCompassUI();
+}
+
+function resetNorth(){
+  if(map.setBearing) map.setBearing(0);
+  updateCompassUI();
+}
+
+function rotCompassClick(){
+  const b = map.getBearing ? map.getBearing() : 0;
+  if(Math.abs(b) > 0.5) resetNorth();
+}
+
+function updateCompassUI(){
+  const b = map.getBearing ? map.getBearing() : 0;
+  const needle = document.getElementById('rotNeedle');
+  const lockBtn = document.getElementById('rotLockBtn');
+  const resetBtn = document.getElementById('rotResetBtn');
+  const cmpBtn = document.getElementById('rotCompassBtn');
+  if(needle) needle.style.transform = `rotate(${-b}deg)`;
+  if(lockBtn){
+    lockBtn.textContent = rotLocked ? '🔒' : '🔓';
+    lockBtn.title = rotLocked ? 'ปลดล็อค: คลิกขวาค้างแล้วลากเพื่อหมุน (สองนิ้วบน mobile)' : 'ล็อคทิศเหนือ';
+    lockBtn.classList.toggle('unlocked', !rotLocked);
+  }
+  if(resetBtn) resetBtn.style.display = (!rotLocked && Math.abs(b) > 0.5) ? 'flex' : 'none';
+  if(cmpBtn) cmpBtn.title = Math.abs(b) > 0.5 ? `${b.toFixed(0)}° · คลิกรีเซ็ตทิศเหนือ` : 'ทิศเหนือ';
+}
+
+initMapRotation();
 
 // ═══════════════════════════════════════════
 // LAYER GROUPS
@@ -1356,9 +1587,10 @@ const LG={
     })
   }),
   flights: L.layerGroup(),
+  bn2:     L.layerGroup(),
 };
 // Default: only Aerodromes ON; all others OFF
-const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false,flights:false};
+const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false,flights:false,bn2:false};
 // Add only active layers to map on startup
 Object.entries(LG).forEach(([k,g])=>{ if(LS[k]!==false) g.addTo(map); });
 
@@ -2305,6 +2537,113 @@ function addArea(area,type,color,grp){
 prohibitedAreas.forEach(a=>addArea(a,'PROHIBITED AREA','#ff4444',LG.prohibited));
 restrictedAreas.forEach(a=>addArea(a,'RESTRICTED AREA','#ff8800',LG.restricted));
 dangerAreas    .forEach(a=>addArea(a,'DANGER AREA',    '#ffdd00',LG.danger));
+
+// ═══════════════════════════════════════════
+// BN.2 TRAINING AREA (พท.การฝึก บน.2)
+// ═══════════════════════════════════════════
+(function(){
+  const g=LG.bn2;
+
+  // Outer boundary polygon (A3→A11→A10→A9→A8→A7→A6→A5→A4→A1→A2)
+  L.polygon([
+    [14.873767,100.159911],[15.121111,100.169444],[15.119183,100.635825],
+    [15.116667,100.833333],[14.916667,100.833333],[14.916667,101.090278],
+    [14.847614,101.090278],[14.610278,101.090278],[14.612694,100.734889],
+    [14.615342,100.345175],[14.616667,100.150000],
+  ],{color:'#f97316',weight:2.4,opacity:0.9,fillColor:'#fb923c',fillOpacity:0,dashArray:'8 4'})
+  .bindPopup('<b>พท.การฝึก บน.2 (Active)</b><br><span style="font-size:10px;color:var(--muted);">Training Area</span>',{maxWidth:220}).addTo(g);
+
+  // VTP4 inner zone (CHNDY rectangle)
+  L.polygon([
+    [15.116667,100.833333],[15.116667,100.983333],
+    [14.916667,100.983333],[14.916667,100.833333],
+  ],{color:'#ef4444',weight:2.4,opacity:0.9,fillColor:'#ef4444',fillOpacity:0,dashArray:'5 3'})
+  .bindPopup('<b>VTP4</b><br><span style="font-size:10px;color:var(--muted);">Restricted Zone</span>',{maxWidth:200}).addTo(g);
+
+  // Route 202604240259 (green dashed)
+  L.polyline([
+    [14.874633,100.663408],[14.615342,100.345175],[14.616667,100.150000],[14.873767,100.159911],
+    [14.874633,100.663408],[14.615342,100.345175],[14.612694,100.734889],
+    [14.874633,100.663408],[14.612694,100.734889],[14.610278,101.090278],[14.847614,101.090278],
+    [14.874633,100.663408],[14.847614,101.090278],[14.916667,101.090278],[14.916667,100.833333],
+    [15.116667,100.833333],[15.119183,100.635825],
+    [14.874633,100.663408],[15.119183,100.635825],[15.121111,100.169444],[14.873767,100.159911],
+  ],{color:'#39ff14',weight:1.8,opacity:0.9,dashArray:'8 5'})
+  .bindPopup('<b>Route 202604240259</b><br><span style="font-size:10px;color:var(--muted);">Route no. 1</span>',{maxWidth:200}).addTo(g);
+
+  // Waypoints A1-A11 + CTR
+  [
+    {n:'CTR',          lat:14.874633,lng:100.663408,c:'#f97316',r:6,b:2,   lbl:'CTR'},
+    {n:'A1 R230/24.0', lat:14.615342,lng:100.345175,c:'#39ff14',r:4,b:1.5,lbl:'A1\nR230/24'},
+    {n:'A2 R243/33.5', lat:14.616667,lng:100.150000,c:'#39ff14',r:4,b:1.5,lbl:'A2\nR243/33'},
+    {n:'A3 R271/29.0', lat:14.873767,lng:100.159911,c:'#39ff14',r:4,b:1.5,lbl:'A3\nR271/29'},
+    {n:'A4 R165/16.3', lat:14.612694,lng:100.734889,c:'#39ff14',r:4,b:1.5,lbl:'A4\nR165/16'},
+    {n:'A5 R123/29.6', lat:14.610278,lng:101.090278,c:'#39ff14',r:4,b:1.5,lbl:'A5\nR123/29'},
+    {n:'A6 R095/25.1', lat:14.847614,lng:101.090278,c:'#39ff14',r:4,b:1.5,lbl:'A6\nR095/25'},
+    {n:'A7 R085/25.1', lat:14.916667,lng:101.090278,c:'#39ff14',r:4,b:1.5,lbl:'A7\nR085/25'},
+    {n:'A8 R077/10.4', lat:14.916667,lng:100.833333,c:'#39ff14',r:4,b:1.5,lbl:'A8\nR077/10'},
+    {n:'A9 R036/17.5', lat:15.116667,lng:100.833333,c:'#39ff14',r:4,b:1.5,lbl:'A9\nR036/17'},
+    {n:'A10 R355/14.6',lat:15.119183,lng:100.635825,c:'#39ff14',r:4,b:1.5,lbl:'A10\nR355/14'},
+    {n:'A11 R298/32.0',lat:15.121111,lng:100.169444,c:'#39ff14',r:4,b:1.5,lbl:'A11\nR298/32'},
+  ].forEach(w=>{
+    const sz=w.r*2;
+    const lblHtml=w.lbl.split('\n').map((t,i)=>
+      `<div style="font-size:${i===0?'9':'8'}px;font-weight:${i===0?'700':'600'};line-height:1.25;color:${w.c};text-shadow:0 0 3px rgba(0,0,0,1),0 1px 2px rgba(0,0,0,.9);">${t}</div>`
+    ).join('');
+    L.marker([w.lat,w.lng],{icon:L.divIcon({
+      html:`<div style="position:relative;"><div style="width:${sz}px;height:${sz}px;background:${w.c};border:${w.b}px solid #fff;border-radius:50%;box-shadow:0 0 6px ${w.c},0 1px 4px rgba(0,0,0,.65);"></div><div style="position:absolute;left:${sz+4}px;top:50%;transform:translateY(-50%);white-space:nowrap;">${lblHtml}</div></div>`,
+      iconSize:[sz,sz],iconAnchor:[w.r,w.r],className:''
+    })}).bindPopup(
+      `<b>${w.n}</b><br><span style="font-size:10px;color:var(--muted);">${w.lat.toFixed(5)}°N&nbsp;&nbsp;${w.lng.toFixed(5)}°E</span>`,
+      {maxWidth:220}
+    ).addTo(g);
+  });
+
+  // TCN 115X (TACAN)
+  L.marker([14.876203,100.659858],{icon:L.divIcon({
+    html:`<div style="width:10px;height:10px;background:#a78bfa;border:1.5px solid #fff;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.55);"></div>`,
+    iconSize:[10,10],iconAnchor:[5,5],className:''
+  })}).bindPopup('<b>TCN 115X</b><br><span style="font-size:10px;color:var(--muted);">TACAN Station<br>14.87620°N 100.65986°E</span>',{maxWidth:220}).addTo(g);
+
+  // CHNDY1-4 corners (red circles)
+  [{n:'CHNDY1',lat:15.116667,lng:100.983333},
+   {n:'CHNDY2',lat:15.116667,lng:100.833333},
+   {n:'CHNDY3',lat:14.916667,lng:100.983333},
+   {n:'CHNDY4',lat:14.916667,lng:100.833333}].forEach(p=>{
+    L.marker([p.lat,p.lng],{icon:L.divIcon({
+      html:`<div style="width:8px;height:8px;background:#ef4444;border:1.5px solid #fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.55);"></div>`,
+      iconSize:[8,8],iconAnchor:[4,4],className:''
+    })}).bindPopup(`<b>${p.n}</b><br><span style="font-size:10px;color:var(--muted);">${p.lat.toFixed(5)}°N&nbsp;&nbsp;${p.lng.toFixed(5)}°E</span>`,{maxWidth:220}).addTo(g);
+  });
+
+  // Reporting Points (P/B/K/L)
+  [{n:'P',full:'P pt. 13NM BRG140 (NDB)',lat:14.71667,lng:100.79167},
+   {n:'B',full:'B pt. 12NM BRG325 (NDB)',lat:15.04167,lng:100.54167},
+   {n:'K',full:'K pt.',lat:14.89722,lng:100.59444},
+   {n:'L',full:'L pt.',lat:14.79444,lng:100.63889}].forEach(p=>{
+    L.marker([p.lat,p.lng],{icon:L.divIcon({
+      html:`<div style="width:22px;height:22px;background:#00e5ff;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#000;box-shadow:0 0 8px #00e5ff,0 1px 4px rgba(0,0,0,.65);">${p.n}</div>`,
+      iconSize:[22,22],iconAnchor:[11,11],className:''
+    })}).bindPopup(
+      `<b style="color:#00e5ff;">${p.full}</b><br><span style="font-size:10px;color:var(--muted);">Reporting Point<br>${toDDM(p.lat,true)} ${toDDM(p.lng,false)}</span>`,
+      {maxWidth:240}
+    ).addTo(g);
+  });
+
+  // Area label markers (text-only)
+  [{n:'Area1',lat:14.764630,lng:100.312396},
+   {n:'Area2',lat:14.695732,lng:100.582262},
+   {n:'Area3',lat:14.739637,lng:100.928467},
+   {n:'Area4',lat:15.006565,lng:100.722163},
+   {n:'VTP4', lat:15.019516,lng:100.904052},
+   {n:'พท.ฝึก ศบบ.ทบ.',lat:15.000843,lng:100.387564}].forEach(p=>{
+    L.marker([p.lat,p.lng],{icon:L.divIcon({
+      html:`<div style="font-size:9px;font-weight:700;color:#f97316;text-shadow:0 1px 2px rgba(0,0,0,.85);white-space:nowrap;pointer-events:none;letter-spacing:.3px;">${p.n}</div>`,
+      iconSize:[0,0],iconAnchor:[0,0],className:''
+    })}).addTo(g);
+  });
+})();
+updateLayerCount();
 
 // ═══════════════════════════════════════════
 // AIRPORT MARKERS
@@ -4635,12 +4974,14 @@ function toggle3DMode(){
     el2d.style.display = 'none';
     el3d.style.display = 'block';
     btn.classList.add('active');
+    document.getElementById('rotCtrl').style.display = 'none';
     if(!map3d) init3DMap(); // syncDistMeasureTo3D() called after build3DLayers()
     else { syncViewTo3D(); syncDistMeasureTo3D(); }
   } else {
     el3d.style.display = 'none';
     el2d.style.display = 'block';
     btn.classList.remove('active');
+    document.getElementById('rotCtrl').style.display = 'flex';
     if(map3d){ syncViewTo2D(); syncDistMeasureTo2D(); }
     setTimeout(()=>map.invalidateSize(), 100);
   }
