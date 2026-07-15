@@ -430,7 +430,7 @@
   <div class="hlogo">✈</div>
   <div class="htitle">
     <h1>AIP Thailand GIS System</h1>
-    <p>Civil Aviation Authority of Thailand (CAAT) · AIRAC 2026-06-11</p>
+    <p>Civil Aviation Authority of Thailand (CAAT) · AIRAC 2026-07-09</p>
   </div>
 
   <div class="header-right">
@@ -1095,11 +1095,11 @@
 
 <div class="stats">
   <div>Aerodromes: <span id="stAP">48</span></div>
-  <div>ACC Sectors: <span>12</span></div>
-  <div>Nav Aids: <span>60</span></div>
-  <div>CTR/TMA: <span>20</span></div>
-  <div>PRD/RST/DNG: <span>5/18/49</span></div>
-  <div>AIRAC: <span>2026-06-11</span></div>
+  <div>ACC Sectors: <span id="stAccSectors">12</span></div>
+  <div>Nav Aids: <span id="stNavAids">60</span></div>
+  <div>CTR/TMA: <span id="stAts">20</span></div>
+  <div>PRD/RST/DNG: <span id="stPRD">5/18/49</span></div>
+  <div>AIRAC: <span>2026-07-09</span></div>
   <div id="coordDisp">Lat: — Lon: —</div>
 </div>
 
@@ -1154,6 +1154,7 @@ const OP_CONFIG = {
   'Royal Thai Navy': {color:'#6366f1', bg:'rgba(99,102,241,.15)', label:'Navy'},
   'Royal Thai Army': {color:'#f59e0b', bg:'rgba(245,158,11,.15)', label:'Army'},
   'Bangkok Airways': {color:'#a855f7', bg:'rgba(168,85,247,.15)', label:'BKK Air'},
+  'Dept. of Royal Rainmaking': {color:'#14b8a6', bg:'rgba(20,184,166,.15)', label:'Rainmaking'},
 };
 const opColor=op=>(OP_CONFIG[op]||{color:'#94a3b8'}).color;
 const opBg   =op=>(OP_CONFIG[op]||{bg:'rgba(148,163,184,.15)'}).bg;
@@ -1166,32 +1167,32 @@ const airports = [
   {icao:"VTBS",name:"Bangkok / Suvarnabhumi International Airport",     city:"Bangkok",           lat:13.6858,lon:100.7489,elev:"8 ft",   op:"AOT"},
   {icao:"VTBU",name:"Rayong / U-Tapao Rayong Pattaya Intl Airport",    city:"Rayong",            lat:12.6797,lon:101.0050,elev:"59 ft",  op:"Royal Thai Navy"},
   {icao:"VTCC",name:"Chiang Mai International Airport",                 city:"Chiang Mai",        lat:18.7714,lon:98.9628, elev:"1,036 ft",op:"AOT"},
-  {icao:"VTCL",name:"Lampang Airport",                                  city:"Lampang",           lat:18.2708,lon:99.5022, elev:"815 ft", op:"DOA"},
+  {icao:"VTCL",name:"Lampang Airport",                                  city:"Lampang",           lat:18.2708,lon:99.5042, elev:"815 ft", op:"DOA"},
   {icao:"VTCN",name:"Nan Nakhon Airport",                               city:"Nan",               lat:18.8079,lon:100.7834,elev:"685 ft", op:"DOA"},
   {icao:"VTCP",name:"Phrae Airport",                                    city:"Phrae",             lat:18.1322,lon:100.1647,elev:"540 ft", op:"DOA"},
   {icao:"VTCT",name:"Mae Fah Luang - Chiang Rai International Airport", city:"Chiang Rai",        lat:19.9524,lon:99.8829, elev:"1,280 ft",op:"AOT"},
-  {icao:"VTCH",name:"Mae Hong Son Airport",                             city:"Mae Hong Son",      lat:19.3017,lon:97.9995, elev:"929 ft", op:"DOA"},
+  {icao:"VTCH",name:"Mae Hong Son Airport",                             city:"Mae Hong Son",      lat:19.3017,lon:97.9750, elev:"929 ft", op:"DOA"},
   {icao:"VTCI",name:"Pai Airport",                                      city:"Pai",               lat:19.3720,lon:98.4359, elev:"1,676 ft",op:"DOA"},
   {icao:"VTPB",name:"Phetchabun Airport",                               city:"Phetchabun",        lat:16.6760,lon:101.1951,elev:"450 ft", op:"DOA"},
   {icao:"VTPH",name:"Prachuap Khiri Khan / Hua Hin Airport",           city:"Hua Hin",           lat:12.6303,lon:99.9534, elev:"62 ft",  op:"DOA"},
   {icao:"VTPM",name:"Tak / Mae Sot Airport",                           city:"Mae Sot",           lat:16.6999,lon:98.5501, elev:"693 ft", op:"DOA"},
-  {icao:"VTPN",name:"Nakhon Sawan Airport",                            city:"Nakhon Sawan",      lat:15.6725,lon:100.1360,elev:"113 ft", op:"DOA"},
+  {icao:"VTPN",name:"Nakhon Sawan Airport",                            city:"Nakhon Sawan",      lat:15.6725,lon:100.1360,elev:"113 ft", op:"Dept. of Royal Rainmaking"},
   {icao:"VTPO",name:"Sukhothai Airport",                               city:"Sukhothai",         lat:17.2375,lon:99.8183, elev:"184 ft", op:"Bangkok Airways"},
   {icao:"VTPP",name:"Phitsanulok Airport",                             city:"Phitsanulok",       lat:16.7830,lon:100.2791,elev:"148 ft", op:"DOA"},
   {icao:"VTSB",name:"Surat Thani Airport",                             city:"Surat Thani",       lat:9.1361, lon:99.1390, elev:"20 ft",  op:"DOA"},
   {icao:"VTSC",name:"Narathiwat Airport",                              city:"Narathiwat",        lat:6.5178, lon:101.7425,elev:"23 ft",  op:"DOA"},
-  {icao:"VTSE",name:"Chumphon Airport",                                city:"Chumphon",          lat:10.7112,lon:99.3656, elev:"22 ft",  op:"DOA"},
-  {icao:"VTSG",name:"Krabi Airport",                                   city:"Krabi",             lat:8.1002, lon:98.9801, elev:"93 ft",  op:"AOT"},
+  {icao:"VTSE",name:"Chumphon Airport",                                city:"Chumphon",          lat:10.7112,lon:99.3617, elev:"22 ft",  op:"DOA"},
+  {icao:"VTSG",name:"Krabi Airport",                                   city:"Krabi",             lat:8.1002, lon:98.9853, elev:"93 ft",  op:"DOA"},
   {icao:"VTSH",name:"Songkhla Naval Air Station",                      city:"Songkhla",          lat:7.1857, lon:100.6088,elev:"12 ft",  op:"Royal Thai Navy"},
   {icao:"VTSK",name:"Pattani Airport",                                 city:"Pattani",           lat:6.7857, lon:101.1536,elev:"8 ft",   op:"RTAF"},
   {icao:"VTSM",name:"Koh Samui Airport",                              city:"Koh Samui",         lat:9.5489, lon:100.0625,elev:"64 ft",  op:"Bangkok Airways"},
   {icao:"VTSN",name:"Nakhon Si Thammarat Airport",                    city:"Nakhon Si Thammarat",lat:8.4639,lon:99.9583, elev:"44 ft",  op:"Royal Thai Army"},
   {icao:"VTSP",name:"Phuket International Airport",                   city:"Phuket",            lat:8.1125, lon:98.3092, elev:"84 ft",  op:"AOT"},
-  {icao:"VTSR",name:"Ranong Airport",                                  city:"Ranong",            lat:9.7776, lon:98.5855, elev:"57 ft",  op:"DOA"},
-  {icao:"VTSS",name:"Songkhla / Hat Yai International Airport",       city:"Hat Yai",           lat:6.9328, lon:100.3761,elev:"90 ft",  op:"AOT"},
+  {icao:"VTSR",name:"Ranong Airport",                                  city:"Ranong",            lat:9.7776, lon:98.5855, elev:"61 ft",  op:"DOA"},
+  {icao:"VTSS",name:"Songkhla / Hat Yai International Airport",       city:"Hat Yai",           lat:6.9328, lon:100.3950,elev:"90 ft",  op:"AOT"},
   {icao:"VTST",name:"Trang Airport",                                  city:"Trang",             lat:7.5086, lon:99.6158, elev:"67 ft",  op:"DOA"},
   {icao:"VTUD",name:"Udon Thani Airport",                             city:"Udon Thani",        lat:17.3864,lon:102.7882,elev:"579 ft", op:"DOA"},
-  {icao:"VTUI",name:"Sakon Nakhon Airport",                           city:"Sakon Nakhon",      lat:17.1951,lon:104.1100,elev:"529 ft", op:"DOA"},
+  {icao:"VTUI",name:"Sakon Nakhon Airport",                           city:"Sakon Nakhon",      lat:17.1951,lon:104.1186,elev:"529 ft", op:"DOA"},
   {icao:"VTUK",name:"Khon Kaen Airport",                              city:"Khon Kaen",         lat:16.4667,lon:102.7836,elev:"681 ft", op:"DOA"},
   {icao:"VTUL",name:"Loei Airport",                                   city:"Loei",              lat:17.4392,lon:101.7219,elev:"864 ft", op:"DOA"},
   {icao:"VTBL",name:"Lop Buri / Khok Kathiam Air Force Base",        city:"Lop Buri",          lat:14.8746,lon:100.6634,elev:"133 ft", op:"RTAF"},
@@ -1204,15 +1205,15 @@ const airports = [
   {icao:"VTBW",name:"Sa Kaeo / Watthana Nakhon Airport",            city:"Sa Kaeo",           lat:13.7688,lon:102.3155,elev:"225 ft", op:"RTAF"},
   // ── 8 airports added (previously missing) ──
   {icao:"VTPI",name:"Nakhon Sawan / Takhli Air Force Base",          city:"Nakhon Sawan",      lat:15.2773,lon:100.2959,elev:"103 ft", op:"RTAF"},
-  {icao:"VTUV",name:"Roi Et Airport",                                city:"Roi Et",            lat:16.1167,lon:103.7763,elev:"451 ft", op:"DOA"},
+  {icao:"VTUV",name:"Roi Et Airport",                                city:"Roi Et",            lat:16.1167,lon:103.7739,elev:"451 ft", op:"DOA"},
   {icao:"VTBO",name:"Trat / Khao Sming Airport",                     city:"Trat",              lat:12.2758,lon:102.3206,elev:"109 ft", op:"Bangkok Airways"},
   {icao:"VTBP",name:"Prachuap Khiri Khan Airport",                   city:"Prachuap Khiri Khan",lat:11.7884,lon:99.8046, elev:"17 ft",  op:"RTAF"},
-  {icao:"VTPT",name:"Tak Airport",                                   city:"Tak",               lat:16.8960,lon:99.2537, elev:"478 ft", op:"DOA"},
+  {icao:"VTPT",name:"Tak Airport",                                   city:"Tak",               lat:16.8960,lon:99.2537, elev:"478 ft", op:"Dept. of Royal Rainmaking"},
   {icao:"VTSF",name:"Nakhon Si Thammarat Airport (South)",           city:"Nakhon Si Thammarat",lat:8.5396,lon:99.9447, elev:"13 ft",  op:"DOA"},
   {icao:"VTSY",name:"Yala / Betong Airport",                         city:"Betong, Yala",      lat:5.7877,lon:101.1471,elev:"738 ft", op:"DOA"},
   {icao:"VTUZ",name:"Khon Kaen / Nam Phong Air Force Base",          city:"Nam Phong, Khon Kaen",lat:16.6503,lon:102.9631,elev:"723 ft",op:"RTAF"},
 ];
-airports.forEach(a=>{ a.url=`https://aip.caat.or.th/2026-06-11-AIRAC/html/eAIP/VT-AD-2.${a.icao}-en-GB.html`; });
+airports.forEach(a=>{ a.url=`https://aip.caat.or.th/2026-07-09-AIRAC/html/eAIP/VT-AD-2.${a.icao}-en-GB.html`; });
 
 // ═══════════════════════════════════════════
 // RADIO NAVIGATION AIDS DATA (ENR 4.1 + AD 2.19)
@@ -1223,11 +1224,11 @@ const navAids = [
   {id:'SVB', name:'Suvarnabhumi',  type:'DVOR/DME',freq:'111.4 MHz',ch:'CH 51X', lat:13.6590,lon:100.7315,elev:'2 m',  ap:'VTBS'},
   {id:'CMAT',name:'Chiang Mai',    type:'DVOR/DME',freq:'116.9 MHz',ch:'CH 116X',lat:18.7661,lon:98.9611, elev:'330 m',ap:'VTCC'},
   {id:'CTR', name:'Chiang Rai',    type:'DVOR/DME',freq:'116.5 MHz',ch:'CH 112X',lat:19.9489,lon:99.8831, elev:'390 m',ap:'VTCT'},
-  {id:'HTY', name:'Hat Yai',       type:'DVOR/DME',freq:'115.3 MHz',ch:'CH 100X',lat:6.9342, lon:100.3861,elev:'37 m', ap:'VTSS'},
+  {id:'HTY', name:'Hat Yai',       type:'DVOR/DME',freq:'115.3 MHz',ch:'CH 100X',lat:6.9342, lon:100.3879,elev:'37 m', ap:'VTSS'},
   {id:'HHN', name:'Hua Hin',       type:'DVOR/DME',freq:'113.3 MHz',ch:'CH 80X', lat:12.6344,lon:99.9511, elev:'30 m', ap:'VTPH'},
   {id:'KBI', name:'Krabi',         type:'DVOR/DME',freq:'111.0 MHz',ch:'CH 47X', lat:8.1075, lon:98.9775, elev:'30 m', ap:'VTSG'},
   {id:'KPS', name:'Kamphaeng Saen',type:'DVOR/DME',freq:'114.5 MHz',ch:'CH 92X', lat:14.1656,lon:99.9542, elev:'20 m', ap:'VTBK'},
-  {id:'KKN', name:'Khon Kaen',     type:'DVOR/DME',freq:'114.9 MHz',ch:'CH 96X', lat:16.4667,lon:102.7836,elev:'210 m',ap:'VTUK'},
+  {id:'KKN', name:'Khon Kaen',     type:'DVOR/DME',freq:'114.9 MHz',ch:'CH 96X', lat:16.4709,lon:102.7880,elev:'210 m',ap:'VTUK'},
   {id:'KRT', name:'Khorat',        type:'DVOR/DME',freq:'113.7 MHz',ch:'CH 84X', lat:14.9172,lon:102.1397,elev:'210 m',ap:'VTUN'},
   {id:'LPN', name:'Lampang',       type:'DVOR/DME',freq:'114.7 MHz',ch:'CH 94X', lat:18.2767,lon:99.5022, elev:'240 m',ap:'VTCL'},
   {id:'LOY', name:'Loei',          type:'DVOR/DME',freq:'115.9 MHz',ch:'CH 106X',lat:17.4469,lon:101.7231,elev:'270 m',ap:'VTUL'},
@@ -1252,7 +1253,7 @@ const navAids = [
   {id:'UDN', name:'Udon Thani',    type:'DVOR/DME',freq:'114.3 MHz',ch:'CH 90X', lat:17.3847,lon:102.7750,elev:'180 m',ap:'VTUD'},
   {id:'BUT', name:'U-Tapao',       type:'DVOR/DME',freq:'110.8 MHz',ch:'CH 45X', lat:12.6667,lon:101.0006,elev:'18 m', ap:'VTBU'},
   {id:'BETT',name:'Betong',        type:'DVOR/DME',freq:'113.1 MHz',ch:'CH 78X', lat:5.7856, lon:101.1442,elev:'240 m',ap:'VTSY'},
-  {id:'BRMT',name:'Buri Ram',      type:'DVOR/DME',freq:'117.2 MHz',ch:'CH 119X',lat:15.2267,lon:103.2589,elev:'180 m',ap:'VTUO'},
+  {id:'BRMT',name:'Buri Ram',      type:'DVOR/DME',freq:'117.2 MHz',ch:'CH 119X',lat:15.2396,lon:103.2589,elev:'180 m',ap:'VTUO'},
   {id:'CMP', name:'Chum Phae',     type:'DVOR/DME',freq:'112.9 MHz',ch:'CH 76X', lat:16.6353,lon:101.9889,elev:'270 m',ap:''},
   {id:'CPN', name:'Chumphon',      type:'DVOR/DME',freq:'110.0 MHz',ch:'CH 37X', lat:10.7111,lon:99.3656, elev:'6 m',  ap:'VTSE'},
   {id:'RYN', name:'Rayong/U-Tapao',type:'DVOR/DME',freq:'112.5 MHz',ch:'CH 72X', lat:12.7786,lon:101.6764,elev:'0 m',  ap:'VTBU'},
@@ -1276,9 +1277,9 @@ const navAids = [
   {id:'ISEN',name:'Suvarnabhumi ILS RWY 19', type:'ILS',cat:'CAT II',freq:'110.5 MHz',ch:'CH 42X',lat:13.6541,lon:100.7501,elev:'2 m', ap:'VTBS',rwy:'19'},
   {id:'IPK', name:'Phuket ILS RWY 27',       type:'ILS',cat:'CAT I', freq:'109.9 MHz',ch:'CH 36X',lat:8.1133, lon:98.3055, elev:'26 m', ap:'VTSP',rwy:'27'},
   {id:'ICM', name:'Chiang Mai ILS RWY 36',   type:'ILS',cat:'CAT I', freq:'109.9 MHz',ch:'CH 36X',lat:18.7854,lon:98.9630, elev:'316 m',ap:'VTCC',rwy:'36'},
-  {id:'IHTY',name:'Hat Yai ILS RWY 26',      type:'ILS',cat:'CAT I', freq:'109.9 MHz',ch:'CH 36X',lat:6.9303, lon:100.3731,elev:'28 m', ap:'VTSS',rwy:'26'},
+  {id:'IHTY',name:'Hat Yai ILS RWY 26',      type:'ILS',cat:'CAT I', freq:'109.9 MHz',ch:'CH 36X',lat:6.9303, lon:100.3750,elev:'28 m', ap:'VTSS',rwy:'26'},
   {id:'IC',  name:'Chiang Rai ILS RWY 03',   type:'ILS',cat:'CAT I', freq:'109.5 MHz',ch:'CH 32X',lat:19.9597,lon:99.8825, elev:'390 m',ap:'VTCT',rwy:'03'},
-  {id:'IKBI',name:'Krabi ILS RWY 32',        type:'ILS',cat:'CAT I', freq:'110.1 MHz',ch:'CH 38X',lat:8.1085, lon:99.9784, elev:'28 m', ap:'VTSG',rwy:'32'},
+  {id:'IKBI',name:'Krabi ILS RWY 32',        type:'ILS',cat:'CAT I', freq:'110.1 MHz',ch:'CH 38X',lat:8.1085, lon:98.9784, elev:'28 m', ap:'VTSG',rwy:'32'},
   {id:'IBU', name:'U-Tapao ILS RWY 18',      type:'ILS',cat:'CAT I', freq:'111.9 MHz',ch:'CH 56X',lat:12.6797,lon:101.0050,elev:'18 m', ap:'VTBU',rwy:'18'},
   // ── VTBL (Lop Buri / Khok Kathiam RTAF) — AD 2.19 ────────────
   {id:'LB',  name:'Lop Buri NDB',            type:'NDB',             freq:'280 kHz',  ch:'',        lat:14.8767,lon:100.6573,elev:'40 m', ap:'VTBL'},
@@ -2334,7 +2335,8 @@ ACC_SECTORS.forEach(sec => {
 const atsAirspace=[
   {id:'Bangkok CTR',       cls:'C',ul:'11,000 ft',ll:'GND',     circle:{c:'135452N 1003620E',r:35}},
   {id:'Bangkok TMA',       cls:'C',ul:'FL160',    ll:'3,000 ft',circle:{c:'135452N 1003620E',r:50}},
-  {id:'Alfa CTA',          cls:'A',ul:'FL460',    ll:'FL160',   circle:{c:'135452N 1003620E',r:50}},
+  {id:'Alfa CTA (lower)',  cls:'B',ul:'FL285',    ll:'FL160',   circle:{c:'135452N 1003620E',r:50}},
+  {id:'Alfa CTA (upper)',  cls:'A',ul:'FL460',    ll:'FL285',   circle:{c:'135452N 1003620E',r:50}},
   {id:'Chiang Mai CTR',    cls:'C',ul:'5,000 ft', ll:'GND',     circle:{c:'184558N 0985740E',r:10}},
   {id:'Chiang Mai TMA',    cls:'C',ul:'11,000 ft',ll:'2,000 ft',circle:{c:'184558N 0985740E',r:25}},
   {id:'Chiang Rai CTR',    cls:'C',ul:'3,500 ft', ll:'GND',     circle:{c:'195656N 0995259E',r:8}},
@@ -2386,7 +2388,7 @@ const restrictedAreas=[
   {id:"VTR3", name:"HUA HIN PALACE",   upper:"6,000 ft",lower:"GND",activity:"By NOTAM", circle:{c:"123522N 0995711E",r:1}},
   {id:"VTR5", name:"PHU PHING PALACE", upper:"12,000 ft",lower:"GND",activity:"By NOTAM",circle:{c:"184820N 0985357E",r:2}},
   {id:"VTR6", name:"THAK SIN PALACE",  upper:"6,000 ft",lower:"GND",activity:"By NOTAM", circle:{c:"062522N 1015219E",r:5}},
-  {id:"VTR8", name:"KAMPHAENG SAEN",   upper:"7,000 ft",lower:"GND",activity:"H24",       coords:["125300N 1002000E","125300N 1002500E","123500N 1001700E","123500N 1001130E"]},
+  {id:"VTR8", name:"KAMPHAENG SAEN JETTISON",upper:"7,000 ft",lower:"GND",activity:"H24", coords:["125300N 1002000E","125300N 1002500E","123500N 1001700E","123500N 1001130E"]},
   {id:"VTR11",name:"KO HIN CHALAM",    upper:"UNL",     lower:"GND",activity:"H24",        circle:{c:"122753N 1005819E",r:2}},
   {id:"VTR12",name:"KO LUAM",          upper:"9,000 ft",lower:"GND",activity:"By NOTAM",   circle:{c:"114530N 0995000E",r:0.5}},
   {id:"VTR13",name:"KO SAMET",         upper:"UNL",     lower:"GND",activity:"H24",         circle:{c:"121200N 1012100E",r:7.1}},
@@ -2397,10 +2399,15 @@ const restrictedAreas=[
   {id:"VTR68",name:"NAM PHONG",        upper:"FL 150",  lower:"GND",activity:"MON-FRI 0000-1000", coords:["164048.58N 1025559.19E","163810.90N 1025605.94E","164049.25N 1025706.67E","163814.77N 1025708.31E"]},
   {id:"VTR79",name:"PHIMANMAS PALACE", upper:"6,000 ft",lower:"GND",activity:"By NOTAM",    circle:{c:"123908N 1005848E",r:0.5}},
   {id:"VTR80",name:"SRAPATHUM PALACE", upper:"6,000 ft",lower:"GND",activity:"H24",          circle:{c:"134453N 1003156E",r:1}},
-  {id:"VTR81",name:"JAKRIBONGKOT",     upper:"6,000 ft",lower:"GND",activity:"H24",          circle:{c:"135648N 1003127E",r:1}},
-  {id:"VTR82",name:"AMPHORN PALACE",   upper:"6,000 ft",lower:"GND",activity:"H24",          circle:{c:"134622N 1003040E",r:1}},
+  {id:"VTR81",name:"JAKRIBONGKOT PALACE",upper:"6,000 ft",lower:"GND",activity:"H24",        circle:{c:"135648N 1003127E",r:1}},
+  {id:"VTR82",name:"AMPHORN ROYAL PALACE",upper:"6,000 ft",lower:"GND",activity:"H24",       circle:{c:"134622N 1003040E",r:1}},
   {id:"VTR83",name:"SUKOTHAI PALACE",  upper:"6,000 ft",lower:"GND",activity:"H24",          circle:{c:"134657N 1003034E",r:1}},
   {id:"VTR84",name:"TIPPIMARN PALACE", upper:"7,500 ft",lower:"GND",activity:"H24",          circle:{c:"142930N 1013145E",r:0.5}},
+  // New in AIRAC 2026-07-09. NOTE: published boundary closes via "westward along the Thai-Cambodian
+  // border to the starting point" — the border segment isn't a straight line; polygon below is a
+  // straight-line approximation of the listed vertices only, verify against official chart before operational use.
+  {id:"VTR62",name:"EASTERN AREA",     upper:"13,000 ft",lower:"GND",activity:"Sunset-Sunrise",
+   coords:["113800N 1025530E","113000N 1023000E","120945N 1023432E","125613N 1021250E","135000N 1021250E","142800N 1031000E","144500N 1040000E","144500N 1044100E","142400N 1045100E"]},
 ];
 // Helpers: pre-converted decimal coordinates (lat, lon)
 // Format for coords arrays: [[lat,lon], ...]  — use latlng property
@@ -2464,7 +2471,7 @@ const dangerAreas=[
   {id:"VTD29", name:"HIN RAKIT, PATTANI",        upper:"150 ft",   lower:"GND",  activity:"By NOTAM",
    circle:{c:"064400N 1014400E",r:3}},
   // VTD31 — Referenced in VTBL departure procedures & Takhli CTR exclusion zone
-  // (No formal polygon published in ENR 5.1 AIRAC 2026-06-11; associated with Khok Kathiam RTAF / VTBL)
+  // (No formal polygon published in ENR 5.1 AIRAC 2026-07-09; associated with Khok Kathiam RTAF / VTBL)
   // Using Takhli CTR exclusion reference: ~12 NM radius centered on Khok Kathiam (145228.7N 1003948.2E)
   {id:"VTD31", name:"KHOK KATHIAM / TAKHLI (VTBL)", upper:"5,500 ft",  lower:"GND",  activity:"H24 (Local Flight Operations — see VTBL AD 2.22)",
    circle:{c:"145229N 1003948E", r:12}},
@@ -2540,6 +2547,13 @@ const dangerAreas=[
   {id:"VTD74C",name:"PHANG NGA C",              upper:"8,000 ft", lower:"GND",  activity:"By NOTAM",
    latlng:[[8.55,97.8333],[8.55,98.2333],[8.45,98.2333],[8.45,97.8333]]},
 ];
+
+// Footer stats: always derive from actual array lengths so counts can't drift out of sync
+document.getElementById('stAccSectors').textContent = ACC_SECTORS.length;
+document.getElementById('stNavAids').textContent = navAids.length;
+document.getElementById('stAts').textContent = atsAirspace.length;
+document.getElementById('stPRD').textContent = `${prohibitedAreas.length}/${restrictedAreas.length}/${dangerAreas.length}`;
+
 function addArea(area,type,color,grp){
   const opts={color,weight:1.5,fillColor:color,fillOpacity:.15,dashArray:'5,4'};
   const pop=`<div class="as-hdr" style="background:linear-gradient(135deg,#1a0a0a,#3a1010);border-bottom-color:${color}40;">
@@ -3500,7 +3514,7 @@ async function exportDistPDF(btn){
     doc.setTextColor(20);doc.text('Distance Measure',mg,18);
     doc.setFontSize(8);doc.setFont('helvetica','normal');
     doc.setTextColor(130);
-    doc.text(`Thailand AIP GIS  •  AIRAC 2026-06-11  •  ${now}`,mg,24);
+    doc.text(`Thailand AIP GIS  •  AIRAC 2026-07-09  •  ${now}`,mg,24);
     doc.setTextColor(0);doc.setDrawColor(180);doc.line(mg,27,W-mg,27);
     let y=33;
 
@@ -3686,7 +3700,7 @@ async function exportNavlog(btn){
     doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(100);
     doc.text(`Aircraft: ${acft}`,mg+90,y-3);
     doc.text(`Date: ${today}`,mg+145,y-3);
-    doc.text(`Thailand AIP GIS  •  AIRAC 2026-06-11`,mg+90,y+2.5);
+    doc.text(`Thailand AIP GIS  •  AIRAC 2026-07-09`,mg+90,y+2.5);
     y+=5;
     doc.setDrawColor(139,92,246);doc.setLineWidth(0.5);doc.line(mg,y,W-mg,y);
     y+=4;
@@ -4588,7 +4602,7 @@ async function loadWXIntoPopup(icao, force=false){
 // AIRAC STATUS
 // ═══════════════════════════════════════════
 function checkAIRAC(){
-  const AIRAC_DATE = new Date('2026-06-11');
+  const AIRAC_DATE = new Date('2026-07-09');
   const nextAIRAC  = new Date(AIRAC_DATE.getTime() + 28*86400000);
   const days = Math.ceil((nextAIRAC - new Date()) / 86400000);
   const nextStr = nextAIRAC.toISOString().split('T')[0];
@@ -4610,7 +4624,7 @@ function checkAIRAC(){
   }
 }
 function openAIP(){
-  window.open('https://aip.caat.or.th/2026-06-11-AIRAC/html/index-en-GB.html','_blank');
+  window.open('https://aip.caat.or.th/2026-07-09-AIRAC/html/index-en-GB.html','_blank');
 }
 checkAIRAC();
 setInterval(checkAIRAC, 3600000);
