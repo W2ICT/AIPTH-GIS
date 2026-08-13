@@ -430,7 +430,7 @@
   <div class="hlogo">✈</div>
   <div class="htitle">
     <h1>AIP Thailand GIS System</h1>
-    <p>Civil Aviation Authority of Thailand (CAAT) · AIRAC 2026-07-09</p>
+    <p>Civil Aviation Authority of Thailand (CAAT) · AIRAC 2026-08-06</p>
   </div>
 
   <div class="header-right">
@@ -1099,7 +1099,7 @@
   <div>Nav Aids: <span id="stNavAids">60</span></div>
   <div>CTR/TMA: <span id="stAts">20</span></div>
   <div>PRD/RST/DNG: <span id="stPRD">5/18/49</span></div>
-  <div>AIRAC: <span>2026-07-09</span></div>
+  <div>AIRAC: <span>2026-08-06</span></div>
   <div id="coordDisp">Lat: — Lon: —</div>
 </div>
 
@@ -1182,7 +1182,7 @@ const airports = [
   {icao:"VTSB",name:"Surat Thani Airport",                             city:"Surat Thani",       lat:9.1361, lon:99.1390, elev:"20 ft",  op:"DOA"},
   {icao:"VTSC",name:"Narathiwat Airport",                              city:"Narathiwat",        lat:6.5178, lon:101.7425,elev:"23 ft",  op:"DOA"},
   {icao:"VTSE",name:"Chumphon Airport",                                city:"Chumphon",          lat:10.7112,lon:99.3617, elev:"22 ft",  op:"DOA"},
-  {icao:"VTSG",name:"Krabi Airport",                                   city:"Krabi",             lat:8.1002, lon:98.9853, elev:"93 ft",  op:"DOA"},
+  {icao:"VTSG",name:"Krabi Airport",                                   city:"Krabi",             lat:8.0958, lon:98.9889, elev:"95 ft",  op:"DOA"},
   {icao:"VTSH",name:"Songkhla Naval Air Station",                      city:"Songkhla",          lat:7.1857, lon:100.6088,elev:"12 ft",  op:"Royal Thai Navy"},
   {icao:"VTSK",name:"Pattani Airport",                                 city:"Pattani",           lat:6.7857, lon:101.1536,elev:"8 ft",   op:"RTAF"},
   {icao:"VTSM",name:"Koh Samui Airport",                              city:"Koh Samui",         lat:9.5489, lon:100.0625,elev:"64 ft",  op:"Bangkok Airways"},
@@ -1213,7 +1213,7 @@ const airports = [
   {icao:"VTSY",name:"Yala / Betong Airport",                         city:"Betong, Yala",      lat:5.7877,lon:101.1471,elev:"738 ft", op:"DOA"},
   {icao:"VTUZ",name:"Khon Kaen / Nam Phong Air Force Base",          city:"Nam Phong, Khon Kaen",lat:16.6503,lon:102.9631,elev:"723 ft",op:"RTAF"},
 ];
-airports.forEach(a=>{ a.url=`https://aip.caat.or.th/2026-07-09-AIRAC/html/eAIP/VT-AD-2.${a.icao}-en-GB.html`; });
+airports.forEach(a=>{ a.url=`https://aip.caat.or.th/2026-08-06-AIRAC/html/eAIP/VT-AD-2.${a.icao}-en-GB.html`; });
 
 // ═══════════════════════════════════════════
 // RADIO NAVIGATION AIDS DATA (ENR 4.1 + AD 2.19)
@@ -3514,7 +3514,7 @@ async function exportDistPDF(btn){
     doc.setTextColor(20);doc.text('Distance Measure',mg,18);
     doc.setFontSize(8);doc.setFont('helvetica','normal');
     doc.setTextColor(130);
-    doc.text(`Thailand AIP GIS  •  AIRAC 2026-07-09  •  ${now}`,mg,24);
+    doc.text(`Thailand AIP GIS  •  AIRAC 2026-08-06  •  ${now}`,mg,24);
     doc.setTextColor(0);doc.setDrawColor(180);doc.line(mg,27,W-mg,27);
     let y=33;
 
@@ -3700,7 +3700,7 @@ async function exportNavlog(btn){
     doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(100);
     doc.text(`Aircraft: ${acft}`,mg+90,y-3);
     doc.text(`Date: ${today}`,mg+145,y-3);
-    doc.text(`Thailand AIP GIS  •  AIRAC 2026-07-09`,mg+90,y+2.5);
+    doc.text(`Thailand AIP GIS  •  AIRAC 2026-08-06`,mg+90,y+2.5);
     y+=5;
     doc.setDrawColor(139,92,246);doc.setLineWidth(0.5);doc.line(mg,y,W-mg,y);
     y+=4;
@@ -4602,7 +4602,7 @@ async function loadWXIntoPopup(icao, force=false){
 // AIRAC STATUS
 // ═══════════════════════════════════════════
 function checkAIRAC(){
-  const AIRAC_DATE = new Date('2026-07-09');
+  const AIRAC_DATE = new Date('2026-08-06');
   const nextAIRAC  = new Date(AIRAC_DATE.getTime() + 28*86400000);
   const days = Math.ceil((nextAIRAC - new Date()) / 86400000);
   const nextStr = nextAIRAC.toISOString().split('T')[0];
@@ -4624,7 +4624,7 @@ function checkAIRAC(){
   }
 }
 function openAIP(){
-  window.open('https://aip.caat.or.th/2026-07-09-AIRAC/html/index-en-GB.html','_blank');
+  window.open('https://aip.caat.or.th/2026-08-06-AIRAC/html/index-en-GB.html','_blank');
 }
 checkAIRAC();
 setInterval(checkAIRAC, 3600000);
