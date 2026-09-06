@@ -2629,13 +2629,18 @@ dangerAreas    .forEach(a=>addArea(a,'DANGER AREA',    '#ffdd00',LG.danger));
   const g=LG.bn2;
 
   // Outer boundary polygon (A3→A11→A10→A9→A8→A7→A6→A5→A4→A1→A2)
+  // Vertices per ผนวก ก ประกอบ รปป.ที่ บน.๒-๐๗-๐๐๔ (11 จุด, DMS→decimal).
+  // A10 corrected 100°38'→100°27'24.73"E to match the annex (was ~19 km east in the KML source).
   L.polygon([
-    [14.873767,100.159911],[15.121111,100.169444],[15.119183,100.635825],
+    [14.873767,100.159911],[15.121111,100.169444],[15.119183,100.456869],
     [15.116667,100.833333],[14.916667,100.833333],[14.916667,101.090278],
     [14.847614,101.090278],[14.610278,101.090278],[14.612694,100.734889],
     [14.615342,100.345175],[14.616667,100.150000],
   ],{color:'#f97316',weight:2.4,opacity:0.9,fillColor:'#fb923c',fillOpacity:0,dashArray:'8 4'})
-  .bindPopup('<b>พท.การฝึก บน.2 (Active)</b><br><span style="font-size:10px;color:var(--muted);">Training Area</span>',{maxWidth:220}).addTo(g);
+  .bindPopup('<b>พท.การฝึก บน.2 (Active)</b><br><span style="font-size:10px;color:var(--muted);">'+
+    'Training Area — ผนวก ก / รปป.บน.๒-๐๗-๐๐๔<br>'+
+    'VT D2: GND – 6,000 ft&nbsp;&nbsp;•&nbsp;&nbsp;VT P4: GND – FL240<br>'+
+    'TRA 2: GND – 5,000 ft</span>',{maxWidth:240}).addTo(g);
 
   // VTP4 inner zone (CHNDY rectangle)
   L.polygon([
@@ -2650,8 +2655,8 @@ dangerAreas    .forEach(a=>addArea(a,'DANGER AREA',    '#ffdd00',LG.danger));
     [14.874633,100.663408],[14.615342,100.345175],[14.612694,100.734889],
     [14.874633,100.663408],[14.612694,100.734889],[14.610278,101.090278],[14.847614,101.090278],
     [14.874633,100.663408],[14.847614,101.090278],[14.916667,101.090278],[14.916667,100.833333],
-    [15.116667,100.833333],[15.119183,100.635825],
-    [14.874633,100.663408],[15.119183,100.635825],[15.121111,100.169444],[14.873767,100.159911],
+    [15.116667,100.833333],[15.119183,100.456869],
+    [14.874633,100.663408],[15.119183,100.456869],[15.121111,100.169444],[14.873767,100.159911],
   ],{color:'#39ff14',weight:1.8,opacity:0.9,dashArray:'8 5'})
   .bindPopup('<b>Route 202604240259</b><br><span style="font-size:10px;color:var(--muted);">Route no. 1</span>',{maxWidth:200}).addTo(g);
 
@@ -2667,7 +2672,7 @@ dangerAreas    .forEach(a=>addArea(a,'DANGER AREA',    '#ffdd00',LG.danger));
     {n:'A7 R085/25.1', lat:14.916667,lng:101.090278,c:'#39ff14',r:4,b:1.5,lbl:'A7\nR085/25'},
     {n:'A8 R077/10.4', lat:14.916667,lng:100.833333,c:'#39ff14',r:4,b:1.5,lbl:'A8\nR077/10'},
     {n:'A9 R036/17.5', lat:15.116667,lng:100.833333,c:'#39ff14',r:4,b:1.5,lbl:'A9\nR036/17'},
-    {n:'A10 R355/14.6',lat:15.119183,lng:100.635825,c:'#39ff14',r:4,b:1.5,lbl:'A10\nR355/14'},
+    {n:'A10 R321/18.9',lat:15.119183,lng:100.456869,c:'#39ff14',r:4,b:1.5,lbl:'A10\nR321/19'},
     {n:'A11 R298/32.0',lat:15.121111,lng:100.169444,c:'#39ff14',r:4,b:1.5,lbl:'A11\nR298/32'},
   ].forEach(w=>{
     const sz=w.r*2;
