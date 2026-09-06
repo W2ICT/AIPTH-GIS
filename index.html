@@ -213,6 +213,9 @@
     #rtafHud .rt-title{font-size:11px;font-weight:700;color:#fb7185;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
     #rtafHud .rt-title .dt-x{cursor:pointer;color:var(--muted);font-size:13px;}
     #rtafHud .rt-title .dt-x:hover{color:var(--text);}
+    .rt-scope{display:flex;gap:3px;margin-bottom:7px;background:var(--bg);border-radius:6px;padding:2px;}
+    .rt-scope button{flex:1;padding:4px 3px;font-size:9px;font-weight:700;background:transparent;border:1px solid transparent;border-radius:5px;color:var(--muted);cursor:pointer;}
+    .rt-scope button.active{background:rgba(225,29,72,.16);border-color:rgba(225,29,72,.4);color:#fb7185;}
     .rt-hint{font-size:9px;color:var(--muted);text-align:center;line-height:1.6;padding:4px 0;}
     .rt-stops{font-size:9px;font-weight:700;color:var(--text2);background:var(--bg);border-radius:5px;padding:4px 6px;margin-bottom:6px;word-break:break-all;}
     .rt-leg{display:flex;justify-content:space-between;gap:8px;padding:2px 1px;color:var(--text2);border-bottom:1px dashed var(--border2);}
@@ -551,7 +554,7 @@
         </div>
         <div class="layer-row" onclick="toggleLayer('rtafRange')">
           <div class="layer-dot" style="background:#e11d48;border-radius:50%;"></div>
-          <span class="layer-label">วัดระยะ ฐานบิน ทอ. (NM)</span>
+          <span class="layer-label">วัดระยะสนามบิน (NM)</span>
           <div class="ltog" id="ltog-rtafRange"></div>
         </div>
 
@@ -1119,7 +1122,11 @@
 </div>
 
 <div id="rtafHud">
-  <div class="rt-title">🎯 แผนระยะ ฐานบิน ทอ.<span class="dt-x" onclick="toggleLayer('rtafRange')">✕</span></div>
+  <div class="rt-title">🎯 แผนระยะสนามบิน<span class="dt-x" onclick="toggleLayer('rtafRange')">✕</span></div>
+  <div class="rt-scope">
+    <button id="rtafScopeRtaf" class="active" onclick="rtafSetScope('rtaf')">ฐานบิน ทอ. 16</button>
+    <button id="rtafScopeAll" onclick="rtafSetScope('all')">ทุกสนาม 48</button>
+  </div>
   <div id="rtafHudBody"></div>
   <div class="rt-acts">
     <button class="dt-btn sec" onclick="rtafUndo()">⌫ ถอย 1 จุด</button>
@@ -2723,9 +2730,10 @@ dangerAreas    .forEach(a=>addArea(a,'DANGER AREA',    '#ffdd00',LG.danger));
 updateLayerCount();
 
 // ═══════════════════════════════════════════
-// RTAF RANGE PLANNER  (วัดระยะ ฐานบิน ทอ. — NM)
+// AIRPORT RANGE PLANNER  (วัดระยะสนามบิน — NM)
 // ═══════════════════════════════════════════
-// Quick air-planning tool: click RTAF bases in sequence to chain legs.
+// Quick air-planning tool: click airports in sequence to chain legs.
+// Scope switch: RTAF bases only (16) or every airport (48).
 // HUD shows per-leg NM + cumulative route distance (ระยะสะสม) and the
 // direct origin→destination great-circle displacement (ระยะกระจัด).
 LG.rtafRange = L.layerGroup();
@@ -2734,32 +2742,55 @@ LS.rtafRange = false;                 // off on startup (added after LG-literal,
 // 16 RTAF flying-wing airfields (incl. wings sharing a civil field: บน.41/7/56)
 const RTAF_BASES = ['VTBD','VTBK','VTBL','VTBP','VTBW','VTCC','VTCN','VTPI',
                     'VTPP','VTSB','VTSK','VTSS','VTUD','VTUN','VTUU','VTUZ'];
+const RTAF_BASE_SET = new Set(RTAF_BASES);
 const rtafRouteLG = L.layerGroup();   // dynamic legs + NM labels + direct O→D line
 let rtafChain = [];                    // airport objects, in click order
+let rtafScope = 'rtaf';               // 'rtaf' = 16 bases | 'all' = every airport
 const RTAF_MAX_STOPS = 12;
 
 function rtafNM(a,b){ return haversine([a.lat,a.lon],[b.lat,b.lon]) * UCONV.nm; }
 
-function rtafBaseIcon(icao,seq){
+// selectable node set for the current scope (chain members are always shown too)
+function rtafActiveIcaos(){
+  return rtafScope==='all' ? airports.map(a=>a.icao) : RTAF_BASES;
+}
+
+function rtafSetScope(s){
+  if(s===rtafScope) return;
+  rtafScope = s;
+  const rb=document.getElementById('rtafScopeRtaf'), ab=document.getElementById('rtafScopeAll');
+  if(rb) rb.classList.toggle('active', s==='rtaf');
+  if(ab) ab.classList.toggle('active', s==='all');
+  rtafRefresh();
+}
+
+function rtafBaseIcon(icao,seq,isRtaf,showLabel){
   const on = seq>0;
-  return L.divIcon({className:'',iconSize:[16,16],iconAnchor:[8,8],
+  const clr = isRtaf ? '#e11d48' : '#0ea5e9';                 // RTAF red · civil sky-blue
+  const glow = isRtaf ? 'rgba(225,29,72,.35)' : 'rgba(14,165,233,.35)';
+  const lblClr = isRtaf ? '#fda4af' : '#7dd3fc';
+  const lbl = (showLabel||on) ? `<div style="margin-top:2px;font-size:8px;font-weight:700;color:${lblClr};text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;">${icao}</div>` : '';
+  return L.divIcon({className:'',iconSize:[14,14],iconAnchor:[7,7],
     html:`<div style="display:flex;flex-direction:column;align-items:center;">
-      <div style="width:16px;height:16px;border-radius:50%;background:${on?'#e11d48':'#0b1220'};
-        border:2px solid ${on?'#fff':'#e11d48'};box-shadow:0 0 0 2px rgba(225,29,72,.35),0 2px 5px rgba(0,0,0,.55);
+      <div style="width:14px;height:14px;border-radius:50%;background:${on?clr:'#0b1220'};
+        border:2px solid ${on?'#fff':clr};box-shadow:0 0 0 2px ${glow},0 2px 5px rgba(0,0,0,.55);
         display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;">${on?seq:''}</div>
-      <div style="margin-top:2px;font-size:8px;font-weight:700;color:#fda4af;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;">${icao}</div>
+      ${lbl}
     </div>`});
 }
 
 function rtafBuildBaseMarkers(){
   LG.rtafRange.clearLayers();
-  RTAF_BASES.forEach(ic=>{
+  const icaos = new Set([...rtafActiveIcaos(), ...rtafChain.map(a=>a.icao)]);
+  const labelAll = rtafScope!=='all';         // hide static labels when showing all 48
+  icaos.forEach(ic=>{
     const ap = airports.find(a=>a.icao===ic);
     if(!ap) return;
-    const seq = rtafChain.indexOf(ap)+1;      // 0 = not in chain
-    const m = L.marker([ap.lat,ap.lon],{icon:rtafBaseIcon(ap.icao,seq),zIndexOffset:1200});
+    const seq   = rtafChain.indexOf(ap)+1;      // 0 = not in chain
+    const isRtaf= RTAF_BASE_SET.has(ic);
+    const m = L.marker([ap.lat,ap.lon],{icon:rtafBaseIcon(ap.icao,seq,isRtaf,labelAll),zIndexOffset:1200});
     m.on('click',()=>rtafAddStop(ap));
-    m.bindTooltip(`${ap.icao} — ${ap.name}`,{direction:'top',offset:[0,-9]});
+    m.bindTooltip(`${ap.icao} — ${ap.name}`,{direction:'top',offset:[0,-8]});
     LG.rtafRange.addLayer(m);
   });
 }
@@ -2806,7 +2837,7 @@ function rtafRenderHud(){
   const body=document.getElementById('rtafHudBody');
   if(!body || !LS.rtafRange) return;
   if(rtafChain.length===0){
-    body.innerHTML=`<div class="rt-hint">คลิกฐานบิน ทอ. บนแผนที่ตามลำดับ<br>เพื่อต่อระยะเส้นทาง (คลิกจุดสุดท้ายซ้ำ = ถอย)</div>`;
+    body.innerHTML=`<div class="rt-hint">คลิกสนามบินบนแผนที่ตามลำดับ<br>เพื่อต่อระยะเส้นทาง (คลิกจุดสุดท้ายซ้ำ = ถอย)</div>`;
     return;
   }
   let rows='', tot=0;
