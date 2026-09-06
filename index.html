@@ -164,10 +164,6 @@
     .ap3d-popup .maplibregl-popup-close-button{position:absolute;top:7px;right:8px;color:rgba(255,255,255,.55);font-size:17px;padding:1px 5px;border-radius:4px;z-index:10;}
     .ap3d-popup .maplibregl-popup-close-button:hover{color:#fff;background:rgba(255,255,255,.12);}
     .ap3d-popup .pu-hdr{padding-right:28px;}
-    .flt3d-popup .maplibregl-popup-content{padding:0 !important;min-width:265px;}
-    .flt3d-popup .maplibregl-popup-content>div{margin:0 !important;}
-    .flt3d-popup .maplibregl-popup-close-button{color:var(--muted);font-size:16px;padding:2px 6px;z-index:10;}
-    .flt3d-popup .maplibregl-popup-close-button:hover{color:var(--text);background:var(--surface2);}
     .maplibregl-ctrl-group{background:var(--surface) !important;border:1px solid var(--border) !important;border-radius:8px !important;}
     .maplibregl-ctrl button{color:var(--text) !important;}
     /* 3D mode hint banner */
@@ -229,9 +225,6 @@
     /* ══ LEAFLET POPUPS ══ */
     .leaflet-popup-content-wrapper{background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 30px var(--shadow);padding:0;}
     .leaflet-popup-content{margin:0!important;width:265px!important;}
-    /* Flight popup — wider, no extra padding, amber top border */
-    .flight-popup .leaflet-popup-content-wrapper{border-top:2px solid #f59e0b;border-radius:10px;overflow:hidden;}
-    .flight-popup .leaflet-popup-content{width:280px!important;}
     .hosp-popup .leaflet-popup-content-wrapper{border-top:2px solid #ef4444;border-radius:10px;overflow:hidden;}
     .hosp-popup .leaflet-popup-content{width:255px!important;}
     .hosp-row{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid var(--border)}
@@ -498,7 +491,7 @@
       <div class="lp-header collapsed" id="lph-layers" onclick="togglePanel('layers')"
         <span style="font-size:11px;">🗂</span>
         <span class="lp-title">Layers</span>
-        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/11</span>
+        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/10</span>
         <span class="lp-chevron">▼</span>
       </div>
       <div class="lp-body collapsed" id="lpb-layers">
@@ -542,11 +535,6 @@
           <span class="layer-label" id="lbl-hospitals">Hospitals (OSM)</span>
           <div class="ltog" id="ltog-hospitals"></div>
         </div>
-        <div class="layer-row" onclick="toggleLayer('flights')">
-          <div class="layer-dot" style="background:#f59e0b;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;color:#fff;">✈</div>
-          <span class="layer-label" id="lbl-flights">Live Flights</span>
-          <div class="ltog" id="ltog-flights"></div>
-        </div>
         <div class="layer-row" onclick="toggleLayer('bn2')">
           <div class="layer-dot" style="background:#f97316;border-radius:2px;"></div>
           <span class="layer-label">พท.การฝึก บน.2 (Active)</span>
@@ -575,30 +563,6 @@
         </div>
         <div id="navTypeFilter" style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:4px;"></div>
         <div id="navResultList" style="max-height:120px;overflow-y:auto;"></div>
-      </div>
-    </div>
-
-    <!-- FLIGHT SEARCH (collapsible) -->
-    <div class="layer-panel">
-      <div class="lp-header collapsed" id="lph-fltsearch" onclick="togglePanel('fltsearch')">
-        <span style="font-size:11px;">✈</span>
-        <span class="lp-title">Flight Search</span>
-        <span class="lp-chevron">▼</span>
-      </div>
-      <div class="lp-body collapsed" id="lpb-fltsearch">
-        <div class="search-wrap" style="margin-bottom:5px;">
-          <span class="si">🔍</span>
-          <input type="text" id="fltSearch" placeholder="Callsign, Flight No. or Squawk…" oninput="filterFlights()" style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 9px 5px 27px;font-size:11px;outline:none;box-sizing:border-box;"/>
-        </div>
-        <div id="fltResultList" style="max-height:140px;overflow-y:auto;font-size:11px;">
-          <div style="color:var(--muted);font-size:10px;padding:3px 2px">Enable Live Flights layer then type to search</div>
-        </div>
-        <div id="fltTrackBadge" style="display:none;padding:5px 9px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:6px;font-size:10px;color:#f59e0b;margin-top:5px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <span>🎯 Tracking: <span id="fltTrackCS" style="font-weight:800;font-family:monospace;letter-spacing:.5px"></span></span>
-            <span onclick="clearFlightTrack()" style="cursor:pointer;opacity:.6;font-size:12px;padding:0 2px" title="Stop tracking">✕</span>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -1652,11 +1616,10 @@ const LG={
       iconSize:[28,28],iconAnchor:[14,14],className:''
     })
   }),
-  flights: L.layerGroup(),
   bn2:     L.layerGroup(),
 };
 // Default: only Aerodromes ON; all others OFF
-const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false,flights:false,bn2:false};
+const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false,bn2:false};
 // Add only active layers to map on startup
 Object.entries(LG).forEach(([k,g])=>{ if(LS[k]!==false) g.addTo(map); });
 
@@ -1687,7 +1650,6 @@ function toggleLayer(k){
   document.getElementById('ltog-'+k).classList.toggle('on',LS[k]);
   updateLayerCount();
   if(k==='hospitals'&&LS[k]&&!hospitalsLoaded){fetchHospitals();return;}
-  if(k==='flights'){ LS[k] ? startFlightTracking() : stopFlightTracking(); return; }
   if(k==='rtafRange'){
     if(LS[k]){ LG[k].addTo(map); rtafRouteLG.addTo(map); rtafRefresh(); }
     else { map.removeLayer(LG[k]); map.removeLayer(rtafRouteLG); rtafChain=[]; rtafRenderHud(); }
@@ -1773,430 +1735,6 @@ async function fetchHospitals(){
     if(tog) tog.classList.remove('on');
     if(lbl) lbl.textContent='Hospitals (OSM)';
     alert('ไม่สามารถโหลดข้อมูลโรงพยาบาลได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
-  }
-}
-
-// ── Live Flights ──────────────────────────────────────────────────────────
-// file:// origin → ADSB.lol (CORS-open, no auth)
-// http:// origin → OpenSky Network OAuth2 (your credentials, higher fidelity)
-// ASEAN bounding box: Myanmar–Philippines–Indonesia–Timor-Leste
-const OS_API   = 'https://opensky-network.org/api/states/all?lamin=-11.0&lomin=92.0&lamax=28.0&lomax=142.0';
-const OS_TOKEN = 'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token';
-const OS_ID    = 'designer.5259-api-client';
-const OS_SEC   = 'BR9ogwZbLjob4xHMuYMe7SLVNtTPLpcd';
-// Centre of ASEAN ~5°N 110°E, 1500 nm radius covers all 10 member states
-const _ADSL_DIRECT = 'https://api.adsb.lol/v2/lat/5.0/lon/110.0/dist/1500';
-// localhost → direct; อื่นๆ → ผ่าน CORS proxy เพราะ ADSB.lol ไม่มี CORS header
-const ADSL_URL = ['localhost','127.0.0.1'].includes(location.hostname)
-  ? _ADSL_DIRECT
-  : 'https://corsproxy.io/?' + encodeURIComponent(_ADSL_DIRECT);
-// file:// → 30 s; http:// OpenSky → 60 s (3 credits/call, 4000 credits/day)
-const FLIGHT_REFRESH_MS = location.protocol === 'file:' ? 30000 : 60000;
-let flightTimer   = null;
-let flightMarkers = {};
-let _osToken      = null;
-let _osTokenExp   = 0;
-
-async function getOSToken() {
-  if (_osToken && Date.now() < _osTokenExp - 60000) return _osToken;
-  const res = await fetch(OS_TOKEN, {
-    method:'POST',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body: new URLSearchParams({grant_type:'client_credentials', client_id:OS_ID, client_secret:OS_SEC})
-  });
-  if (!res.ok) throw new Error('OAuth2 '+res.status);
-  const j = await res.json();
-  _osToken   = j.access_token;
-  _osTokenExp = Date.now() + j.expires_in * 1000;
-  return _osToken;
-}
-
-function makeFlightIcon(heading, onGround, vRateMs) {
-  const fill   = onGround ? '#94a3b8' : '#f59e0b';
-  const stroke = onGround ? '#64748b' : '#b45309';
-  const rot    = heading != null ? heading : 0;
-  // Top-down aircraft silhouette: nose points up (north=0°), rotated by heading
-  return L.divIcon({
-    html:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="30" height="30"
-            style="filter:drop-shadow(0 1px 4px rgba(0,0,0,.7))">
-            <g transform="rotate(${rot},20,20)">
-              <!-- Fuselage -->
-              <ellipse cx="20" cy="20" rx="2.5" ry="9" fill="${fill}" stroke="${stroke}" stroke-width="0.8"/>
-              <!-- Wings -->
-              <path d="M20,15 L4,23 L7,23 L20,19 L33,23 L36,23 Z" fill="${fill}" stroke="${stroke}" stroke-width="0.8" stroke-linejoin="round"/>
-              <!-- Horizontal stabilizer -->
-              <path d="M20,27 L12,31 L14,31 L20,29 L26,31 L28,31 Z" fill="${fill}" stroke="${stroke}" stroke-width="0.8" stroke-linejoin="round"/>
-            </g>
-          </svg>`,
-    iconSize:[30,30], iconAnchor:[15,15], className:''
-  });
-}
-
-function makeHelicopterIcon(heading, onGround) {
-  const fill   = onGround ? '#94a3b8' : '#67e8f9';
-  const stroke = onGround ? '#475569' : '#0e7490';
-  const rot    = heading != null ? heading : 0;
-  return L.divIcon({
-    html:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="28" height="28"
-            style="filter:drop-shadow(0 1px 4px rgba(0,0,0,.8))">
-            <g transform="rotate(${rot},20,20)">
-              <!-- Tail boom -->
-              <rect x="19" y="23" width="2" height="10" rx="1" fill="${fill}"/>
-              <!-- Body -->
-              <ellipse cx="20" cy="19" rx="5" ry="6.5" fill="${fill}" stroke="${stroke}" stroke-width="1"/>
-              <!-- Nose bubble -->
-              <circle cx="20" cy="13.5" r="2.8" fill="${fill}" stroke="${stroke}" stroke-width="0.8"/>
-              <!-- Main rotor -->
-              <line x1="5" y1="19" x2="35" y2="19" stroke="${fill}" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
-              <line x1="20" y1="8"  x2="20" y2="30" stroke="${fill}" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
-              <!-- Tail rotor -->
-              <line x1="16.5" y1="33" x2="23.5" y2="33" stroke="${fill}" stroke-width="2.2" stroke-linecap="round"/>
-            </g>
-          </svg>`,
-    iconSize:[28,28], iconAnchor:[14,14], className:''
-  });
-}
-
-// Unified popup — detects OpenSky array vs ADSB.lol object automatically
-function buildFlightPopup(d) {
-  let id, cs, reg, acType, altFt, spdKt, hdg, vsFpm, squawk, src, country, onGround;
-  if (Array.isArray(d)) {
-    id       = d[0].toUpperCase();
-    cs       = (d[1]||'').trim() || id;
-    altFt    = d[7]  != null ? Math.round(d[7]  * 3.28084) : null;
-    spdKt    = d[9]  != null ? Math.round(d[9]  * 1.94384) : null;
-    hdg      = d[10] != null ? Math.round(d[10])            : null;
-    vsFpm    = d[11] != null ? Math.round(d[11] * 196.85)   : null;
-    squawk   = d[14];
-    src      = (['ADS-B','ASTERIX','MLAT','FLARM'])[d[16]] || '?';
-    country  = d[2] || null;
-    onGround = d[8];
-  } else {
-    id       = (d.hex||'').toUpperCase();
-    cs       = (d.flight||'').trim() || id;
-    reg      = d.r || null;
-    acType   = d.t || null;
-    onGround = d.alt_baro === 'ground';
-    altFt    = onGround ? null : (d.alt_baro != null ? Number(d.alt_baro) : null);
-    spdKt    = d.gs        != null ? Math.round(d.gs)        : null;
-    hdg      = d.track     != null ? Math.round(d.track)     : null;
-    vsFpm    = d.baro_rate != null ? Math.round(d.baro_rate) : null;
-    squawk   = d.squawk;
-    src      = (d.type||'ADS-B').replace('adsb_icao','ADS-B').replace('mlat','MLAT').replace('tisb_icao','TIS-B');
-    country  = null;
-  }
-
-  // Flight Level: FL = round(altFt / 100) when > 1000ft
-  const fl     = altFt != null && altFt > 1000 ? 'FL'+String(Math.round(altFt/100)).padStart(3,'0') : null;
-  const altStr = onGround ? 'On Ground'
-               : altFt != null ? altFt.toLocaleString()+' ft' : '—';
-
-  // V/S arrow + color
-  const vsArrow = vsFpm == null ? '' : vsFpm > 100 ? '▲ ' : vsFpm < -100 ? '▼ ' : '► ';
-  const vsColor = vsFpm == null ? 'var(--text2)'
-                : vsFpm > 100  ? '#22c55e'
-                : vsFpm < -100 ? '#f87171'
-                : 'var(--text2)';
-  const vsStr   = vsFpm != null ? vsArrow+(vsFpm>=0?'+':'')+vsFpm.toLocaleString()+' fpm' : '—';
-
-  // Heading compass point
-  const compassPts = ['N','NE','E','SE','S','SW','W','NW'];
-  const compass = hdg != null ? compassPts[Math.round(hdg/45)%8] : '';
-
-  const statusDot = onGround
-    ? `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f59e0b;margin-right:4px;vertical-align:middle"></span><span style="color:#f59e0b;font-weight:600;font-size:9px">ON GROUND</span>`
-    : `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:4px;vertical-align:middle"></span><span style="color:#22c55e;font-weight:600;font-size:9px">AIRBORNE</span>`;
-
-  const metaLine = [reg, acType, country].filter(Boolean).join(' · ');
-
-  return `<div style="font-family:'Segoe UI',system-ui,sans-serif;width:260px;overflow:hidden;margin:-1px">
-    <!-- Header -->
-    <div style="padding:11px 13px 9px;background:linear-gradient(135deg,rgba(245,158,11,.09) 0%,transparent 70%);border-bottom:1px solid var(--border)">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-        <span style="display:inline-flex;align-items:center;gap:4px;background:${onGround?'rgba(245,158,11,.15)':'rgba(34,197,94,.12)'};border:1px solid ${onGround?'rgba(245,158,11,.35)':'rgba(34,197,94,.3)'};color:${onGround?'#fbbf24':'#4ade80'};font-size:9px;font-weight:700;padding:2px 8px 2px 6px;border-radius:99px;letter-spacing:.6px">
-          <span style="width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0"></span>
-          ${onGround?'ON GROUND':'AIRBORNE'}
-        </span>
-        <span style="font-size:10px;color:var(--muted);font-family:monospace;letter-spacing:.5px;margin-top:1px">${id}</span>
-      </div>
-      <div style="font-size:21px;font-weight:800;color:#f59e0b;letter-spacing:2px;line-height:1">${cs}</div>
-      ${(reg||acType||country)?`<div style="font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:.3px">${[reg,acType,country].filter(Boolean).join(' · ')}</div>`:''}
-    </div>
-    <!-- Primary metrics (value big on top, label small below) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr">
-      <div style="padding:10px 13px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
-        <div style="font-size:18px;font-weight:800;color:#38bdf8;line-height:1;margin-bottom:1px">${altStr}</div>
-        <div style="font-size:10px;color:var(--muted);min-height:15px">${fl||''}</div>
-        <div style="font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:2px">Altitude</div>
-      </div>
-      <div style="padding:10px 13px;border-bottom:1px solid var(--border)">
-        <div style="font-size:18px;font-weight:800;color:#4ade80;line-height:1;margin-bottom:1px">${spdKt!=null?spdKt+' kt':'—'}</div>
-        <div style="min-height:15px"></div>
-        <div style="font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:2px">Speed GS</div>
-      </div>
-    </div>
-    <!-- Secondary row: heading / V/S / squawk -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:9px 0 8px">
-      <div style="padding:0 11px;border-right:1px solid var(--border)">
-        <div style="font-size:15px;font-weight:700;color:var(--text);line-height:1">${hdg!=null?hdg+'°':'—'}</div>
-        <div style="font-size:10px;color:var(--text2);height:14px;line-height:14px">${compass||''}</div>
-        <div style="font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px">Heading</div>
-      </div>
-      <div style="padding:0 11px;border-right:1px solid var(--border)">
-        <div style="font-size:12px;font-weight:700;color:${vsColor};line-height:1.2">${vsStr}</div>
-        <div style="height:14px"></div>
-        <div style="font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px">Vert Rate</div>
-      </div>
-      <div style="padding:0 11px">
-        <div style="font-size:15px;font-weight:700;font-family:monospace;color:var(--text);line-height:1">${squawk||'——'}</div>
-        <div style="height:14px"></div>
-        <div style="font-size:8px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px">Squawk</div>
-      </div>
-    </div>
-    <!-- Footer -->
-    <div style="padding:4px 13px 7px;border-top:1px solid var(--border);display:flex;justify-content:flex-end">
-      <span style="font-size:9px;color:var(--muted);font-family:monospace">${src}</span>
-    </div>
-  </div>`;
-}
-
-// ── Shared marker update logic ─────────────────────────────────────────────
-function _applyFlightData(id, lat, lon, heading, onGround, vRateMs, gsMs, acCat, rawData, lbl, seen) {
-  seen.add(id);
-  const isHelo = acCat === 'A7';
-  const icon = isHelo ? makeHelicopterIcon(heading, onGround) : makeFlightIcon(heading, onGround, vRateMs);
-  if (flightMarkers[id]) {
-    const m = flightMarkers[id];
-    m.setLatLng([lat, lon]).setIcon(icon);
-    m._fData = rawData;
-    m._lat = lat; m._lon = lon; m._gsMs = gsMs||0; m._track = heading||0;
-    m._onGround = onGround; m._posTs = Date.now();
-  } else {
-    const m = L.marker([lat, lon], {icon, zIndexOffset:500});
-    m._fData = rawData;
-    m._lat = lat; m._lon = lon; m._gsMs = gsMs||0; m._track = heading||0;
-    m._onGround = onGround; m._posTs = Date.now();
-    m.bindPopup(()=>buildFlightPopup(m._fData), {maxWidth:280, className:'flight-popup'});
-    flightMarkers[id] = m;
-    LG.flights.addLayer(m);
-  }
-}
-
-function _pruneAndLabel(seen, count, lbl, source) {
-  Object.keys(flightMarkers).forEach(id => {
-    if (!seen.has(id)) { LG.flights.removeLayer(flightMarkers[id]); delete flightMarkers[id]; }
-  });
-  const ts = new Date().toTimeString().slice(0,8);
-  if (lbl) lbl.textContent = `Live Flights (${count}) · ${ts}`;
-  update3DFlights();
-}
-
-// ── OpenSky fetch (HTTP origin) ────────────────────────────────────────────
-async function _fetchOpenSky(lbl) {
-  const token = await getOSToken();
-  let res = await fetch(OS_API, {headers:{'Authorization':'Bearer '+token}});
-  if (res.status === 401) {
-    _osToken = null;
-    res = await fetch(OS_API, {headers:{'Authorization':'Bearer '+(await getOSToken())}});
-  }
-  if (res.status === 429) {
-    if(lbl) lbl.textContent = 'Live Flights (rate limited ⏳)';
-    stopFlightTracking(true); return;
-  }
-  if (!res.ok) throw new Error('HTTP '+res.status);
-  const data   = await res.json();
-  const states = (data.states||[]).filter(s => s[5]!=null && s[6]!=null);
-  const seen   = new Set();
-  states.forEach(s => _applyFlightData(s[0], s[6], s[5], s[10], s[8], s[11], s[9]||0, '', s, lbl, seen));
-  _pruneAndLabel(seen, states.length, lbl, 'OpenSky');
-}
-
-// ── ADSB.lol fetch (file:// origin) ───────────────────────────────────────
-async function _fetchADSBLOL(lbl) {
-  const res = await fetch(ADSL_URL, { cache:'no-cache' });
-  if (res.status === 429) {
-    if(lbl) lbl.textContent = 'Live Flights (rate limited ⏳)';
-    stopFlightTracking(true); return;
-  }
-  if (!res.ok) throw new Error('HTTP '+res.status);
-  const data    = await res.json();
-  const aircraft = (data.ac||[]).filter(a => a.lat!=null && a.lon!=null);
-  const seen    = new Set();
-  aircraft.forEach(a => {
-    const onGround = a.alt_baro === 'ground';
-    const vMs      = (a.baro_rate||0) / 196.85; // fpm → m/s for icon colour
-    _applyFlightData(a.hex, a.lat, a.lon, a.track, onGround, vMs, (a.gs||0)*0.514444, a.category||'', a, lbl, seen);
-  });
-  _pruneAndLabel(seen, aircraft.length, lbl, 'ADSB.lol');
-}
-
-let _osCorsFailed = false;
-
-async function fetchFlights() {
-  const lbl = document.getElementById('lbl-flights');
-  // OpenSky OAuth2 ใช้ได้เฉพาะ localhost เท่านั้น (CORS whitelist)
-  // ทุก origin อื่น (file://, GitHub Pages, etc.) ใช้ ADSB.lol ตรงๆ
-  const onLocalhost = ['localhost','127.0.0.1'].includes(location.hostname);
-  try {
-    if (onLocalhost && !_osCorsFailed) {
-      try {
-        await _fetchOpenSky(lbl);
-      } catch(e) {
-        if (e instanceof TypeError) {
-          _osCorsFailed = true;
-          await _fetchADSBLOL(lbl);
-        } else { throw e; }
-      }
-    } else {
-      await _fetchADSBLOL(lbl);
-    }
-  } catch(e) {
-    console.warn('Live Flights error:', e);
-    if(lbl) lbl.textContent = 'Live Flights (error ⚠)';
-  }
-}
-
-// ── Dead reckoning: move markers 1s at a time between API refreshes ────────
-function deadReckon(lat, lon, headingDeg, distMeters) {
-  const R  = 6371000;
-  const d  = distMeters / R;
-  const θ  = headingDeg * Math.PI / 180;
-  const φ1 = lat * Math.PI / 180;
-  const λ1 = lon * Math.PI / 180;
-  const sinφ2 = Math.sin(φ1)*Math.cos(d) + Math.cos(φ1)*Math.sin(d)*Math.cos(θ);
-  const φ2    = Math.asin(sinφ2);
-  const λ2    = λ1 + Math.atan2(Math.sin(θ)*Math.sin(d)*Math.cos(φ1), Math.cos(d) - Math.sin(φ1)*sinφ2);
-  return [φ2 * 180/Math.PI, ((λ2 * 180/Math.PI) + 540) % 360 - 180];
-}
-
-let flightInterpTimer = null;
-
-function startFlightInterp() {
-  if (flightInterpTimer) return;
-  flightInterpTimer = setInterval(() => {
-    const now = Date.now();
-    Object.values(flightMarkers).forEach(m => {
-      if (m._onGround || !m._gsMs || !m._posTs) return;
-      const dt = (now - m._posTs) / 1000;
-      if (dt <= 0 || dt > 120) return;
-      const [nlat, nlon] = deadReckon(m._lat, m._lon, m._track, m._gsMs * dt);
-      m.setLatLng([nlat, nlon]);
-    });
-    // Sync positions to 3D map
-    update3DFlights();
-    // Auto-pan if tracking a specific flight
-    if (_trackingHex) {
-      const tm = flightMarkers[_trackingHex];
-      if (tm) {
-        const ll = tm.getLatLng();
-        if (!is3D) map.panTo(ll, {animate:true, duration:0.5});
-        else if (map3d) map3d.panTo([ll.lng, ll.lat]);
-      } else clearFlightTrack();
-    }
-  }, 1000);
-}
-
-function stopFlightInterp() {
-  clearInterval(flightInterpTimer);
-  flightInterpTimer = null;
-}
-
-// ── Flight Search & Track ──────────────────────────────────────────────────
-let _trackingHex = null;
-
-function filterFlights() {
-  const q    = (document.getElementById('fltSearch')?.value || '').toLowerCase().trim();
-  const list = document.getElementById('fltResultList');
-  if (!list) return;
-  if (!q) {
-    list.innerHTML = '<div style="color:var(--muted);font-size:10px;padding:3px 2px">Enable Live Flights layer then type to search</div>';
-    return;
-  }
-  const matches = Object.entries(flightMarkers).filter(([hex, m]) => {
-    const d  = m._fData;
-    if (!d) return false;
-    const cs = (Array.isArray(d) ? (d[1]||'') : (d.flight||'')).trim().toLowerCase();
-    const sq = (Array.isArray(d) ? (d[14]||'') : (d.squawk||'')).toLowerCase();
-    return cs.includes(q) || sq.includes(q) || hex.toLowerCase().includes(q);
-  });
-  if (!matches.length) {
-    list.innerHTML = '<div style="color:var(--muted);font-size:10px;padding:3px 2px">No flights found</div>';
-    return;
-  }
-  list.innerHTML = matches.slice(0,15).map(([hex, m]) => {
-    const d   = m._fData;
-    const cs  = ((Array.isArray(d) ? (d[1]||hex) : (d.flight||hex))).trim().toUpperCase() || hex.toUpperCase();
-    const alt = m._onGround ? 'GND'
-              : Array.isArray(d)
-                ? (d[7]!=null ? Math.round(d[7]*3.28084).toLocaleString()+' ft' : '—')
-                : (d.alt_baro!=null&&d.alt_baro!=='ground' ? Math.round(Number(d.alt_baro)).toLocaleString()+' ft' : '—');
-    const spd = Array.isArray(d)
-              ? (d[9]!=null ? Math.round(d[9]*1.94384)+' kt' : '—')
-              : (d.gs!=null ? Math.round(d.gs)+' kt' : '—');
-    const sq  = (Array.isArray(d) ? d[14] : d.squawk) || '';
-    const isTrk = hex === _trackingHex;
-    return `<div onclick="selectFlight('${hex}')"
-      style="padding:5px 7px;border-radius:5px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;
-             background:${isTrk?'rgba(245,158,11,.1)':'transparent'};
-             border:1px solid ${isTrk?'rgba(245,158,11,.3)':'transparent'};margin-bottom:2px">
-      <div>
-        <span style="font-weight:700;font-family:monospace;font-size:12px;color:${isTrk?'#f59e0b':'var(--text)'}">${cs}</span>
-        ${sq?`<span style="font-size:9px;color:var(--muted);margin-left:5px">▣ ${sq}</span>`:''}
-        <div style="font-size:9px;color:var(--muted);margin-top:1px">${alt} · ${spd}</div>
-      </div>
-      <span onclick="event.stopPropagation();trackFlight('${hex}')"
-            title="${isTrk?'Stop tracking':'Track this flight'}"
-            style="font-size:16px;cursor:pointer;opacity:${isTrk?1:.3};flex-shrink:0;margin-left:6px">🎯</span>
-    </div>`;
-  }).join('');
-}
-
-function selectFlight(hex) {
-  const m = flightMarkers[hex];
-  if (!m) return;
-  map.setView(m.getLatLng(), Math.max(map.getZoom(), 8), {animate:true});
-  m.openPopup();
-}
-
-function trackFlight(hex) {
-  if (_trackingHex === hex) { clearFlightTrack(); return; }
-  const m = flightMarkers[hex];
-  if (!m) return;
-  _trackingHex = hex;
-  const d  = m._fData;
-  const cs = ((Array.isArray(d) ? (d[1]||hex) : (d.flight||hex))).trim().toUpperCase() || hex.toUpperCase();
-  const badge = document.getElementById('fltTrackBadge');
-  const csEl  = document.getElementById('fltTrackCS');
-  if (badge) badge.style.display = 'block';
-  if (csEl)  csEl.textContent = cs;
-  filterFlights();
-  selectFlight(hex);
-}
-
-function clearFlightTrack() {
-  _trackingHex = null;
-  const badge = document.getElementById('fltTrackBadge');
-  if (badge) badge.style.display = 'none';
-  filterFlights();
-}
-
-function startFlightTracking() {
-  LG.flights.addTo(map);
-  fetchFlights();
-  flightTimer = setInterval(fetchFlights, FLIGHT_REFRESH_MS);
-  startFlightInterp();
-}
-
-function stopFlightTracking(rateLimited) {
-  clearInterval(flightTimer); flightTimer = null;
-  stopFlightInterp();
-  LG.flights.clearLayers(); flightMarkers = {};
-  map.removeLayer(LG.flights);
-  if (map3d) { const s = map3d.getSource('flights3d'); if (s) s.setData({type:'FeatureCollection',features:[]}); }
-  if (rateLimited) {
-    LS.flights = false;
-    document.getElementById('ltog-flights').classList.remove('on');
-    document.getElementById('lbl-flights').textContent = 'Live Flights (rate limited ⏳)';
   }
 }
 
@@ -5355,42 +4893,6 @@ function naPinSVG(color, dark, label){
   </svg>`;
 }
 
-// ── 3D Live Flights helpers ────────────────────────────────────────────────
-const _AC3D_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="2.2" ry="10" fill="white"/><path d="M20,16 L4,24 L8,24 L20,20 L32,24 L36,24 Z" fill="white"/><path d="M20,27 L13,31 L15,31 L20,29 L25,31 L27,31 Z" fill="white"/></svg>`;
-const _HELO3D_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="5.5" ry="6.5" fill="white"/><rect x="18.5" y="27" width="3" height="8" rx="1.5" fill="white"/><rect x="5" y="18.5" width="30" height="3" rx="1.5" fill="white"/><rect x="16.5" y="34" width="7" height="2.5" rx="1.25" fill="white"/><rect x="18" y="11" width="4" height="9" rx="2" fill="white"/></svg>`;
-
-function _svgToImgData(svg, size=40) {
-  return new Promise(res => {
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width = c.height = size;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(img, 0, 0, size, size);
-      res(ctx.getImageData(0, 0, size, size));
-    };
-    img.onerror = () => res(null);
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-  });
-}
-
-function update3DFlights() {
-  if (!map3d || !is3D) return;
-  const src = map3d.getSource('flights3d');
-  if (!src) return;
-  const features = Object.entries(flightMarkers).map(([hex, m]) => {
-    const ll = m.getLatLng();
-    const d  = m._fData;
-    const cs = ((Array.isArray(d) ? (d[1]||hex) : (d.flight||hex))||hex).trim().toUpperCase();
-    const isHelo = !!((!Array.isArray(d)) && d.category === 'A7');
-    return { type:'Feature',
-      geometry: { type:'Point', coordinates:[ll.lng, ll.lat] },
-      properties: { hex, cs, heading: m._track||0, onGround: !!m._onGround, isHelo }
-    };
-  });
-  src.setData({ type:'FeatureCollection', features });
-}
-
 async function loadPin3DImages(){
   const load = (name, svg, w, h) => new Promise(res=>{
     const img = new Image(w, h);
@@ -5594,58 +5096,6 @@ function build3DLayers(){
       'text-halo-color':'rgba(0,0,0,0.92)',
       'text-halo-width':4
     }
-  });
-
-  // ── Live Flights 3D layer ────────────────────────────────────────
-  map3d.addSource('flights3d', { type:'geojson', data:{ type:'FeatureCollection', features:[] } });
-  Promise.all([_svgToImgData(_AC3D_SVG, 40), _svgToImgData(_HELO3D_SVG, 40)]).then(([acData, heloData]) => {
-    if (!acData || !heloData) return;
-    if (!map3d.hasImage('flt-ac'))   map3d.addImage('flt-ac',   acData,   { sdf:true });
-    if (!map3d.hasImage('flt-helo')) map3d.addImage('flt-helo', heloData, { sdf:true });
-    map3d.addLayer({
-      id: 'flight-layer',
-      type: 'symbol',
-      source: 'flights3d',
-      layout: {
-        'icon-image': ['case', ['get','isHelo'], 'flt-helo', 'flt-ac'],
-        'icon-size': 0.65,
-        'icon-rotate': ['get','heading'],
-        'icon-rotation-alignment': 'map',
-        'icon-allow-overlap': true,
-        'icon-ignore-placement': true,
-        'text-field': ['get','cs'],
-        'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
-        'text-size': 9,
-        'text-offset': [0, 1.4],
-        'text-anchor': 'top',
-        'text-allow-overlap': false,
-        'text-optional': true
-      },
-      paint: {
-        'icon-color': ['case',
-          ['get','onGround'], '#94a3b8',
-          ['get','isHelo'],   '#67e8f9',
-          '#f59e0b'
-        ],
-        'icon-opacity': 1,
-        'text-color': '#e2e8f0',
-        'text-halo-color': '#000000',
-        'text-halo-width': 1.5,
-        'text-opacity': 0.9
-      }
-    });
-    map3d.on('click', 'flight-layer', e => {
-      const props = e.features[0].properties;
-      const m = flightMarkers[props.hex];
-      if (!m) return;
-      new maplibregl.Popup({ offset:[0,-12], maxWidth:'280px', className:'flt3d-popup' })
-        .setLngLat(e.features[0].geometry.coordinates.slice())
-        .setHTML(buildFlightPopup(m._fData))
-        .addTo(map3d);
-    });
-    map3d.on('mouseenter', 'flight-layer', () => { map3d.getCanvas().style.cursor = 'pointer'; });
-    map3d.on('mouseleave', 'flight-layer', () => { map3d.getCanvas().style.cursor = ''; });
-    if (LS.flights) update3DFlights();
   });
 }
 
