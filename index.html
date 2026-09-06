@@ -430,7 +430,7 @@
   <div class="hlogo">✈</div>
   <div class="htitle">
     <h1>AIP Thailand GIS System</h1>
-    <p>Civil Aviation Authority of Thailand (CAAT) · AIRAC 2026-08-06</p>
+    <p>Civil Aviation Authority of Thailand (CAAT) · AIRAC 2026-09-03</p>
   </div>
 
   <div class="header-right">
@@ -1099,7 +1099,7 @@
   <div>Nav Aids: <span id="stNavAids">60</span></div>
   <div>CTR/TMA: <span id="stAts">20</span></div>
   <div>PRD/RST/DNG: <span id="stPRD">5/18/49</span></div>
-  <div>AIRAC: <span>2026-08-06</span></div>
+  <div>AIRAC: <span>2026-09-03</span></div>
   <div id="coordDisp">Lat: — Lon: —</div>
 </div>
 
@@ -1213,7 +1213,7 @@ const airports = [
   {icao:"VTSY",name:"Yala / Betong Airport",                         city:"Betong, Yala",      lat:5.7877,lon:101.1471,elev:"738 ft", op:"DOA"},
   {icao:"VTUZ",name:"Khon Kaen / Nam Phong Air Force Base",          city:"Nam Phong, Khon Kaen",lat:16.6503,lon:102.9631,elev:"723 ft",op:"RTAF"},
 ];
-airports.forEach(a=>{ a.url=`https://aip.caat.or.th/2026-08-06-AIRAC/html/eAIP/VT-AD-2.${a.icao}-en-GB.html`; });
+airports.forEach(a=>{ a.url=`https://aip.caat.or.th/2026-09-03-AIRAC/html/eAIP/VT-AD-2.${a.icao}-en-GB.html`; });
 
 // ═══════════════════════════════════════════
 // RADIO NAVIGATION AIDS DATA (ENR 4.1 + AD 2.19)
@@ -1260,13 +1260,14 @@ const navAids = [
   // ── NDB ──────────────────────────────────
   {id:'THS', name:'Sukhothai',     type:'NDB',     freq:'292 kHz', ch:'',        lat:17.2353,lon:99.8219, elev:'60 m', ap:'VTPO'},
   {id:'TLT', name:'Tak Lit',       type:'NDB',     freq:'350 kHz', ch:'',        lat:15.2758,lon:100.2975,elev:'20 m', ap:'VTPI'},
-  {id:'TK',  name:'Tak',           type:'NDB',     freq:'332 kHz', ch:'',        lat:16.8994,lon:99.2522, elev:'150 m',ap:'VTPT'},
+  // TAK NDB (TK, 332 kHz) decommissioned AIRAC 2026-09-03 — routes now via RNAV points BEVKU/ISKIV
   {id:'TRT', name:'Trat',          type:'NDB',     freq:'384 kHz', ch:'',        lat:12.2744,lon:102.3139,elev:'30 m', ap:'VTBO'},
   {id:'CT',  name:'Chiang Rai NDB',type:'NDB',     freq:'277 kHz', ch:'',        lat:19.9597,lon:99.8831, elev:'390 m',ap:'VTCT'},
   {id:'UP',  name:'U-Tapao NDB',   type:'NDB',     freq:'414 kHz', ch:'',        lat:12.6797,lon:101.0050,elev:'18 m', ap:'VTBU'},
   // ── TACAN ────────────────────────────────
   {id:'CHM', name:'Chiang Mai TACAN',type:'TACAN', freq:'CH 109',  ch:'CH 109',  lat:18.7755,lon:98.9607, elev:'330 m',ap:'VTCC'},
   {id:'HTY', name:'Hat Yai TACAN', type:'TACAN',   freq:'CH 104X', ch:'CH 104X', lat:6.9281, lon:100.3956,elev:'37 m', ap:'VTSS'},
+  {id:'UDNT',name:'Udon Thani TACAN',type:'TACAN', freq:'CH 86',   ch:'CH 86',   lat:17.3828,lon:102.7986,elev:'180 m',ap:'VTUD'},
   // ── ILS / LOC ────────────────────────────
   {id:'IBKK',name:'Don Mueang ILS RWY 21R',type:'ILS',cat:'CAT II',freq:'109.3 MHz',ch:'CH 30X',lat:13.8946,lon:100.5946,elev:'2 m',  ap:'VTBD',rwy:'21R'},
   {id:'IDMG',name:'Don Mueang ILS RWY 21L',type:'ILS',cat:'CAT I', freq:'110.3 MHz',ch:'CH 40X',lat:13.8977,lon:100.6005,elev:'2 m',  ap:'VTBD',rwy:'21L'},
@@ -3514,7 +3515,7 @@ async function exportDistPDF(btn){
     doc.setTextColor(20);doc.text('Distance Measure',mg,18);
     doc.setFontSize(8);doc.setFont('helvetica','normal');
     doc.setTextColor(130);
-    doc.text(`Thailand AIP GIS  •  AIRAC 2026-08-06  •  ${now}`,mg,24);
+    doc.text(`Thailand AIP GIS  •  AIRAC 2026-09-03  •  ${now}`,mg,24);
     doc.setTextColor(0);doc.setDrawColor(180);doc.line(mg,27,W-mg,27);
     let y=33;
 
@@ -3700,7 +3701,7 @@ async function exportNavlog(btn){
     doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(100);
     doc.text(`Aircraft: ${acft}`,mg+90,y-3);
     doc.text(`Date: ${today}`,mg+145,y-3);
-    doc.text(`Thailand AIP GIS  •  AIRAC 2026-08-06`,mg+90,y+2.5);
+    doc.text(`Thailand AIP GIS  •  AIRAC 2026-09-03`,mg+90,y+2.5);
     y+=5;
     doc.setDrawColor(139,92,246);doc.setLineWidth(0.5);doc.line(mg,y,W-mg,y);
     y+=4;
@@ -4602,7 +4603,7 @@ async function loadWXIntoPopup(icao, force=false){
 // AIRAC STATUS
 // ═══════════════════════════════════════════
 function checkAIRAC(){
-  const AIRAC_DATE = new Date('2026-08-06');
+  const AIRAC_DATE = new Date('2026-09-03');
   const nextAIRAC  = new Date(AIRAC_DATE.getTime() + 28*86400000);
   const days = Math.ceil((nextAIRAC - new Date()) / 86400000);
   const nextStr = nextAIRAC.toISOString().split('T')[0];
@@ -4624,7 +4625,7 @@ function checkAIRAC(){
   }
 }
 function openAIP(){
-  window.open('https://aip.caat.or.th/2026-08-06-AIRAC/html/index-en-GB.html','_blank');
+  window.open('https://aip.caat.or.th/2026-09-03-AIRAC/html/index-en-GB.html','_blank');
 }
 checkAIRAC();
 setInterval(checkAIRAC, 3600000);
