@@ -207,6 +207,22 @@
     .dt-btn.sec{background:var(--surface2);color:var(--text2);border:1px solid var(--border2);}
     .dt-hint{font-size:9px;color:var(--muted);text-align:center;margin-top:5px;}
 
+    /* ══ RTAF RANGE PLANNER HUD ══ */
+    #rtafHud{position:absolute;left:295px;bottom:34px;z-index:800;background:var(--surface);border:1px solid var(--border);border-left:3px solid #e11d48;border-radius:9px;padding:10px 11px;width:252px;max-height:calc(100vh - 120px);overflow-y:auto;box-shadow:0 4px 20px var(--shadow);display:none;font-size:10px;}
+    #rtafHud.show{display:block;}
+    #rtafHud .rt-title{font-size:11px;font-weight:700;color:#fb7185;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+    #rtafHud .rt-title .dt-x{cursor:pointer;color:var(--muted);font-size:13px;}
+    #rtafHud .rt-title .dt-x:hover{color:var(--text);}
+    .rt-hint{font-size:9px;color:var(--muted);text-align:center;line-height:1.6;padding:4px 0;}
+    .rt-stops{font-size:9px;font-weight:700;color:var(--text2);background:var(--bg);border-radius:5px;padding:4px 6px;margin-bottom:6px;word-break:break-all;}
+    .rt-leg{display:flex;justify-content:space-between;gap:8px;padding:2px 1px;color:var(--text2);border-bottom:1px dashed var(--border2);}
+    .rt-leg span:last-child{font-family:monospace;color:var(--text);white-space:nowrap;}
+    .rt-tot,.rt-dir{display:flex;justify-content:space-between;gap:8px;margin-top:6px;padding:5px 6px;border-radius:5px;font-weight:700;}
+    .rt-tot{background:rgba(225,29,72,.12);border:1px solid rgba(225,29,72,.3);color:#fb7185;}
+    .rt-dir{background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.28);color:#67e8f9;}
+    .rt-tot span:last-child,.rt-dir span:last-child{font-family:monospace;white-space:nowrap;}
+    .rt-acts{display:flex;gap:4px;margin-top:8px;}
+
     /* ══ LEAFLET POPUPS ══ */
     .leaflet-popup-content-wrapper{background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 30px var(--shadow);padding:0;}
     .leaflet-popup-content{margin:0!important;width:265px!important;}
@@ -335,6 +351,7 @@
       .sidebar.collapsed ~ .sb-toggle{left:0;}
       .quicklinks .ql-btn{padding:3px 7px;font-size:9.5px;}
       .htitle h1{font-size:13px;}
+      #rtafHud{left:270px;}
     }
 
     /* Mobile (iPhone ≤ 640px) */
@@ -366,6 +383,9 @@
 
       /* Header-right buttons — touch-friendly */
       .theme-btn{width:34px;height:34px;font-size:15px;}
+
+      /* RTAF range HUD — sidebar is hidden on mobile, pin to left edge */
+      #rtafHud{left:8px;right:8px;width:auto;bottom:44px;}
 
       /* Left sidebar — hidden by default, slide in */
       .sidebar{width:0;min-width:0;border-right:none;}
@@ -475,7 +495,7 @@
       <div class="lp-header collapsed" id="lph-layers" onclick="togglePanel('layers')"
         <span style="font-size:11px;">🗂</span>
         <span class="lp-title">Layers</span>
-        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/10</span>
+        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/11</span>
         <span class="lp-chevron">▼</span>
       </div>
       <div class="lp-body collapsed" id="lpb-layers">
@@ -528,6 +548,11 @@
           <div class="layer-dot" style="background:#f97316;border-radius:2px;"></div>
           <span class="layer-label">พท.การฝึก บน.2 (Active)</span>
           <div class="ltog" id="ltog-bn2"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('rtafRange')">
+          <div class="layer-dot" style="background:#e11d48;border-radius:50%;"></div>
+          <span class="layer-label">วัดระยะ ฐานบิน ทอ. (NM)</span>
+          <div class="ltog" id="ltog-rtafRange"></div>
         </div>
 
       </div>
@@ -1093,6 +1118,15 @@
   </div>
 </div>
 
+<div id="rtafHud">
+  <div class="rt-title">🎯 แผนระยะ ฐานบิน ทอ.<span class="dt-x" onclick="toggleLayer('rtafRange')">✕</span></div>
+  <div id="rtafHudBody"></div>
+  <div class="rt-acts">
+    <button class="dt-btn sec" onclick="rtafUndo()">⌫ ถอย 1 จุด</button>
+    <button class="dt-btn pri" onclick="rtafClear()">🗑 ล้าง</button>
+  </div>
+</div>
+
 <div class="stats">
   <div>Aerodromes: <span id="stAP">48</span></div>
   <div>ACC Sectors: <span id="stAccSectors">12</span></div>
@@ -1647,6 +1681,11 @@ function toggleLayer(k){
   updateLayerCount();
   if(k==='hospitals'&&LS[k]&&!hospitalsLoaded){fetchHospitals();return;}
   if(k==='flights'){ LS[k] ? startFlightTracking() : stopFlightTracking(); return; }
+  if(k==='rtafRange'){
+    if(LS[k]){ LG[k].addTo(map); rtafRouteLG.addTo(map); rtafRefresh(); }
+    else { map.removeLayer(LG[k]); map.removeLayer(rtafRouteLG); rtafChain=[]; rtafRenderHud(); }
+    return;
+  }
 
   LS[k] ? LG[k].addTo(map) : map.removeLayer(LG[k]);
 }
@@ -2681,6 +2720,111 @@ dangerAreas    .forEach(a=>addArea(a,'DANGER AREA',    '#ffdd00',LG.danger));
     })}).addTo(g);
   });
 })();
+updateLayerCount();
+
+// ═══════════════════════════════════════════
+// RTAF RANGE PLANNER  (วัดระยะ ฐานบิน ทอ. — NM)
+// ═══════════════════════════════════════════
+// Quick air-planning tool: click RTAF bases in sequence to chain legs.
+// HUD shows per-leg NM + cumulative route distance (ระยะสะสม) and the
+// direct origin→destination great-circle displacement (ระยะกระจัด).
+LG.rtafRange = L.layerGroup();
+LS.rtafRange = false;                 // off on startup (added after LG-literal, like accSectors)
+
+// 16 RTAF flying-wing airfields (incl. wings sharing a civil field: บน.41/7/56)
+const RTAF_BASES = ['VTBD','VTBK','VTBL','VTBP','VTBW','VTCC','VTCN','VTPI',
+                    'VTPP','VTSB','VTSK','VTSS','VTUD','VTUN','VTUU','VTUZ'];
+const rtafRouteLG = L.layerGroup();   // dynamic legs + NM labels + direct O→D line
+let rtafChain = [];                    // airport objects, in click order
+const RTAF_MAX_STOPS = 12;
+
+function rtafNM(a,b){ return haversine([a.lat,a.lon],[b.lat,b.lon]) * UCONV.nm; }
+
+function rtafBaseIcon(icao,seq){
+  const on = seq>0;
+  return L.divIcon({className:'',iconSize:[16,16],iconAnchor:[8,8],
+    html:`<div style="display:flex;flex-direction:column;align-items:center;">
+      <div style="width:16px;height:16px;border-radius:50%;background:${on?'#e11d48':'#0b1220'};
+        border:2px solid ${on?'#fff':'#e11d48'};box-shadow:0 0 0 2px rgba(225,29,72,.35),0 2px 5px rgba(0,0,0,.55);
+        display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;">${on?seq:''}</div>
+      <div style="margin-top:2px;font-size:8px;font-weight:700;color:#fda4af;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;">${icao}</div>
+    </div>`});
+}
+
+function rtafBuildBaseMarkers(){
+  LG.rtafRange.clearLayers();
+  RTAF_BASES.forEach(ic=>{
+    const ap = airports.find(a=>a.icao===ic);
+    if(!ap) return;
+    const seq = rtafChain.indexOf(ap)+1;      // 0 = not in chain
+    const m = L.marker([ap.lat,ap.lon],{icon:rtafBaseIcon(ap.icao,seq),zIndexOffset:1200});
+    m.on('click',()=>rtafAddStop(ap));
+    m.bindTooltip(`${ap.icao} — ${ap.name}`,{direction:'top',offset:[0,-9]});
+    LG.rtafRange.addLayer(m);
+  });
+}
+
+// Click behaviour: new base → append; last base → pop; earlier base → trim back to it
+function rtafAddStop(ap){
+  const idx = rtafChain.indexOf(ap);
+  if(idx>=0 && idx===rtafChain.length-1) rtafChain.pop();
+  else if(idx>=0) rtafChain = rtafChain.slice(0,idx+1);
+  else { if(rtafChain.length>=RTAF_MAX_STOPS) return; rtafChain.push(ap); }
+  rtafRefresh();
+}
+function rtafUndo(){ rtafChain.pop(); rtafRefresh(); }
+function rtafClear(){ rtafChain=[]; rtafRefresh(); }
+
+function rtafRefresh(){ rtafBuildBaseMarkers(); rtafDrawRoute(); rtafRenderHud(); }
+
+function rtafDrawRoute(){
+  rtafRouteLG.clearLayers();
+  if(rtafChain.length<2) return;
+  const pts = rtafChain.map(a=>[a.lat,a.lon]);
+  L.polyline(pts,{color:'#e11d48',weight:2.5,dashArray:'7,5'}).addTo(rtafRouteLG);
+  for(let i=0;i<rtafChain.length-1;i++){
+    const A=rtafChain[i], B=rtafChain[i+1];
+    const nm=rtafNM(A,B), brg=Math.round(calcBearing(A.lat,A.lon,B.lat,B.lon));
+    const mid=[(A.lat+B.lat)/2,(A.lon+B.lon)/2];
+    L.marker(mid,{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],
+      html:`<div style="font-size:9px;font-weight:700;color:#fff;background:rgba(225,29,72,.92);
+        border-radius:4px;padding:1px 5px;white-space:nowrap;transform:translate(-50%,-50%);
+        box-shadow:0 1px 4px rgba(0,0,0,.5);">${String(brg).padStart(3,'0')}° · ${nm.toFixed(1)} NM</div>`})
+    }).addTo(rtafRouteLG);
+  }
+  // direct origin→destination displacement — only when it differs from the route
+  if(rtafChain.length>=3){
+    const O=rtafChain[0], D=rtafChain[rtafChain.length-1];
+    L.polyline([[O.lat,O.lon],[D.lat,D.lon]],{color:'#22d3ee',weight:1.5,dashArray:'2,4',opacity:.9}).addTo(rtafRouteLG);
+  }
+}
+
+function rtafRenderHud(){
+  const hud=document.getElementById('rtafHud');
+  if(!hud) return;
+  hud.classList.toggle('show', !!LS.rtafRange);
+  const body=document.getElementById('rtafHudBody');
+  if(!body || !LS.rtafRange) return;
+  if(rtafChain.length===0){
+    body.innerHTML=`<div class="rt-hint">คลิกฐานบิน ทอ. บนแผนที่ตามลำดับ<br>เพื่อต่อระยะเส้นทาง (คลิกจุดสุดท้ายซ้ำ = ถอย)</div>`;
+    return;
+  }
+  let rows='', tot=0;
+  for(let i=0;i<rtafChain.length-1;i++){
+    const A=rtafChain[i], B=rtafChain[i+1];
+    const nm=rtafNM(A,B); tot+=nm;
+    const brg=Math.round(calcBearing(A.lat,A.lon,B.lat,B.lon));
+    rows+=`<div class="rt-leg"><span>${i+1}. ${A.icao} → ${B.icao}</span><span>${String(brg).padStart(3,'0')}° · ${nm.toFixed(1)}</span></div>`;
+  }
+  const O=rtafChain[0], D=rtafChain[rtafChain.length-1];
+  const direct=rtafNM(O,D), dBrg=Math.round(calcBearing(O.lat,O.lon,D.lat,D.lon));
+  body.innerHTML=
+    `<div class="rt-stops">${rtafChain.map(a=>a.icao).join(' → ')}</div>`+
+    (rows||`<div class="rt-hint">เลือกอีกฐานเพื่อเริ่มต่อระยะ</div>`)+
+    `<div class="rt-tot"><span>ระยะสะสม · ${rtafChain.length-1} leg</span><span>${tot.toFixed(1)} NM</span></div>`+
+    `<div class="rt-dir"><span>ระยะกระจัด ${O.icao}→${D.icao}</span><span>${String(dBrg).padStart(3,'0')}° · ${direct.toFixed(1)} NM</span></div>`;
+}
+
 updateLayerCount();
 
 // ═══════════════════════════════════════════
