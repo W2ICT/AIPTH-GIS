@@ -1170,7 +1170,10 @@
   </div>
   <div id="rtafHudBody"></div>
   <div class="rt-acts">
-    <button class="dt-btn sec" onclick="rtafExportKML()" title="บันทึกเส้นทางบินเป็นไฟล์ .kml (เปิดใน Google Earth / EFB / นำเข้ากลับได้)">⬇ KML</button>
+    <button class="dt-btn sec" onclick="rtafExportKML()" title="บันทึกเส้นทางบินเป็น .kml (Google Earth / EFB / นำเข้ากลับได้)">⬇ KML</button>
+    <button class="dt-btn sec" onclick="rtafExportGPX()" title="บันทึกเส้นทางบินเป็น .gpx (GPS / EFB บางรุ่น)">⬇ GPX</button>
+  </div>
+  <div class="rt-acts" style="margin-top:4px;">
     <button class="dt-btn sec" onclick="rtafUndo()">⌫ ถอย</button>
     <button class="dt-btn pri" onclick="rtafClear()">🗑 ล้าง</button>
   </div>
@@ -2700,6 +2703,50 @@ ${wpts}
 </kml>`;
 
   downloadFile(`route-${rn}-${stamp}.kml`, kml, 'application/vnd.google-earth.kml+xml');
+}
+
+// Same route as a GPX 1.1 file: one <wpt> per stop + a <rte> of <rtept>s.
+// Better fit for panel-mount GPS / some EFBs than KML.
+function rtafExportGPX(){
+  if(rtafChain.length < 2){ alert('เลือกสนามบินอย่างน้อย 2 จุดก่อน export'); return; }
+  const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const elevM = a => Math.round((parseFloat(String(a.elev).replace(/[, ]/g,''))||0) * 0.3048);
+  const O = rtafChain[0], D = rtafChain[rtafChain.length-1];
+  let tot=0; for(let i=0;i<rtafChain.length-1;i++) tot+=rtafNM(rtafChain[i],rtafChain[i+1]);
+  const rn = `${O.icao}-${D.icao}`;
+  const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+  const now = new Date().toISOString();
+
+  const wpts = rtafChain.map(a=>
+`  <wpt lat="${a.lat.toFixed(6)}" lon="${a.lon.toFixed(6)}">
+    <ele>${elevM(a)}</ele>
+    <name>${esc(a.icao)}</name>
+    <cmt>${esc(a.name||'')}</cmt>
+    <desc>${esc((a.name||'')+(a.city?' — '+a.city:''))}</desc>
+    <sym>Airport</sym><type>Airport</type>
+  </wpt>`).join('\n');
+
+  const rtepts = rtafChain.map(a=>
+`    <rtept lat="${a.lat.toFixed(6)}" lon="${a.lon.toFixed(6)}"><ele>${elevM(a)}</ele><name>${esc(a.icao)}</name><sym>Airport</sym></rtept>`).join('\n');
+
+  const gpx =
+`<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AIP Thailand GIS System" xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>AIP-TH Route ${esc(rn)}</name>
+    <desc>${esc(rtafChain.map(a=>a.icao).join(' → ')+'  ·  '+tot.toFixed(1)+' NM  ·  '+rtafChain.length+' stops')}</desc>
+    <time>${now}</time>
+  </metadata>
+${wpts}
+  <rte>
+    <name>${esc(rn)} (${tot.toFixed(0)} NM)</name>
+${rtepts}
+  </rte>
+</gpx>`;
+
+  downloadFile(`route-${rn}-${stamp}.gpx`, gpx, 'application/gpx+xml');
 }
 
 updateLayerCount();
