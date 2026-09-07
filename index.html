@@ -257,6 +257,7 @@
     .hp-mgw.warn{background:rgba(245,158,11,.13);border:1px solid rgba(245,158,11,.4);color:#fbbf24;}
     .hp-mgw.bad{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.45);color:#f87171;}
     .hp-note{font-size:9px;color:var(--text2);margin-top:5px;padding:4px 6px;border-radius:5px;background:var(--bg);line-height:1.5;}
+    .heli-tip{font-size:10px;font-weight:600;text-align:center;line-height:1.4;}
     .hp-disc{font-size:8px;color:var(--muted);margin-top:7px;line-height:1.5;font-style:italic;text-align:center;}
     .hp-acts{display:flex;gap:4px;margin-top:8px;}
 
@@ -1507,8 +1508,44 @@ const osmTile   = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.pn
 satTile.addTo(map);
 L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite":satTile,"🛰 Hybrid":satHybrid,"🗺 OSM":osmTile},{},{position:'bottomright'}).addTo(map);
 
+// Live coordinate readout + on-pause terrain elevation (SRTM via _fetchElev).
+// Elevation is fetched only when the pointer settles (debounced), cached by a
+// ~110 m grid cell, and capped per session so the free open-topo-data quota
+// isn't burned by casual mouse-overs.
+let _elevTimer=null, _elevSeq=0, _elevFetches=0;
+const _elevCache=new Map();
+const _ELEV_MAX_FETCH=250;
 map.on('mousemove',e=>{
-  document.getElementById('coordDisp').textContent=`${toDDM(e.latlng.lat,true)} ${toDDM(e.latlng.lng,false)}`;
+  const lat=e.latlng.lat, lng=e.latlng.lng;
+  const base=`${toDDM(lat,true)} ${toDDM(lng,false)}`;
+  const key=`${lat.toFixed(3)},${lng.toFixed(3)}`;
+  const el=document.getElementById('coordDisp');
+  if(!el) return;
+  if(_elevCache.has(key)){
+    const v=_elevCache.get(key);
+    el.textContent = base + (v==null ? '' : `  ·  ${v.toLocaleString('en-US')} ft`);
+  }else{
+    el.textContent = base + (_elevFetches<_ELEV_MAX_FETCH ? '  ·  …' : '');
+  }
+  clearTimeout(_elevTimer);
+  const seq=++_elevSeq, mk=key, mlat=lat, mlng=lng;
+  _elevTimer=setTimeout(async()=>{
+    if(_elevCache.has(mk) || _elevFetches>=_ELEV_MAX_FETCH || typeof _fetchElev!=='function') return;
+    _elevFetches++;
+    let ft=null;
+    try{
+      const m=await Promise.race([
+        _fetchElev([{lat:mlat,lng:mlng}]),
+        new Promise(res=>setTimeout(()=>res(null),4500))
+      ]);
+      if(m && m.length && m[0]!=null) ft=Math.round(m[0]*3.28084);
+    }catch(err){}
+    _elevCache.set(mk, ft);
+    if(_elevCache.size>600) _elevCache.clear();
+    if(seq===_elevSeq && el){
+      el.textContent = `${toDDM(mlat,true)} ${toDDM(mlng,false)}` + (ft==null ? '' : `  ·  ${ft.toLocaleString('en-US')} ft`);
+    }
+  }, 480);
 });
 
 // ═══════════════════════════════════════════
@@ -2844,11 +2881,17 @@ function heliIcon(){
       box-shadow:0 0 0 3px rgba(34,197,94,.28),0 2px 6px rgba(0,0,0,.6);
       display:flex;align-items:center;justify-content:center;font-size:15px;">🚁</div>`});
 }
+function heliMarkerTip(pt){
+  const i = heliPts.indexOf(pt);
+  const e = pt.elevFt==null ? 'กำลังดึง elev…' : (pt.elevFail ? 'elev N/A (SL)' : `${pt.elevFt.toLocaleString('en-US')} ft`);
+  return `🚁 จุด ${i+1} · ${e}<br>${toDDM(pt.lat,true)} ${toDDM(pt.lon,false)}`;
+}
 function heliAttachMarker(pt){
   pt.marker = L.marker([pt.lat,pt.lon],{icon:heliIcon(),draggable:true,zIndexOffset:1600});
   pt.marker.on('click',()=>heliPick(heliPts.indexOf(pt)));
   pt.marker.on('dragend',()=>{ const ll=pt.marker.getLatLng(); pt.lat=ll.lat; pt.lon=ll.lng;
     pt.elevFt=null; heliRefresh(); heliFetchElev(pt); });
+  pt.marker.bindTooltip(()=>heliMarkerTip(pt), {direction:'top', offset:[0,-16], className:'heli-tip'});
   LG.heliRadius.addLayer(pt.marker);
 }
 function heliAddPt(latlng){
@@ -2932,7 +2975,10 @@ function heliMaybeRestore(){
 // ---- draw + HUD --------------------------------------------------
 let heliLegLayers = [];   // FARP connector polylines + labels
 
-function heliRefresh(){ heliDrawRings(); heliDrawLegs(); heliRenderHud(); heliSaveState(); }
+function heliRefresh(){
+  heliPts.forEach(pt=>{ if(pt.marker) pt.marker.setTooltipContent(heliMarkerTip(pt)); });
+  heliDrawRings(); heliDrawLegs(); heliRenderHud(); heliSaveState();
+}
 
 function heliDrawRings(){
   heliPts.forEach((pt,i)=>{
