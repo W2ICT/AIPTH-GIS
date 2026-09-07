@@ -229,6 +229,7 @@
     #heliHud .hp-title .dt-x{cursor:pointer;color:var(--muted);font-size:13px;}
     #heliHud .hp-title .dt-x:hover{color:var(--text);}
     .hp-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 7px;margin-bottom:7px;}
+    .hp-sub{font-size:9px;font-weight:800;color:#67e8f9;text-transform:uppercase;letter-spacing:.5px;margin:2px 0 5px;padding-top:6px;border-top:1px dashed var(--border2);}
     .hp-f{display:flex;flex-direction:column;gap:2px;}
     .hp-f.full{grid-column:1 / -1;}
     .hp-f label{font-size:8.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
@@ -253,7 +254,9 @@
     .hp-math .hp-row span:last-child{font-family:monospace;color:var(--text);}
     .hp-mgw{margin-top:6px;padding:5px 7px;border-radius:5px;font-size:9.5px;font-weight:700;text-align:center;}
     .hp-mgw.ok{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#4ade80;}
+    .hp-mgw.warn{background:rgba(245,158,11,.13);border:1px solid rgba(245,158,11,.4);color:#fbbf24;}
     .hp-mgw.bad{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.45);color:#f87171;}
+    .hp-note{font-size:9px;color:var(--text2);margin-top:5px;padding:4px 6px;border-radius:5px;background:var(--bg);line-height:1.5;}
     .hp-disc{font-size:8px;color:var(--muted);margin-top:7px;line-height:1.5;font-style:italic;text-align:center;}
     .hp-acts{display:flex;gap:4px;margin-top:8px;}
 
@@ -1195,6 +1198,33 @@
       <input id="hpCont" type="number" min="0" step="1" value="5" oninput="heliOnParam()">
     </div>
   </div>
+
+  <div class="hp-sub">🌦 ลม / สภาพอากาศที่หมาย (Phase 2)</div>
+  <div class="hp-grid">
+    <div class="hp-f">
+      <label>ลมจาก (°)</label>
+      <input id="hpWindDir" type="number" min="0" max="360" step="10" value="0" oninput="heliOnParam()">
+    </div>
+    <div class="hp-f">
+      <label>ลมความเร็ว (kt)</label>
+      <input id="hpWindSpd" type="number" min="0" step="5" value="0" oninput="heliOnParam()">
+    </div>
+    <div class="hp-f">
+      <label>OAT ที่หมาย (°C)</label>
+      <input id="hpOat" type="number" step="1" value="15" oninput="heliOnParam()">
+    </div>
+    <div class="hp-f">
+      <label>QNH (hPa)</label>
+      <input id="hpQnh" type="number" step="1" value="1013" oninput="heliOnParam()">
+    </div>
+    <div class="hp-f full">
+      <label style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+        <input id="hpDaAdj" type="checkbox" checked onchange="heliOnParam()" style="width:auto;">
+        ปรับ TAS ตาม Density Altitude (~+2%/1000 ft — ประมาณ)
+      </label>
+    </div>
+  </div>
+
   <div id="heliHudBody"></div>
   <div class="hp-acts">
     <button class="dt-btn sec" onclick="heliApplyAll()" title="ตั้งค่าปัจจุบันให้ทุกจุดที่วางไว้">↧ ทุกจุด</button>
@@ -2533,25 +2563,34 @@ const HELI_START_TAXI_MIN = 10;     // start + hover-taxi allowance
 const HELI_TERMINAL_MIN   = 5;      // approach + departure per sortie
 const HELI_MAX_PTS        = 8;
 
+// hoge = one HOGE-OGE data point from template row 38 (weight kg / pressure-alt ft).
+//   est:true  → figure was asterisked / not from an RFM chart (H135 point in the
+//   template was a copy-paste error, so a generic ISA estimate is used instead).
 const HELI_TYPES = {
   B412 : { name:'Bell 412EP',      oew:3084, crew:2, crewWt:85, mgw:5398, sling:2041, seats:14,
            fuelKg:1001, auxL:318, auxMax:2, auxTankWt:22.8,  auxSeats:2,
-           tasCruise:122, tasLRC:115, ff:340, ceiling:16290, vne:140, auxEst:false },
+           tasCruise:122, tasLRC:115, ff:340, ceiling:16290, vne:140, auxEst:false,
+           hoge:{kg:5398, ft:5200, est:false} },
   H225M: { name:'Airbus H225M',    oew:5715, crew:3, crewWt:85, mgw:11000, sling:4750, seats:28,
            fuelKg:2277, auxL:978, auxMax:1, auxTankWt:55,    auxSeats:4,
-           tasCruise:141, tasLRC:141, ff:506, ceiling:20000, vne:175, auxEst:true },
+           tasCruise:141, tasLRC:141, ff:506, ceiling:20000, vne:175, auxEst:true,
+           hoge:{kg:11000, ft:2598, est:true} },
   S92  : { name:'Sikorsky S-92A',  oew:7104, crew:2, crewWt:85, mgw:12564, sling:3628, seats:22,
            fuelKg:2302, auxL:795, auxMax:2, auxTankWt:75,    auxSeats:4,
-           tasCruise:151, tasLRC:136, ff:576, ceiling:15000, vne:165, auxEst:true },
+           tasCruise:151, tasLRC:136, ff:576, ceiling:15000, vne:165, auxEst:true,
+           hoge:{kg:12020, ft:6700, est:true} },
   S70i : { name:'Sikorsky S-70i',  oew:5348, crew:2, crewWt:85, mgw:9979, sling:4082, seats:11,
            fuelKg:1090, auxL:757, auxMax:2, auxTankWt:86.85, auxSeats:3,
-           tasCruise:145, tasLRC:128, ff:280, ceiling:15000, vne:163, auxEst:false },
+           tasCruise:145, tasLRC:128, ff:280, ceiling:15000, vne:163, auxEst:false,
+           hoge:{kg:8165, ft:11000, est:true} },
   H135 : { name:'Airbus H135 T3H', oew:1555, crew:2, crewWt:85, mgw:2980, sling:1200, seats:7,
            fuelKg:560,  auxL:213, auxMax:1, auxTankWt:18,    auxSeats:2,
-           tasCruise:136, tasLRC:130, ff:225, ceiling:15350, vne:136, auxEst:true },
+           tasCruise:136, tasLRC:130, ff:225, ceiling:15350, vne:136, auxEst:true,
+           hoge:{kg:2980, ft:6000, est:true} },
 };
 const HELI_DEFAULTS = { type:'B412', payloadKg:0, fuelMode:'max', fuelKg:0, aux:0,
-                        tasMode:'cruise', reserveMin:20, loiterMin:30, contPct:5 };
+                        tasMode:'cruise', reserveMin:20, loiterMin:30, contPct:5,
+                        windDir:0, windSpd:0, oatC:15, qnh:1013, daAdj:true };
 
 let heliParams    = Object.assign({}, HELI_DEFAULTS);
 let heliPts       = [];     // { lat, lon, marker, rings:[], p:<param snapshot> }
@@ -2577,7 +2616,7 @@ function heliSaveState(){
   try{
     localStorage.setItem('heliRadius', JSON.stringify({
       params: heliSnapshot(),
-      pts: heliPts.map(pt=>({ lat:pt.lat, lon:pt.lon, p:pt.p }))
+      pts: heliPts.map(pt=>({ lat:pt.lat, lon:pt.lon, elevFt:pt.elevFt, elevFail:!!pt.elevFail, p:pt.p }))
     }));
   }catch(e){}
 }
@@ -2602,6 +2641,11 @@ function heliSyncForm(){
   g('hpReserve').value = String(heliParams.reserveMin);
   g('hpLoiter').value  = heliParams.loiterMin;
   g('hpCont').value    = heliParams.contPct;
+  g('hpWindDir').value = heliParams.windDir||0;
+  g('hpWindSpd').value = heliParams.windSpd||0;
+  g('hpOat').value     = heliParams.oatC;
+  g('hpQnh').value     = heliParams.qnh;
+  g('hpDaAdj').checked = heliParams.daAdj!==false;
   g('hpFuelKgWrap').style.display = heliParams.fuelMode==='custom' ? '' : 'none';
   document.querySelectorAll('#hpFuelSeg button').forEach(b=>b.classList.toggle('active', b.dataset.m===heliParams.fuelMode));
   document.querySelectorAll('#hpAuxSeg button').forEach(b=>b.classList.toggle('active', +b.dataset.m===heliParams.aux));
@@ -2619,6 +2663,11 @@ function heliReadForm(){
   heliParams.reserveMin = +g('hpReserve').value||20;
   heliParams.loiterMin  = Math.max(0, +g('hpLoiter').value||0);
   heliParams.contPct    = Math.max(0, +g('hpCont').value||0);
+  heliParams.windDir    = ((+g('hpWindDir').value||0)%360+360)%360;
+  heliParams.windSpd    = Math.max(0, +g('hpWindSpd').value||0);
+  heliParams.oatC       = +g('hpOat').value||0;
+  heliParams.qnh        = +g('hpQnh').value||1013;
+  heliParams.daAdj      = g('hpDaAdj').checked;
 }
 function heliOnParam(){
   heliReadForm();
@@ -2648,7 +2697,8 @@ function heliAux(v){
 }
 
 // ---- the planning model --------------------------------------------
-function heliCompute(p){
+// elevFt = site elevation of the placement (SRTM, ft); optional → treated as 0/SL.
+function heliCompute(p, elevFt){
   const t = HELI_TYPES[p.type];
   const crew    = t.crew * t.crewWt;
   const auxN    = p.aux ? t.auxMax : 0;
@@ -2663,7 +2713,17 @@ function heliCompute(p){
   const gross   = t.oew + crew + auxTk + fuelKg + p.payloadKg;
   const overMGW = gross - t.mgw;
 
-  const TAS   = p.tasMode==='lrc' ? t.tasLRC : t.tasCruise;
+  // --- Phase 2: density altitude at the site -------------------------
+  const elev  = (elevFt==null) ? null : elevFt;
+  const qnh   = p.qnh || 1013;
+  const oatC  = (p.oatC==null) ? 15 : p.oatC;
+  const paFt  = (elev==null?0:elev) + (1013 - qnh) * 30;   // pressure altitude
+  const isaT  = 15 - 2 * (paFt/1000);                       // ISA temp at that PA
+  const daFt  = paFt + 120 * (oatC - isaT);                 // density altitude
+  const daKft = Math.max(0, daFt/1000);
+  const TAS0  = p.tasMode==='lrc' ? t.tasLRC : t.tasCruise;
+  const TAS   = (p.daAdj!==false) ? TAS0 * (1 + 0.02 * daKft) : TAS0;   // ~+2%/1000ft DA
+
   const kgFor = min => min/60 * t.ff;
   const reserveKg   = kgFor(p.reserveMin);
   const startTaxiKg = kgFor(HELI_START_TAXI_MIN);
@@ -2671,16 +2731,49 @@ function heliCompute(p){
   const loiterKg    = kgFor(p.loiterMin);
   const contKg      = p.contPct/100 * fuelKg;
 
-  const rtCruise  = fuelKg - reserveKg - startTaxiKg - terminalKg - loiterKg - contKg;
-  const radiusROA = Math.max(0, rtCruise) / t.ff * TAS / 2;
-  const owCruise  = fuelKg - reserveKg - startTaxiKg - contKg;
-  const oneWay    = Math.max(0, owCruise) / t.ff * TAS;
-  const absRange  = fuelKg / t.ff * TAS;
+  // cruise TIME budgets (hr) — wind is applied per-track in heliWindRadius()
+  const hrROA = Math.max(0, fuelKg - reserveKg - startTaxiKg - terminalKg - loiterKg - contKg) / t.ff;
+  const hrOW  = Math.max(0, fuelKg - reserveKg - startTaxiKg - contKg) / t.ff;
+  const hrABS = fuelKg / t.ff;
+  const radiusROA = hrROA * TAS / 2;   // still-air reference distances
+  const oneWay    = hrOW  * TAS;
+  const absRange  = hrABS * TAS;
+
+  // HOGE advisory: compare site DA to the type's HOGE-OGE data point
+  const hogeMarginFt = t.hoge ? (t.hoge.ft - daFt) : null;
 
   const fuelLimited = p.fuelMode!=='custom' && fuelKg < maxFuel - 1 && fuelKg > 0;
-  return { t, TAS, crew, auxN, auxTk, auxFuel, maxFuel, useful, fuelKg, gross, overMGW, fuelLimited,
+  return { t, TAS, TAS0, crew, auxN, auxTk, auxFuel, maxFuel, useful, fuelKg, gross, overMGW, fuelLimited,
            reserveKg, startTaxiKg, terminalKg, loiterKg, contKg,
-           radiusROA, oneWay, absRange, enduranceHr: fuelKg / t.ff };
+           hrROA, hrOW, hrABS, radiusROA, oneWay, absRange, enduranceHr: fuelKg / t.ff,
+           elev, paFt, isaT, daFt, daKft, hogeMarginFt };
+}
+
+// wind-adjusted reach (NM) for one compass track. kind: 'roa' | 'ow' | 'abs'
+function heliWindRadius(kind, c, p, brgDeg){
+  const still = kind==='roa' ? c.radiusROA : kind==='ow' ? c.oneWay : c.absRange;
+  const ws = p.windSpd||0;
+  if(ws<=0) return still;
+  const ang = (( (p.windDir||0) - brgDeg ) * Math.PI/180);
+  const hw  = ws * Math.cos(ang);                            // + = headwind outbound
+  const xw  = ws * Math.sin(ang);
+  const eff = Math.sqrt(Math.max(0, c.TAS*c.TAS - xw*xw));   // TAS left after crab
+  const gsOut = eff - hw, gsBack = eff + hw;
+  if(kind==='roa'){
+    if(gsOut<=0 || gsBack<=0) return 0;
+    return c.hrROA / (1/gsOut + 1/gsBack);                   // out-and-back radius of action
+  }
+  if(gsOut<=0) return 0;
+  return (kind==='ow' ? c.hrOW : c.hrABS) * gsOut;
+}
+
+// destination lat/lon a distance (NM) along a bearing from a start point
+function heliDestPoint(lat, lon, brgDeg, nm){
+  const R=3440.065, d=nm/R, br=brgDeg*Math.PI/180;
+  const la1=lat*Math.PI/180, lo1=lon*Math.PI/180;
+  const la2=Math.asin(Math.sin(la1)*Math.cos(d)+Math.cos(la1)*Math.sin(d)*Math.cos(br));
+  const lo2=lo1+Math.atan2(Math.sin(br)*Math.sin(d)*Math.cos(la1), Math.cos(d)-Math.sin(la1)*Math.sin(la2));
+  return [la2*180/Math.PI, (((lo2*180/Math.PI)+540)%360)-180];
 }
 
 // ---- placements ---------------------------------------------------
@@ -2693,17 +2786,35 @@ function heliIcon(){
 function heliAttachMarker(pt){
   pt.marker = L.marker([pt.lat,pt.lon],{icon:heliIcon(),draggable:true,zIndexOffset:1600});
   pt.marker.on('click',()=>heliPick(heliPts.indexOf(pt)));
-  pt.marker.on('dragend',()=>{ const ll=pt.marker.getLatLng(); pt.lat=ll.lat; pt.lon=ll.lng; heliRefresh(); });
+  pt.marker.on('dragend',()=>{ const ll=pt.marker.getLatLng(); pt.lat=ll.lat; pt.lon=ll.lng;
+    pt.elevFt=null; heliRefresh(); heliFetchElev(pt); });
   LG.heliRadius.addLayer(pt.marker);
 }
 function heliAddPt(latlng){
   if(heliPts.length>=HELI_MAX_PTS) return;
   heliReadForm();
-  const pt = { lat:latlng.lat, lon:latlng.lng, marker:null, rings:[], p:heliSnapshot() };
+  const pt = { lat:latlng.lat, lon:latlng.lng, marker:null, rings:[], elevFt:null, p:heliSnapshot() };
   heliAttachMarker(pt);
   heliPts.push(pt);
   heliActive = heliPts.length-1;
   heliRefresh();
+  heliFetchElev(pt);
+}
+async function heliFetchElev(pt){
+  pt.elevFail = false;
+  if(typeof _fetchElev!=='function'){ pt.elevFt = 0; pt.elevFail = true; heliRefresh(); return; }
+  try{
+    const m = await _fetchElev([{lat:pt.lat, lng:pt.lon}]);
+    if(m && m.length!=null && m[0]!=null){ pt.elevFt = Math.round(m[0]*3.28084); heliRefresh(); return; }
+    throw new Error('no data');
+  }catch(e){ pt.elevFt = 0; pt.elevFail = true; heliRefresh(); }
+}
+function heliSetElev(i){
+  const pt = heliPts[i]; if(!pt) return;
+  const v = prompt('ความสูงสนาม (ฟุต MSL):', pt.elevFt!=null ? pt.elevFt : 0);
+  if(v==null) return;
+  const n = parseFloat(v);
+  if(!isNaN(n)){ pt.elevFt = Math.round(n); pt.elevFail = false; heliRefresh(); }
 }
 function heliPick(i){
   if(i<0 || i>=heliPts.length) return;
@@ -2720,6 +2831,7 @@ function heliUndo(){
 }
 function heliClear(){
   heliPts.forEach(pt=>{ LG.heliRadius.removeLayer(pt.marker); pt.rings.forEach(r=>LG.heliRadius.removeLayer(r)); });
+  heliLegLayers.forEach(l=>LG.heliRadius.removeLayer(l)); heliLegLayers = [];
   heliPts = []; heliActive = -1;
   heliRefresh();
 }
@@ -2736,42 +2848,83 @@ function heliMaybeRestore(){
   if(!saved || !saved.length) return;
   saved.forEach(s=>{
     const pt = { lat:s.lat, lon:s.lon, marker:null, rings:[],
+                 elevFt:(s.elevFt==null?null:s.elevFt), elevFail:!!s.elevFail,
                  p:Object.assign({}, HELI_DEFAULTS, s.p||{}) };
     heliAttachMarker(pt);
     heliPts.push(pt);
+    if(pt.elevFt==null || pt.elevFail) heliFetchElev(pt);
   });
   heliActive = heliPts.length-1;
   if(heliActive>=0) heliSyncFormFrom(heliPts[heliActive].p);
 }
 
 // ---- draw + HUD --------------------------------------------------
-function heliRefresh(){ heliDrawRings(); heliRenderHud(); heliSaveState(); }
+let heliLegLayers = [];   // FARP connector polylines + labels
+
+function heliRefresh(){ heliDrawRings(); heliDrawLegs(); heliRenderHud(); heliSaveState(); }
 
 function heliDrawRings(){
   heliPts.forEach((pt,i)=>{
     pt.rings.forEach(r=>LG.heliRadius.removeLayer(r));
     pt.rings = [];
-    const c   = heliCompute(pt.p);
-    const act = i===heliActive;
-    const ring = (nm,color,dash,fill)=>{
-      if(nm<=0) return;
-      const r = L.circle([pt.lat,pt.lon],{radius:nm*1852,color,weight:act?2.4:1.4,
-        opacity:act?.95:.55, dashArray:dash, fill:fill>0, fillColor:color,
-        fillOpacity:act?fill:fill*0.4, interactive:false});
-      LG.heliRadius.addLayer(r); pt.rings.push(r);
+    const c    = heliCompute(pt.p, pt.elevFt);
+    const act  = i===heliActive;
+    const windy= (pt.p.windSpd||0) > 0;
+    const ring = (kind,color,dash,fill)=>{
+      const w = act?2.4:1.4, op = act?.95:.55, fo = (fill>0)?(act?fill:fill*0.4):0;
+      if(windy){
+        const poly = [];
+        for(let b=0; b<360; b+=6){
+          const nm = heliWindRadius(kind, c, pt.p, b);
+          if(nm>0.1) poly.push(heliDestPoint(pt.lat, pt.lon, b, nm));
+        }
+        if(poly.length<8) return;
+        const pg = L.polygon(poly,{color,weight:w,opacity:op,dashArray:dash,
+          fill:fo>0, fillColor:color, fillOpacity:fo, interactive:false});
+        LG.heliRadius.addLayer(pg); pt.rings.push(pg);
+      }else{
+        const nm = kind==='roa'?c.radiusROA : kind==='ow'?c.oneWay : c.absRange;
+        if(nm<=0) return;
+        const r = L.circle([pt.lat,pt.lon],{radius:nm*1852,color,weight:w,opacity:op,
+          dashArray:dash, fill:fo>0, fillColor:color, fillOpacity:fo, interactive:false});
+        LG.heliRadius.addLayer(r); pt.rings.push(r);
+      }
     };
-    ring(c.absRange,  '#ef4444', '3,5', 0);
-    ring(c.oneWay,    '#f59e0b', null,  0.04);
-    ring(c.radiusROA, '#22c55e', null,  0.07);
-    if(c.radiusROA>0){
-      const dLat = (c.radiusROA*1852)/111320;
-      const lbl = L.marker([pt.lat+dLat, pt.lon],{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],
+    ring('abs', '#ef4444', '3,5', 0);
+    ring('ow',  '#f59e0b', null,  0.04);
+    ring('roa', '#22c55e', null,  0.07);
+
+    const rNorth = heliWindRadius('roa', c, pt.p, 0);
+    if(rNorth>0){
+      const [llat,llon] = heliDestPoint(pt.lat, pt.lon, 0, rNorth);
+      const lbl = L.marker([llat,llon],{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],
         html:`<div style="font-size:9px;font-weight:800;color:#052e16;background:#4ade80;border-radius:4px;
           padding:1px 5px;white-space:nowrap;transform:translate(-50%,-120%);box-shadow:0 1px 4px rgba(0,0,0,.5);">
-          ${HELI_TYPES[pt.p.type].name.split(' ').pop()} · ROA ${c.radiusROA.toFixed(0)} NM</div>`})});
+          ${HELI_TYPES[pt.p.type].name.split(' ').pop()} · ROA ${c.radiusROA.toFixed(0)} NM${(pt.p.windSpd||0)>0?' (ลม)':''}</div>`})});
       LG.heliRadius.addLayer(lbl); pt.rings.push(lbl);
     }
   });
+}
+
+// FARP staging legs: dashed connectors between placements in drop order
+function heliDrawLegs(){
+  heliLegLayers.forEach(l=>LG.heliRadius.removeLayer(l));
+  heliLegLayers = [];
+  if(heliPts.length<2) return;
+  for(let i=0;i<heliPts.length-1;i++){
+    const A=heliPts[i], B=heliPts[i+1];
+    const line = L.polyline([[A.lat,A.lon],[B.lat,B.lon]],
+      {color:'#e2e8f0',weight:1.5,dashArray:'4,6',opacity:.75,interactive:false});
+    LG.heliRadius.addLayer(line); heliLegLayers.push(line);
+    const nm  = haversine([A.lat,A.lon],[B.lat,B.lon]) * UCONV.nm;
+    const brg = Math.round(calcBearing(A.lat,A.lon,B.lat,B.lon));
+    const mid = [(A.lat+B.lat)/2,(A.lon+B.lon)/2];
+    const lbl = L.marker(mid,{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],
+      html:`<div style="font-size:8px;font-weight:700;color:#0f172a;background:rgba(226,232,240,.95);
+        border-radius:3px;padding:0 4px;white-space:nowrap;transform:translate(-50%,-50%);">
+        FARP ${String(brg).padStart(3,'0')}°·${nm.toFixed(0)} NM</div>`})});
+    LG.heliRadius.addLayer(lbl); heliLegLayers.push(lbl);
+  }
 }
 
 function heliRenderHud(){
@@ -2785,7 +2938,7 @@ function heliRenderHud(){
   if(heliPts.length){
     list = `<div class="hp-pts">` + heliPts.map((pt,i)=>
       `<div class="hp-pt ${i===heliActive?'act':''}" onclick="heliPick(${i})">
-        <span>${i+1}. ${HELI_TYPES[pt.p.type].name}</span>
+        <span>${i+1}. ${HELI_TYPES[pt.p.type].name}${pt.elevFt!=null?` · ${pt.elevFt} ft`:''}</span>
         <span>${toDDM(pt.lat,true)} ${toDDM(pt.lon,false)}</span>
       </div>`).join('') + `</div>`;
   }
@@ -2796,9 +2949,10 @@ function heliRenderHud(){
 
   const idx = heliActive>=0 ? heliActive : heliPts.length-1;
   const pt  = heliPts[idx];
-  const c   = heliCompute(pt.p);
+  const c   = heliCompute(pt.p, pt.elevFt);
   const t   = c.t;
   const f1  = n=>n.toLocaleString('en-US',{maximumFractionDigits:0});
+  const wind= (pt.p.windSpd||0) > 0;
 
   const mgw = c.overMGW>0.5
     ? `<div class="hp-mgw bad">⚠ เกิน MGW ${f1(c.overMGW)} kg — ลด payload หรือเชื้อเพลิง</div>`
@@ -2806,11 +2960,48 @@ function heliRenderHud(){
       ? `<div class="hp-mgw ok">✔ รวม ${f1(c.gross)} / ${f1(t.mgw)} kg · เชื้อเพลิงถูกจำกัดเหลือ ${f1(c.fuelKg)} kg (ถังจุ ${f1(c.maxFuel)}) เพื่อไม่ให้เกิน MGW</div>`
       : `<div class="hp-mgw ok">✔ ใต้ MGW · รวม ${f1(c.gross)} / ${f1(t.mgw)} kg (เหลือ ${f1(t.mgw-c.gross)} kg)</div>`;
 
+  // Density-altitude block
+  const elevTxt = pt.elevFt==null
+      ? '<span style="opacity:.6">กำลังดึง…</span>'
+      : pt.elevFail
+        ? `<span style="color:#fbbf24">ดึงไม่ได้ · สมมุติ SL</span> <a onclick="heliSetElev(${idx})" style="cursor:pointer;color:#67e8f9">✎ ใส่เอง</a>`
+        : `${f1(pt.elevFt)} ft <a onclick="heliSetElev(${idx})" style="cursor:pointer;color:#67e8f9;opacity:.7">✎</a>`;
+  const daBad   = c.hogeMarginFt!=null && c.hogeMarginFt < 0;
+  const daWarn  = c.hogeMarginFt!=null && c.hogeMarginFt >= 0 && c.hogeMarginFt < 2000;
+  const daCls   = daBad ? 'bad' : (daWarn ? 'warn' : 'ok');
+  const daMsg   = daBad
+      ? `⚠ DA ${f1(c.daFt)} ft สูงกว่า HOGE-OGE โดยประมาณ (${f1(t.hoge.ft)} ft${t.hoge.est?' • ปย.':''}) — อาจยกตัว OGE ไม่ได้ที่น้ำหนักนี้ ตรวจ performance chart`
+      : daWarn
+        ? `DA ${f1(c.daFt)} ft • เหลือ margin ~${f1(c.hogeMarginFt)} ft ถึง HOGE-OGE (${f1(t.hoge.ft)} ft${t.hoge.est?' • ปย.':''}) — ตรวจ HOGE + payload derate`
+        : `DA ${f1(c.daFt)} ft • ต่ำกว่า HOGE-OGE โดยประมาณ (${f1(t.hoge.ft)} ft${t.hoge.est?' • ปย.':''})`;
+  const daBlock =
+    `<div class="hp-sub">Density Altitude ที่หมาย</div>
+     <div class="hp-math">
+       <div class="hp-row"><span>Site elev (SRTM)</span><span>${elevTxt}</span></div>
+       <div class="hp-row"><span>Pressure alt (QNH ${f1(pt.p.qnh)})</span><span>${f1(c.paFt)} ft</span></div>
+       <div class="hp-row"><span>OAT ${pt.p.oatC}°C · ISA ${c.isaT>=0?'+':''}${(pt.p.oatC-c.isaT).toFixed(0)}°C</span><span>DA ${f1(c.daFt)} ft</span></div>
+       <div class="hp-row"><span>TAS ${pt.p.daAdj!==false?`ปรับ DA (+${(2*c.daKft).toFixed(1)}%)`:'ไม่ปรับ'}</span><span>${f1(c.TAS0)} → ${c.TAS.toFixed(0)} kt</span></div>
+     </div>
+     <div class="hp-mgw ${daCls}">${daMsg}</div>`;
+
+  // wind + FARP-leg note
+  let notes = '';
+  if(wind) notes += `<div class="hp-note">🌬 ลม ${String(pt.p.windDir).padStart(3,'0')}° / ${pt.p.windSpd} kt — วงเป็นรูปตามลม (green = ไป-กลับ radius of action; amber/red = เที่ยวเดียว ไกลตามลม)</div>`;
+  if(heliPts.length>=2){
+    let legTot=0; const legs=[];
+    for(let i=0;i<heliPts.length-1;i++){
+      const nm=haversine([heliPts[i].lat,heliPts[i].lon],[heliPts[i+1].lat,heliPts[i+1].lon])*UCONV.nm;
+      legTot+=nm; legs.push(`${i+1}→${i+2}: ${nm.toFixed(0)}`);
+    }
+    notes += `<div class="hp-note">🔗 ขาเชื่อม FARP (${heliPts.length-1}): ${legs.join(' · ')} NM · รวม ${legTot.toFixed(0)} NM</div>`;
+  }
+
   body.innerHTML = list +
     `<div class="hp-out">
-      <div class="hp-ring r1"><span>🟢 รัศมีปฏิบัติการ ไป-กลับ</span><span class="hp-rv">${c.radiusROA.toFixed(0)} NM</span></div>
-      <div class="hp-ring r2"><span>🟠 พิสัยเที่ยวเดียว (มีสำรอง)</span><span class="hp-rv">${c.oneWay.toFixed(0)} NM</span></div>
-      <div class="hp-ring r3"><span>🔴 พิสัยสูงสุด ไม่มีสำรอง</span><span class="hp-rv">${c.absRange.toFixed(0)} NM</span></div>
+      <div class="hp-ring r1"><span>🟢 รัศมีปฏิบัติการ ไป-กลับ${wind?' *':''}</span><span class="hp-rv">${c.radiusROA.toFixed(0)} NM</span></div>
+      <div class="hp-ring r2"><span>🟠 พิสัยเที่ยวเดียว (มีสำรอง)${wind?' *':''}</span><span class="hp-rv">${c.oneWay.toFixed(0)} NM</span></div>
+      <div class="hp-ring r3"><span>🔴 พิสัยสูงสุด ไม่มีสำรอง${wind?' *':''}</span><span class="hp-rv">${c.absRange.toFixed(0)} NM</span></div>
+      ${wind?'<div class="hp-disc">* ตัวเลขในกล่องเป็นค่านิ่งลม (still-air) — รูปวงบนแผนที่คิดลมแล้ว</div>':''}
       ${mgw}
       <div class="hp-math">
         <div class="hp-row"><span>Useful load (MGW−OEW)</span><span>${f1(c.useful)} kg</span></div>
@@ -2820,12 +3011,14 @@ function heliRenderHud(){
         <div class="hp-row"><span>เชื้อเพลิงใช้ได้${pt.p.fuelMode==='custom'?' (กำหนดเอง)':''}</span><span>${f1(c.fuelKg)} / ${f1(c.maxFuel)} kg</span></div>
         <div class="hp-row"><span>Fuel flow (วางแผน)</span><span>${f1(t.ff)} kg/hr</span></div>
         <div class="hp-row"><span>Endurance รวม</span><span>${c.enduranceHr.toFixed(2)} hr</span></div>
-        <div class="hp-row"><span>Cruise TAS (${pt.p.tasMode==='lrc'?'LRC':'normal'})</span><span>${c.TAS} kt</span></div>
+        <div class="hp-row"><span>Cruise TAS (${pt.p.tasMode==='lrc'?'LRC':'normal'})</span><span>${c.TAS.toFixed(0)} kt</span></div>
         <div class="hp-row"><span>หัก สำรอง ${pt.p.reserveMin}′·start+taxi ${HELI_START_TAXI_MIN}′·terminal ${HELI_TERMINAL_MIN}′</span><span>${f1(c.reserveKg+c.startTaxiKg+c.terminalKg)} kg</span></div>
         <div class="hp-row"><span>หัก loiter ${pt.p.loiterMin}′ + contingency ${pt.p.contPct}%</span><span>${f1(c.loiterKg+c.contKg)} kg</span></div>
       </div>
+      ${daBlock}
+      ${notes}
       ${t.auxEst && c.auxN?`<div class="hp-disc">ⓘ น้ำหนักถังเสริมเปล่าของแบบนี้เป็นค่าประมาณ (ผู้ผลิตไม่ published)</div>`:''}
-      <div class="hp-disc">สมรรถนะ = Derived จาก spec ผู้ผลิต · ยังไม่ใช่ RFM/DASH-10 · Phase 1 ยังไม่คิดลม/DA</div>
+      <div class="hp-disc">สมรรถนะ = Derived · ยังไม่ใช่ RFM/DASH-10 · DA/HOGE เป็นค่าประมาณ (ปย.) · ยังไม่คิด payload derate ตาม DA</div>
     </div>`;
 }
 
@@ -2836,6 +3029,57 @@ map.on('click', e=>{
   if(!LS.heliRadius || !heliPlaceMode || distMode) return;
   heliAddPt(e.latlng);
 });
+
+// ── Draggable floating panels (rtafHud / heliHud) ─────────────────────
+// Drag by the title bar so the two range-planner HUDs don't sit on top of
+// each other when both layers are on. Position is remembered per panel.
+function makeDraggablePanel(panelId, handleSel, storeKey){
+  const panel = document.getElementById(panelId);
+  if(!panel) return;
+  const handle = panel.querySelector(handleSel);
+  if(!handle) return;
+  handle.style.cursor = 'move';
+  handle.style.touchAction = 'none';
+  handle.title = 'ลากเพื่อย้ายหน้าต่าง';
+  function applyPos(left, top){
+    const w = panel.offsetWidth || 260, h = panel.offsetHeight || 120;
+    left = Math.max(4, Math.min(left, window.innerWidth  - Math.min(w,90) - 4));
+    top  = Math.max(48, Math.min(top,  window.innerHeight - Math.min(h,60) - 4));
+    panel.style.left = left+'px'; panel.style.top = top+'px';
+    panel.style.right = 'auto';   panel.style.bottom = 'auto';
+  }
+  try{
+    const s = JSON.parse(localStorage.getItem(storeKey)||'null');
+    if(s && typeof s.left==='number') applyPos(s.left, s.top);
+  }catch(e){}
+  let sx, sy, sl, st, dragging=false;
+  const move = e=>{
+    if(!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    applyPos(sl + (p.clientX - sx), st + (p.clientY - sy));
+    if(e.cancelable) e.preventDefault();
+  };
+  const up = ()=>{
+    if(!dragging) return;
+    dragging = false;
+    document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);
+    document.removeEventListener('touchmove', move); document.removeEventListener('touchend', up);
+    try{ localStorage.setItem(storeKey, JSON.stringify({left:parseFloat(panel.style.left), top:parseFloat(panel.style.top)})); }catch(e){}
+  };
+  const down = e=>{
+    if(e.target.closest('.dt-x')) return;      // don't hijack the close button
+    const p = e.touches ? e.touches[0] : e;
+    const r = panel.getBoundingClientRect();
+    sl = r.left; st = r.top; sx = p.clientX; sy = p.clientY; dragging = true;
+    document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
+    document.addEventListener('touchmove', move, {passive:false}); document.addEventListener('touchend', up);
+    e.preventDefault();
+  };
+  handle.addEventListener('mousedown', down);
+  handle.addEventListener('touchstart', down, {passive:false});
+}
+makeDraggablePanel('rtafHud', '.rt-title', 'rtafHudPos');
+makeDraggablePanel('heliHud', '.hp-title', 'heliHudPos');
 
 updateLayerCount();
 
