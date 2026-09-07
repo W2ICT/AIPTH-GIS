@@ -222,6 +222,41 @@
     .rt-tot span:last-child,.rt-dir span:last-child{font-family:monospace;white-space:nowrap;}
     .rt-acts{display:flex;gap:4px;margin-top:8px;}
 
+    /* ══ HELICOPTER RADIUS-OF-ACTION PLANNER HUD ══ */
+    #heliHud{position:absolute;left:295px;top:64px;z-index:801;background:var(--surface);border:1px solid var(--border);border-left:3px solid #22c55e;border-radius:9px;padding:10px 11px;width:268px;max-height:calc(100vh - 150px);overflow-y:auto;box-shadow:0 4px 20px var(--shadow);display:none;font-size:10px;}
+    #heliHud.show{display:block;}
+    #heliHud .hp-title{font-size:11px;font-weight:700;color:#4ade80;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+    #heliHud .hp-title .dt-x{cursor:pointer;color:var(--muted);font-size:13px;}
+    #heliHud .hp-title .dt-x:hover{color:var(--text);}
+    .hp-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 7px;margin-bottom:7px;}
+    .hp-f{display:flex;flex-direction:column;gap:2px;}
+    .hp-f.full{grid-column:1 / -1;}
+    .hp-f label{font-size:8.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+    .hp-f input,.hp-f select{background:var(--bg);border:1px solid var(--border2);border-radius:5px;padding:4px 5px;font-size:10px;color:var(--text);font-family:inherit;width:100%;}
+    .hp-f input:focus,.hp-f select:focus{outline:none;border-color:#22c55e;}
+    .hp-seg{display:flex;gap:3px;background:var(--bg);border-radius:6px;padding:2px;}
+    .hp-seg button{flex:1;padding:4px 3px;font-size:9px;font-weight:700;background:transparent;border:1px solid transparent;border-radius:5px;color:var(--muted);cursor:pointer;}
+    .hp-seg button.active{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.4);color:#4ade80;}
+    .hp-hint{font-size:9px;color:var(--muted);text-align:center;line-height:1.6;padding:4px 0;}
+    .hp-pts{font-size:9px;font-weight:700;color:var(--text2);background:var(--bg);border-radius:5px;padding:4px 6px;margin-bottom:6px;}
+    .hp-pts .hp-pt{display:flex;justify-content:space-between;gap:6px;padding:2px 3px;border-radius:4px;cursor:pointer;}
+    .hp-pts .hp-pt.act{background:rgba(34,197,94,.16);color:#4ade80;}
+    .hp-pts .hp-pt span:last-child{font-family:monospace;color:var(--text);}
+    .hp-out{margin-top:6px;border-top:1px solid var(--border);padding-top:6px;}
+    .hp-ring{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:4px 6px;border-radius:5px;font-weight:700;margin-bottom:4px;}
+    .hp-ring .hp-rv{font-family:monospace;white-space:nowrap;font-size:11px;}
+    .hp-ring.r1{background:rgba(34,197,94,.13);border:1px solid rgba(34,197,94,.32);color:#4ade80;}
+    .hp-ring.r2{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#fbbf24;}
+    .hp-ring.r3{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.28);color:#f87171;}
+    .hp-math{font-size:9px;color:var(--text2);margin-top:5px;line-height:1.7;}
+    .hp-math .hp-row{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed var(--border2);padding:1px 1px;}
+    .hp-math .hp-row span:last-child{font-family:monospace;color:var(--text);}
+    .hp-mgw{margin-top:6px;padding:5px 7px;border-radius:5px;font-size:9.5px;font-weight:700;text-align:center;}
+    .hp-mgw.ok{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#4ade80;}
+    .hp-mgw.bad{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.45);color:#f87171;}
+    .hp-disc{font-size:8px;color:var(--muted);margin-top:7px;line-height:1.5;font-style:italic;text-align:center;}
+    .hp-acts{display:flex;gap:4px;margin-top:8px;}
+
     /* ══ LEAFLET POPUPS ══ */
     .leaflet-popup-content-wrapper{background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 30px var(--shadow);padding:0;}
     .leaflet-popup-content{margin:0!important;width:265px!important;}
@@ -491,7 +526,7 @@
       <div class="lp-header collapsed" id="lph-layers" onclick="togglePanel('layers')"
         <span style="font-size:11px;">🗂</span>
         <span class="lp-title">Layers</span>
-        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/10</span>
+        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-layers">1/11</span>
         <span class="lp-chevron">▼</span>
       </div>
       <div class="lp-body collapsed" id="lpb-layers">
@@ -544,6 +579,11 @@
           <div class="layer-dot" style="background:#e11d48;border-radius:50%;"></div>
           <span class="layer-label">วัดระยะสนามบิน (NM)</span>
           <div class="ltog" id="ltog-rtafRange"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('heliRadius')">
+          <div class="layer-dot" style="background:#22c55e;border-radius:50%;"></div>
+          <span class="layer-label">รัศมีปฏิบัติการ ฮ. (ROA)</span>
+          <div class="ltog" id="ltog-heliRadius"></div>
         </div>
 
       </div>
@@ -1096,6 +1136,72 @@
     <button class="dt-btn sec" onclick="rtafUndo()">⌫ ถอย 1 จุด</button>
     <button class="dt-btn pri" onclick="rtafClear()">🗑 ล้าง</button>
   </div>
+</div>
+
+<div id="heliHud">
+  <div class="hp-title">🚁 รัศมีปฏิบัติการ ฮ.<span class="dt-x" onclick="toggleLayer('heliRadius')">✕</span></div>
+  <div class="hp-grid">
+    <div class="hp-f full">
+      <label>อากาศยาน</label>
+      <select id="hpType" onchange="heliOnParam()"></select>
+    </div>
+    <div class="hp-f">
+      <label>Payload (kg)</label>
+      <input id="hpPayload" type="number" min="0" step="50" value="0" oninput="heliOnParam()">
+    </div>
+    <div class="hp-f">
+      <label>= กำลังพล (×85)</label>
+      <input id="hpTroops" type="number" min="0" step="1" value="0" oninput="heliTroops()">
+    </div>
+    <div class="hp-f full">
+      <label>เชื้อเพลิง</label>
+      <div class="hp-seg" id="hpFuelSeg">
+        <button data-m="max" class="active" onclick="heliFuelMode('max')">เต็ม/สูงสุดใต้ MGW</button>
+        <button data-m="custom" onclick="heliFuelMode('custom')">กำหนดเอง</button>
+      </div>
+    </div>
+    <div class="hp-f full" id="hpFuelKgWrap" style="display:none;">
+      <label>เชื้อเพลิง (kg)</label>
+      <input id="hpFuelKg" type="number" min="0" step="50" value="0" oninput="heliOnParam()">
+    </div>
+    <div class="hp-f full">
+      <label>ถังเสริม / ferry</label>
+      <div class="hp-seg" id="hpAuxSeg">
+        <button data-m="0" class="active" onclick="heliAux(0)">ไม่ใช้</button>
+        <button data-m="1" onclick="heliAux(1)">ใช้ถังเสริม</button>
+      </div>
+    </div>
+    <div class="hp-f">
+      <label>ความเร็ว</label>
+      <select id="hpTas" onchange="heliOnParam()">
+        <option value="cruise">Normal cruise</option>
+        <option value="lrc">Long-range cruise</option>
+      </select>
+    </div>
+    <div class="hp-f">
+      <label>สำรอง</label>
+      <select id="hpReserve" onchange="heliOnParam()">
+        <option value="20">VFR วัน · 20 min</option>
+        <option value="30">VFR คืน / IFR · 30 min</option>
+        <option value="45">IFR + alternate · 45 min</option>
+      </select>
+    </div>
+    <div class="hp-f">
+      <label>Loiter ที่หมาย (min)</label>
+      <input id="hpLoiter" type="number" min="0" step="5" value="30" oninput="heliOnParam()">
+    </div>
+    <div class="hp-f">
+      <label>Contingency (%)</label>
+      <input id="hpCont" type="number" min="0" step="1" value="5" oninput="heliOnParam()">
+    </div>
+  </div>
+  <div id="heliHudBody"></div>
+  <div class="hp-acts">
+    <button class="dt-btn sec" onclick="heliApplyAll()" title="ตั้งค่าปัจจุบันให้ทุกจุดที่วางไว้">↧ ทุกจุด</button>
+    <button class="dt-btn sec" onclick="heliUndo()">⌫ ลบจุด</button>
+    <button class="dt-btn pri" onclick="heliClear()">🗑 ล้าง</button>
+  </div>
+  <div class="hp-disc">ประมาณการวางแผน (still-air) — ไม่ใช้แทน RFM / DASH-10 / performance charts / checklist</div>
 </div>
 
 <div class="stats">
@@ -1653,6 +1759,12 @@ function toggleLayer(k){
   if(k==='rtafRange'){
     if(LS[k]){ LG[k].addTo(map); rtafRouteLG.addTo(map); rtafRefresh(); }
     else { map.removeLayer(LG[k]); map.removeLayer(rtafRouteLG); rtafChain=[]; rtafRenderHud(); }
+    return;
+  }
+  if(k==='heliRadius'){
+    if(LS[k]){ LG[k].addTo(map); heliMaybeRestore(); heliRefresh(); }
+    else { map.removeLayer(LG[k]); heliRenderHud(); }
+    heliSetCursor();
     return;
   }
 
@@ -2398,6 +2510,332 @@ function rtafRenderHud(){
     `<div class="rt-tot"><span>ระยะสะสม · ${rtafChain.length-1} leg</span><span>${tot.toFixed(1)} NM</span></div>`+
     `<div class="rt-dir"><span>ระยะกระจัด ${O.icao}→${D.icao}</span><span>${String(dBrg).padStart(3,'0')}° · ${direct.toFixed(1)} NM</span></div>`;
 }
+
+updateLayerCount();
+
+// ═══════════════════════════════════════════
+// HELICOPTER RADIUS-OF-ACTION PLANNER  (รัศมีปฏิบัติการ ฮ. — ROA)
+// ═══════════════════════════════════════════
+// Phase-1 still-air planning aid. Place a helicopter on the map, pick a type,
+// set payload + fuel, and the tool draws 3 range rings:
+//   green  = radius of action, out-and-back  (reserve + start/taxi + terminal + loiter + contingency held)
+//   amber  = one-way range with reserve      (reserve + start/taxi + contingency held, no loiter)
+//   red    = absolute still-air range         (all usable fuel burned, no reserve — dashed)
+// Model:  useful load = MGW − OEW ;  usable fuel = useful load − crew − aux tanks − payload
+//         endurance = fuel ÷ planning fuel-flow ;  range = endurance × cruise TAS
+// Aircraft data below is DERIVED (D) from manufacturer-published specs
+// (Heli_Radius_Planner_Data_Template.xlsx, filled 2026-09-07) — NOT RFM / DASH-10.
+LG.heliRadius = L.layerGroup();
+LS.heliRadius = false;
+
+const HELI_FUEL_DENSITY   = 0.80;   // kg/L  (Project Settings)
+const HELI_START_TAXI_MIN = 10;     // start + hover-taxi allowance
+const HELI_TERMINAL_MIN   = 5;      // approach + departure per sortie
+const HELI_MAX_PTS        = 8;
+
+const HELI_TYPES = {
+  B412 : { name:'Bell 412EP',      oew:3084, crew:2, crewWt:85, mgw:5398, sling:2041, seats:14,
+           fuelKg:1001, auxL:318, auxMax:2, auxTankWt:22.8,  auxSeats:2,
+           tasCruise:122, tasLRC:115, ff:340, ceiling:16290, vne:140, auxEst:false },
+  H225M: { name:'Airbus H225M',    oew:5715, crew:3, crewWt:85, mgw:11000, sling:4750, seats:28,
+           fuelKg:2277, auxL:978, auxMax:1, auxTankWt:55,    auxSeats:4,
+           tasCruise:141, tasLRC:141, ff:506, ceiling:20000, vne:175, auxEst:true },
+  S92  : { name:'Sikorsky S-92A',  oew:7104, crew:2, crewWt:85, mgw:12564, sling:3628, seats:22,
+           fuelKg:2302, auxL:795, auxMax:2, auxTankWt:75,    auxSeats:4,
+           tasCruise:151, tasLRC:136, ff:576, ceiling:15000, vne:165, auxEst:true },
+  S70i : { name:'Sikorsky S-70i',  oew:5348, crew:2, crewWt:85, mgw:9979, sling:4082, seats:11,
+           fuelKg:1090, auxL:757, auxMax:2, auxTankWt:86.85, auxSeats:3,
+           tasCruise:145, tasLRC:128, ff:280, ceiling:15000, vne:163, auxEst:false },
+  H135 : { name:'Airbus H135 T3H', oew:1555, crew:2, crewWt:85, mgw:2980, sling:1200, seats:7,
+           fuelKg:560,  auxL:213, auxMax:1, auxTankWt:18,    auxSeats:2,
+           tasCruise:136, tasLRC:130, ff:225, ceiling:15350, vne:136, auxEst:true },
+};
+const HELI_DEFAULTS = { type:'B412', payloadKg:0, fuelMode:'max', fuelKg:0, aux:0,
+                        tasMode:'cruise', reserveMin:20, loiterMin:30, contPct:5 };
+
+let heliParams    = Object.assign({}, HELI_DEFAULTS);
+let heliPts       = [];     // { lat, lon, marker, rings:[], p:<param snapshot> }
+let heliActive    = -1;     // index the HUD is editing
+let heliPlaceMode = true;   // map clicks add points while layer is on
+let heliRestoreData = null; // saved placements awaiting first layer-open
+let heliRestored  = false;
+
+function heliSnapshot(){
+  const s = {}; for(const k in HELI_DEFAULTS) s[k] = heliParams[k]; return s;
+}
+
+// ---- persistence (Project Settings Q25 = Y) ----------------------------
+function heliLoadState(){
+  try{
+    const s = JSON.parse(localStorage.getItem('heliRadius')||'null');
+    if(!s) return;
+    if(s.params) for(const k in HELI_DEFAULTS) if(k in s.params) heliParams[k] = s.params[k];
+    if(Array.isArray(s.pts) && s.pts.length) heliRestoreData = s.pts;
+  }catch(e){}
+}
+function heliSaveState(){
+  try{
+    localStorage.setItem('heliRadius', JSON.stringify({
+      params: heliSnapshot(),
+      pts: heliPts.map(pt=>({ lat:pt.lat, lon:pt.lon, p:pt.p }))
+    }));
+  }catch(e){}
+}
+
+// ---- form wiring ------------------------------------------------------
+(function heliInitForm(){
+  const sel = document.getElementById('hpType');
+  if(sel) sel.innerHTML = Object.entries(HELI_TYPES)
+    .map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
+  heliLoadState();
+  heliSyncForm();
+})();
+
+function heliSyncForm(){
+  const g = id=>document.getElementById(id);
+  if(!g('hpType')) return;
+  g('hpType').value    = heliParams.type;
+  g('hpPayload').value = heliParams.payloadKg;
+  g('hpTroops').value  = Math.round(heliParams.payloadKg/85) || 0;
+  g('hpFuelKg').value  = heliParams.fuelKg || 0;
+  g('hpTas').value     = heliParams.tasMode;
+  g('hpReserve').value = String(heliParams.reserveMin);
+  g('hpLoiter').value  = heliParams.loiterMin;
+  g('hpCont').value    = heliParams.contPct;
+  g('hpFuelKgWrap').style.display = heliParams.fuelMode==='custom' ? '' : 'none';
+  document.querySelectorAll('#hpFuelSeg button').forEach(b=>b.classList.toggle('active', b.dataset.m===heliParams.fuelMode));
+  document.querySelectorAll('#hpAuxSeg button').forEach(b=>b.classList.toggle('active', +b.dataset.m===heliParams.aux));
+}
+function heliSyncFormFrom(p){
+  for(const k in HELI_DEFAULTS) if(k in p) heliParams[k] = p[k];
+  heliSyncForm();
+}
+function heliReadForm(){
+  const g = id=>document.getElementById(id);
+  heliParams.type       = g('hpType').value;
+  heliParams.payloadKg  = Math.max(0, +g('hpPayload').value||0);
+  heliParams.fuelKg     = Math.max(0, +g('hpFuelKg').value||0);
+  heliParams.tasMode    = g('hpTas').value;
+  heliParams.reserveMin = +g('hpReserve').value||20;
+  heliParams.loiterMin  = Math.max(0, +g('hpLoiter').value||0);
+  heliParams.contPct    = Math.max(0, +g('hpCont').value||0);
+}
+function heliOnParam(){
+  heliReadForm();
+  document.getElementById('hpTroops').value = Math.round(heliParams.payloadKg/85) || 0;
+  if(heliActive>=0 && heliPts[heliActive]) heliPts[heliActive].p = heliSnapshot();
+  else heliPts.forEach(pt=> pt.p = heliSnapshot());
+  heliRefresh();
+}
+function heliTroops(){
+  const n = Math.max(0, +document.getElementById('hpTroops').value||0);
+  document.getElementById('hpPayload').value = n*85;
+  heliOnParam();
+}
+function heliFuelMode(m){
+  heliParams.fuelMode = m;
+  document.getElementById('hpFuelKgWrap').style.display = m==='custom' ? '' : 'none';
+  document.querySelectorAll('#hpFuelSeg button').forEach(b=>b.classList.toggle('active', b.dataset.m===m));
+  if(m==='custom' && !(+document.getElementById('hpFuelKg').value)){
+    document.getElementById('hpFuelKg').value = Math.round(heliCompute(heliSnapshot()).fuelKg);
+  }
+  heliOnParam();
+}
+function heliAux(v){
+  heliParams.aux = v;
+  document.querySelectorAll('#hpAuxSeg button').forEach(b=>b.classList.toggle('active', +b.dataset.m===v));
+  heliOnParam();
+}
+
+// ---- the planning model --------------------------------------------
+function heliCompute(p){
+  const t = HELI_TYPES[p.type];
+  const crew    = t.crew * t.crewWt;
+  const auxN    = p.aux ? t.auxMax : 0;
+  const auxTk   = auxN * t.auxTankWt;
+  const auxFuel = auxN * t.auxL * HELI_FUEL_DENSITY;
+  const maxFuel = t.fuelKg + auxFuel;
+  const useful  = t.mgw - t.oew;
+  const avail   = useful - crew - auxTk - p.payloadKg;          // room for fuel under MGW
+  const fitFuel = Math.max(0, Math.min(avail, maxFuel));
+  const fuelKg  = p.fuelMode==='custom' ? Math.min(Math.max(0,p.fuelKg), maxFuel) : fitFuel;
+
+  const gross   = t.oew + crew + auxTk + fuelKg + p.payloadKg;
+  const overMGW = gross - t.mgw;
+
+  const TAS   = p.tasMode==='lrc' ? t.tasLRC : t.tasCruise;
+  const kgFor = min => min/60 * t.ff;
+  const reserveKg   = kgFor(p.reserveMin);
+  const startTaxiKg = kgFor(HELI_START_TAXI_MIN);
+  const terminalKg  = kgFor(HELI_TERMINAL_MIN);
+  const loiterKg    = kgFor(p.loiterMin);
+  const contKg      = p.contPct/100 * fuelKg;
+
+  const rtCruise  = fuelKg - reserveKg - startTaxiKg - terminalKg - loiterKg - contKg;
+  const radiusROA = Math.max(0, rtCruise) / t.ff * TAS / 2;
+  const owCruise  = fuelKg - reserveKg - startTaxiKg - contKg;
+  const oneWay    = Math.max(0, owCruise) / t.ff * TAS;
+  const absRange  = fuelKg / t.ff * TAS;
+
+  const fuelLimited = p.fuelMode!=='custom' && fuelKg < maxFuel - 1 && fuelKg > 0;
+  return { t, TAS, crew, auxN, auxTk, auxFuel, maxFuel, useful, fuelKg, gross, overMGW, fuelLimited,
+           reserveKg, startTaxiKg, terminalKg, loiterKg, contKg,
+           radiusROA, oneWay, absRange, enduranceHr: fuelKg / t.ff };
+}
+
+// ---- placements ---------------------------------------------------
+function heliIcon(){
+  return L.divIcon({className:'',iconSize:[30,30],iconAnchor:[15,15],html:
+    `<div style="width:30px;height:30px;border-radius:50%;background:#052e16;border:2px solid #22c55e;
+      box-shadow:0 0 0 3px rgba(34,197,94,.28),0 2px 6px rgba(0,0,0,.6);
+      display:flex;align-items:center;justify-content:center;font-size:15px;">🚁</div>`});
+}
+function heliAttachMarker(pt){
+  pt.marker = L.marker([pt.lat,pt.lon],{icon:heliIcon(),draggable:true,zIndexOffset:1600});
+  pt.marker.on('click',()=>heliPick(heliPts.indexOf(pt)));
+  pt.marker.on('dragend',()=>{ const ll=pt.marker.getLatLng(); pt.lat=ll.lat; pt.lon=ll.lng; heliRefresh(); });
+  LG.heliRadius.addLayer(pt.marker);
+}
+function heliAddPt(latlng){
+  if(heliPts.length>=HELI_MAX_PTS) return;
+  heliReadForm();
+  const pt = { lat:latlng.lat, lon:latlng.lng, marker:null, rings:[], p:heliSnapshot() };
+  heliAttachMarker(pt);
+  heliPts.push(pt);
+  heliActive = heliPts.length-1;
+  heliRefresh();
+}
+function heliPick(i){
+  if(i<0 || i>=heliPts.length) return;
+  heliActive = i;
+  heliSyncFormFrom(heliPts[i].p);
+  heliRefresh();
+}
+function heliUndo(){
+  const pt = heliPts.pop();
+  if(pt){ LG.heliRadius.removeLayer(pt.marker); pt.rings.forEach(r=>LG.heliRadius.removeLayer(r)); }
+  heliActive = heliPts.length-1;
+  if(heliActive>=0) heliSyncFormFrom(heliPts[heliActive].p);
+  heliRefresh();
+}
+function heliClear(){
+  heliPts.forEach(pt=>{ LG.heliRadius.removeLayer(pt.marker); pt.rings.forEach(r=>LG.heliRadius.removeLayer(r)); });
+  heliPts = []; heliActive = -1;
+  heliRefresh();
+}
+function heliApplyAll(){
+  heliReadForm();
+  const snap = heliSnapshot();
+  heliPts.forEach(pt=> pt.p = Object.assign({}, snap));
+  heliRefresh();
+}
+function heliMaybeRestore(){
+  if(heliRestored) return;
+  heliRestored = true;
+  const saved = heliRestoreData; heliRestoreData = null;
+  if(!saved || !saved.length) return;
+  saved.forEach(s=>{
+    const pt = { lat:s.lat, lon:s.lon, marker:null, rings:[],
+                 p:Object.assign({}, HELI_DEFAULTS, s.p||{}) };
+    heliAttachMarker(pt);
+    heliPts.push(pt);
+  });
+  heliActive = heliPts.length-1;
+  if(heliActive>=0) heliSyncFormFrom(heliPts[heliActive].p);
+}
+
+// ---- draw + HUD --------------------------------------------------
+function heliRefresh(){ heliDrawRings(); heliRenderHud(); heliSaveState(); }
+
+function heliDrawRings(){
+  heliPts.forEach((pt,i)=>{
+    pt.rings.forEach(r=>LG.heliRadius.removeLayer(r));
+    pt.rings = [];
+    const c   = heliCompute(pt.p);
+    const act = i===heliActive;
+    const ring = (nm,color,dash,fill)=>{
+      if(nm<=0) return;
+      const r = L.circle([pt.lat,pt.lon],{radius:nm*1852,color,weight:act?2.4:1.4,
+        opacity:act?.95:.55, dashArray:dash, fill:fill>0, fillColor:color,
+        fillOpacity:act?fill:fill*0.4, interactive:false});
+      LG.heliRadius.addLayer(r); pt.rings.push(r);
+    };
+    ring(c.absRange,  '#ef4444', '3,5', 0);
+    ring(c.oneWay,    '#f59e0b', null,  0.04);
+    ring(c.radiusROA, '#22c55e', null,  0.07);
+    if(c.radiusROA>0){
+      const dLat = (c.radiusROA*1852)/111320;
+      const lbl = L.marker([pt.lat+dLat, pt.lon],{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],
+        html:`<div style="font-size:9px;font-weight:800;color:#052e16;background:#4ade80;border-radius:4px;
+          padding:1px 5px;white-space:nowrap;transform:translate(-50%,-120%);box-shadow:0 1px 4px rgba(0,0,0,.5);">
+          ${HELI_TYPES[pt.p.type].name.split(' ').pop()} · ROA ${c.radiusROA.toFixed(0)} NM</div>`})});
+      LG.heliRadius.addLayer(lbl); pt.rings.push(lbl);
+    }
+  });
+}
+
+function heliRenderHud(){
+  const hud = document.getElementById('heliHud');
+  if(!hud) return;
+  hud.classList.toggle('show', !!LS.heliRadius);
+  const body = document.getElementById('heliHudBody');
+  if(!body || !LS.heliRadius) return;
+
+  let list = '';
+  if(heliPts.length){
+    list = `<div class="hp-pts">` + heliPts.map((pt,i)=>
+      `<div class="hp-pt ${i===heliActive?'act':''}" onclick="heliPick(${i})">
+        <span>${i+1}. ${HELI_TYPES[pt.p.type].name}</span>
+        <span>${toDDM(pt.lat,true)} ${toDDM(pt.lon,false)}</span>
+      </div>`).join('') + `</div>`;
+  }
+  if(!heliPts.length){
+    body.innerHTML = list + `<div class="hp-hint">คลิกบนแผนที่เพื่อวางเฮลิคอปเตอร์<br>ปรับค่าด้านบนได้ทั้งก่อนและหลังวาง — ทุกวงคำนวณใหม่ทันที</div>`;
+    return;
+  }
+
+  const idx = heliActive>=0 ? heliActive : heliPts.length-1;
+  const pt  = heliPts[idx];
+  const c   = heliCompute(pt.p);
+  const t   = c.t;
+  const f1  = n=>n.toLocaleString('en-US',{maximumFractionDigits:0});
+
+  const mgw = c.overMGW>0.5
+    ? `<div class="hp-mgw bad">⚠ เกิน MGW ${f1(c.overMGW)} kg — ลด payload หรือเชื้อเพลิง</div>`
+    : c.fuelLimited
+      ? `<div class="hp-mgw ok">✔ รวม ${f1(c.gross)} / ${f1(t.mgw)} kg · เชื้อเพลิงถูกจำกัดเหลือ ${f1(c.fuelKg)} kg (ถังจุ ${f1(c.maxFuel)}) เพื่อไม่ให้เกิน MGW</div>`
+      : `<div class="hp-mgw ok">✔ ใต้ MGW · รวม ${f1(c.gross)} / ${f1(t.mgw)} kg (เหลือ ${f1(t.mgw-c.gross)} kg)</div>`;
+
+  body.innerHTML = list +
+    `<div class="hp-out">
+      <div class="hp-ring r1"><span>🟢 รัศมีปฏิบัติการ ไป-กลับ</span><span class="hp-rv">${c.radiusROA.toFixed(0)} NM</span></div>
+      <div class="hp-ring r2"><span>🟠 พิสัยเที่ยวเดียว (มีสำรอง)</span><span class="hp-rv">${c.oneWay.toFixed(0)} NM</span></div>
+      <div class="hp-ring r3"><span>🔴 พิสัยสูงสุด ไม่มีสำรอง</span><span class="hp-rv">${c.absRange.toFixed(0)} NM</span></div>
+      ${mgw}
+      <div class="hp-math">
+        <div class="hp-row"><span>Useful load (MGW−OEW)</span><span>${f1(c.useful)} kg</span></div>
+        <div class="hp-row"><span>ลูกเรือ ${t.crew} × ${t.crewWt}</span><span>${f1(c.crew)} kg</span></div>
+        ${c.auxN?`<div class="hp-row"><span>ถังเสริม ${c.auxN} ใบ (เปล่า${t.auxEst?' ~':' '}${f1(c.auxTk)} kg)</span><span>+${f1(c.auxFuel)} kg fuel</span></div>`:''}
+        <div class="hp-row"><span>Payload</span><span>${f1(pt.p.payloadKg)} kg</span></div>
+        <div class="hp-row"><span>เชื้อเพลิงใช้ได้${pt.p.fuelMode==='custom'?' (กำหนดเอง)':''}</span><span>${f1(c.fuelKg)} / ${f1(c.maxFuel)} kg</span></div>
+        <div class="hp-row"><span>Fuel flow (วางแผน)</span><span>${f1(t.ff)} kg/hr</span></div>
+        <div class="hp-row"><span>Endurance รวม</span><span>${c.enduranceHr.toFixed(2)} hr</span></div>
+        <div class="hp-row"><span>Cruise TAS (${pt.p.tasMode==='lrc'?'LRC':'normal'})</span><span>${c.TAS} kt</span></div>
+        <div class="hp-row"><span>หัก สำรอง ${pt.p.reserveMin}′·start+taxi ${HELI_START_TAXI_MIN}′·terminal ${HELI_TERMINAL_MIN}′</span><span>${f1(c.reserveKg+c.startTaxiKg+c.terminalKg)} kg</span></div>
+        <div class="hp-row"><span>หัก loiter ${pt.p.loiterMin}′ + contingency ${pt.p.contPct}%</span><span>${f1(c.loiterKg+c.contKg)} kg</span></div>
+      </div>
+      ${t.auxEst && c.auxN?`<div class="hp-disc">ⓘ น้ำหนักถังเสริมเปล่าของแบบนี้เป็นค่าประมาณ (ผู้ผลิตไม่ published)</div>`:''}
+      <div class="hp-disc">สมรรถนะ = Derived จาก spec ผู้ผลิต · ยังไม่ใช่ RFM/DASH-10 · Phase 1 ยังไม่คิดลม/DA</div>
+    </div>`;
+}
+
+function heliSetCursor(){
+  map.getContainer().style.cursor = (!!LS.heliRadius && heliPlaceMode && !distMode) ? 'crosshair' : '';
+}
+map.on('click', e=>{
+  if(!LS.heliRadius || !heliPlaceMode || distMode) return;
+  heliAddPt(e.latlng);
+});
 
 updateLayerCount();
 
