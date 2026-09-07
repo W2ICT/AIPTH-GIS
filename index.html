@@ -258,6 +258,20 @@
     .hp-mgw.bad{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.45);color:#f87171;}
     .hp-note{font-size:9px;color:var(--text2);margin-top:5px;padding:4px 6px;border-radius:5px;background:var(--bg);line-height:1.5;}
     .heli-tip{font-size:10px;font-weight:600;text-align:center;line-height:1.4;}
+
+    /* ══ KML / GPX IMPORT ══ */
+    .imp-drop{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 8px;border:1.5px dashed var(--border2);border-radius:8px;cursor:pointer;font-size:10px;color:var(--text2);text-align:center;transition:border-color .15s,background .15s;}
+    .imp-drop:hover,.imp-drop.drag{border-color:var(--accent);background:rgba(14,165,233,.10);color:var(--text);}
+    .imp-row{display:flex;align-items:center;gap:6px;padding:5px 3px;border-bottom:1px dashed var(--border2);font-size:10px;}
+    .imp-row:last-child{border-bottom:none;}
+    .imp-row input[type=checkbox]{width:auto;flex-shrink:0;margin:0;}
+    .imp-sw{width:10px;height:10px;border-radius:3px;flex-shrink:0;box-shadow:0 0 0 1px rgba(255,255,255,.25);}
+    .imp-nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .imp-ct{color:var(--muted);font-size:8px;flex-shrink:0;font-family:monospace;}
+    .imp-z,.imp-x{cursor:pointer;color:var(--muted);flex-shrink:0;padding:0 2px;font-size:11px;}
+    .imp-z:hover{color:var(--accent);}
+    .imp-x:hover{color:#ef4444;}
+    #map.imp-dragover{outline:3px dashed var(--accent);outline-offset:-8px;}
     .hp-disc{font-size:8px;color:var(--muted);margin-top:7px;line-height:1.5;font-style:italic;text-align:center;}
     .hp-acts{display:flex;gap:4px;margin-top:8px;}
 
@@ -607,6 +621,25 @@
         </div>
         <div id="navTypeFilter" style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:4px;"></div>
         <div id="navResultList" style="max-height:120px;overflow-y:auto;"></div>
+      </div>
+    </div>
+
+    <!-- IMPORT KML / GPX (collapsible) -->
+    <div class="layer-panel">
+      <div class="lp-header collapsed" id="lph-import" onclick="togglePanel('import')">
+        <span style="font-size:11px;">📁</span>
+        <span class="lp-title">นำเข้า KML / GPX</span>
+        <span style="font-size:9px;color:var(--muted);margin-right:4px;" id="lp-count-import"></span>
+        <span class="lp-chevron">▼</span>
+      </div>
+      <div class="lp-body collapsed" id="lpb-import">
+        <label class="imp-drop" id="impDrop">
+          <input type="file" id="impFile" accept=".kml,.gpx" multiple style="display:none;" onchange="importPickFiles(this.files)">
+          <span>📂 เลือกไฟล์ หรือ ลากมาวาง</span>
+          <span style="font-size:8px;color:var(--muted);">.kml · .gpx — วางลงบนแผนที่ก็ได้</span>
+        </label>
+        <div id="impList" style="margin-top:5px;"></div>
+        <div id="impMsg" style="font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5;"></div>
       </div>
     </div>
 
@@ -3207,6 +3240,198 @@ makeDraggablePanel('rtafHud', '.rt-title', 'rtafHudPos');
 makeDraggablePanel('heliHud', '.hp-title', 'heliHudPos');
 
 updateLayerCount();
+
+// ═══════════════════════════════════════════
+// KML / GPX IMPORT  (นำเข้าไฟล์มาแสดงบนแผนที่)
+// ═══════════════════════════════════════════
+// Pure DOMParser — no library. Handles KML Placemark Point / LineString /
+// Polygon (outer ring) / gx:Track, and GPX wpt / trk / rte. One L.layerGroup
+// per file, distinct colour, toggle + zoom + remove in the sidebar panel.
+// 2D Leaflet only (not MAP 3D). Not persisted across reloads.
+const IMPORT_COLORS = ['#38bdf8','#f472b6','#a3e635','#fbbf24','#c084fc','#fb923c','#2dd4bf','#f87171'];
+let importedFiles = [];   // { id, name, layer, color, counts, on, bounds }
+let _impSeq = 0;
+
+function _impEsc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function importMsg(t, err){
+  const el = document.getElementById('impMsg');
+  if(el){ el.textContent = t||''; el.style.color = err ? '#f87171' : 'var(--muted)'; }
+}
+function importPickFiles(fileList){
+  const files = [...fileList||[]];
+  const inp = document.getElementById('impFile'); if(inp) inp.value = '';
+  if(!files.length) return;
+  files.forEach(f=>{
+    if(/\.kmz$/i.test(f.name)){ importMsg(`${f.name}: KMZ (zip) ยังไม่รองรับ — แตกเป็น .kml ก่อน`, true); return; }
+    const rd = new FileReader();
+    rd.onload  = ()=> importParseText(f.name, String(rd.result));
+    rd.onerror = ()=> importMsg('อ่านไฟล์ไม่สำเร็จ: '+f.name, true);
+    rd.readAsText(f);
+  });
+}
+
+const _impTags = (el,n)=> [...el.getElementsByTagNameNS('*', n)];
+const _impTxt  = el => (el && el.textContent || '').trim();
+const _impChild= (el,n)=>{ for(const c of el.children) if(c.localName===n) return c; return null; };
+function _kmlCoords(str){
+  return String(str||'').trim().split(/\s+/).map(tok=>{
+    const p = tok.split(',').map(Number);
+    return (p.length>=2 && isFinite(p[0]) && isFinite(p[1])) ? [p[1],p[0]] : null;
+  }).filter(Boolean);
+}
+function parseKML(doc){
+  const out = [];
+  _impTags(doc,'Placemark').forEach(pm=>{
+    const name = _impTxt(_impChild(pm,'name'));
+    const desc = _impTxt(_impChild(pm,'description'));
+    _impTags(pm,'Point').forEach(g=>{ const c=_kmlCoords(_impTxt(_impTags(g,'coordinates')[0])); if(c.length) out.push({type:'point',coords:c[0],name,desc}); });
+    _impTags(pm,'LineString').forEach(g=>{ const c=_kmlCoords(_impTxt(_impTags(g,'coordinates')[0])); if(c.length>=2) out.push({type:'line',coords:c,name,desc}); });
+    _impTags(pm,'Track').forEach(g=>{
+      const c=_impTags(g,'coord').map(n=>{ const p=_impTxt(n).split(/\s+/).map(Number); return p.length>=2?[p[1],p[0]]:null; }).filter(Boolean);
+      if(c.length>=2) out.push({type:'line',coords:c,name,desc});
+    });
+    _impTags(pm,'Polygon').forEach(g=>{
+      const ob = _impTags(g,'outerBoundaryIs')[0] || g;
+      const lr = _impTags(ob,'LinearRing')[0];
+      const c  = lr ? _kmlCoords(_impTxt(_impTags(lr,'coordinates')[0])) : [];
+      if(c.length>=3) out.push({type:'polygon',coords:c,name,desc});
+    });
+  });
+  return out;
+}
+function parseGPX(doc){
+  const out = [];
+  const ll = n => [parseFloat(n.getAttribute('lat')), parseFloat(n.getAttribute('lon'))];
+  _impTags(doc,'wpt').forEach(w=>{
+    const c = ll(w); if(!isFinite(c[0])||!isFinite(c[1])) return;
+    out.push({type:'point',coords:c,name:_impTxt(_impChild(w,'name')),desc:_impTxt(_impChild(w,'desc'))||_impTxt(_impChild(w,'cmt'))});
+  });
+  _impTags(doc,'trk').forEach(tk=>{
+    const name = _impTxt(_impChild(tk,'name'));
+    _impTags(tk,'trkseg').forEach(seg=>{
+      const pts = _impTags(seg,'trkpt').map(ll).filter(c=>isFinite(c[0])&&isFinite(c[1]));
+      if(pts.length>=2) out.push({type:'line',coords:pts,name,desc:''});
+    });
+  });
+  _impTags(doc,'rte').forEach(rt=>{
+    const pts = _impTags(rt,'rtept').map(ll).filter(c=>isFinite(c[0])&&isFinite(c[1]));
+    if(pts.length>=2) out.push({type:'line',coords:pts,name:_impTxt(_impChild(rt,'name')),desc:''});
+  });
+  return out;
+}
+
+function importParseText(fname, text){
+  let feats;
+  try{
+    const doc = new DOMParser().parseFromString(text, 'application/xml');
+    if(doc.querySelector('parsererror')) throw new Error('XML ไม่ถูกต้อง');
+    const root = (doc.documentElement.localName||'').toLowerCase();
+    const isGpx = root==='gpx' || (/\.gpx$/i.test(fname) && root!=='kml');
+    feats = isGpx ? parseGPX(doc) : parseKML(doc);
+  }catch(e){ importMsg(`${fname}: ${e.message||'parse error'}`, true); return; }
+  if(!feats.length){ importMsg(`${fname}: ไม่พบ geometry ที่รองรับ`, true); return; }
+
+  const color = IMPORT_COLORS[_impSeq++ % IMPORT_COLORS.length];
+  const lg = L.layerGroup();
+  const counts = {pt:0, ln:0, pg:0};
+  const acc = [];
+  feats.forEach(ft=>{
+    const popup = (ft.name||ft.desc)
+      ? `<div style="font-family:'Segoe UI',system-ui,sans-serif;max-width:240px;"><b>${_impEsc(ft.name)||'(ไม่มีชื่อ)'}</b>${ft.desc?`<div style="font-size:11px;color:var(--text2);margin-top:3px;white-space:pre-wrap;max-height:180px;overflow:auto;">${_impEsc(ft.desc)}</div>`:''}<div style="font-size:9px;color:var(--muted);margin-top:4px;">${_impEsc(fname)}</div></div>`
+      : null;
+    if(ft.type==='point'){
+      counts.pt++;
+      const m = L.circleMarker(ft.coords,{radius:5,color:'#fff',weight:1.5,fillColor:color,fillOpacity:1});
+      if(popup) m.bindPopup(popup);
+      if(ft.name) m.bindTooltip(ft.name,{direction:'top',offset:[0,-6]});
+      lg.addLayer(m); acc.push(ft.coords);
+    } else if(ft.type==='line'){
+      counts.ln++;
+      const pl = L.polyline(ft.coords,{color,weight:3,opacity:.9});
+      if(popup) pl.bindPopup(popup);
+      if(ft.name) pl.bindTooltip(ft.name,{sticky:true});
+      lg.addLayer(pl); acc.push(...ft.coords);
+    } else if(ft.type==='polygon'){
+      counts.pg++;
+      const pg = L.polygon(ft.coords,{color,weight:2,fillColor:color,fillOpacity:.15});
+      if(popup) pg.bindPopup(popup);
+      if(ft.name) pg.bindTooltip(ft.name,{sticky:true});
+      lg.addLayer(pg); acc.push(...ft.coords);
+    }
+  });
+
+  const rec = {
+    id: 'imp'+Date.now().toString(36)+_impSeq,
+    name: fname, layer: lg, color, counts, on: true,
+    bounds: acc.length ? L.latLngBounds(acc) : null
+  };
+  importedFiles.push(rec);
+  lg.addTo(map);
+  if(rec.bounds && rec.bounds.isValid()) map.fitBounds(rec.bounds.pad(0.15));
+  importRenderList();
+  importMsg(`${fname}: ${counts.pt} จุด · ${counts.ln} เส้น · ${counts.pg} รูปปิด`);
+}
+
+function importRenderList(){
+  const cnt = document.getElementById('lp-count-import');
+  if(cnt) cnt.textContent = importedFiles.length ? String(importedFiles.length) : '';
+  const el = document.getElementById('impList');
+  if(!el) return;
+  el.innerHTML = importedFiles.map(r=>{
+    const n = r.counts.pt + r.counts.ln + r.counts.pg;
+    return `<div class="imp-row">
+      <input type="checkbox" ${r.on?'checked':''} onchange="importToggle('${r.id}')">
+      <span class="imp-sw" style="background:${r.color};"></span>
+      <span class="imp-nm" title="${_impEsc(r.name)}">${_impEsc(r.name)}</span>
+      <span class="imp-ct">${n}</span>
+      <span class="imp-z" title="ซูมไปที่ไฟล์นี้" onclick="importZoom('${r.id}')">⊙</span>
+      <span class="imp-x" title="ลบไฟล์นี้" onclick="importRemove('${r.id}')">✕</span>
+    </div>`;
+  }).join('');
+}
+function importToggle(id){
+  const r = importedFiles.find(x=>x.id===id); if(!r) return;
+  r.on = !r.on;
+  r.on ? r.layer.addTo(map) : map.removeLayer(r.layer);
+}
+function importZoom(id){
+  const r = importedFiles.find(x=>x.id===id);
+  if(r && !r.on){ r.on = true; r.layer.addTo(map); importRenderList(); }
+  if(r && r.bounds && r.bounds.isValid()) map.fitBounds(r.bounds.pad(0.15));
+}
+function importRemove(id){
+  const i = importedFiles.findIndex(x=>x.id===id); if(i<0) return;
+  map.removeLayer(importedFiles[i].layer);
+  importedFiles.splice(i,1);
+  importRenderList();
+  importMsg('');
+}
+
+// drag-and-drop onto the drop zone and the map itself
+(function importDnD(){
+  const dz = document.getElementById('impDrop');
+  const mp = document.getElementById('map');
+  const stop = e=>{ e.preventDefault(); e.stopPropagation(); };
+  if(dz){
+    ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{ stop(e); dz.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{ stop(e); dz.classList.remove('drag'); }));
+    dz.addEventListener('drop',e=>{ if(e.dataTransfer&&e.dataTransfer.files.length) importPickFiles(e.dataTransfer.files); });
+  }
+  if(mp){
+    ['dragenter','dragover'].forEach(ev=>mp.addEventListener(ev,e=>{
+      if(e.dataTransfer && [...e.dataTransfer.types].includes('Files')){ stop(e); mp.classList.add('imp-dragover'); }
+    }));
+    ['dragleave','dragend'].forEach(ev=>mp.addEventListener(ev,e=>mp.classList.remove('imp-dragover')));
+    mp.addEventListener('drop',e=>{
+      if(e.dataTransfer && e.dataTransfer.files.length){
+        stop(e); mp.classList.remove('imp-dragover');
+        const body = document.getElementById('lpb-import');
+        if(body && body.classList.contains('collapsed')) togglePanel('import');
+        importPickFiles(e.dataTransfer.files);
+      }
+    });
+  }
+})();
 
 // ═══════════════════════════════════════════
 // AIRPORT MARKERS
