@@ -1170,7 +1170,8 @@
   </div>
   <div id="rtafHudBody"></div>
   <div class="rt-acts">
-    <button class="dt-btn sec" onclick="rtafUndo()">⌫ ถอย 1 จุด</button>
+    <button class="dt-btn sec" onclick="rtafExportKML()" title="บันทึกเส้นทางบินเป็นไฟล์ .kml (เปิดใน Google Earth / EFB / นำเข้ากลับได้)">⬇ KML</button>
+    <button class="dt-btn sec" onclick="rtafUndo()">⌫ ถอย</button>
     <button class="dt-btn pri" onclick="rtafClear()">🗑 ล้าง</button>
   </div>
 </div>
@@ -2624,6 +2625,81 @@ function rtafRenderHud(){
     (rows||`<div class="rt-hint">เลือกอีกฐานเพื่อเริ่มต่อระยะ</div>`)+
     `<div class="rt-tot"><span>ระยะสะสม · ${rtafChain.length-1} leg</span><span>${tot.toFixed(1)} NM</span></div>`+
     `<div class="rt-dir"><span>ระยะกระจัด ${O.icao}→${D.icao}</span><span>${String(dBrg).padStart(3,'0')}° · ${direct.toFixed(1)} NM</span></div>`;
+}
+
+// Trigger a client-side file download (used by the KML export below).
+function downloadFile(filename, text, mime){
+  try{
+    const blob = new Blob([text], {type:(mime||'text/plain')+';charset=utf-8'});
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ a.remove(); URL.revokeObjectURL(url); }, 1500);
+  }catch(e){ alert('Export ไม่สำเร็จ: '+(e.message||e)); }
+}
+
+// Export the current airport chain as a .kml file — route LineString + a
+// direct origin→destination line (when ≥3 stops) + a Point per waypoint.
+// The file re-imports cleanly into this app's own KML importer.
+function rtafExportKML(){
+  if(rtafChain.length < 2){ alert('เลือกสนามบินอย่างน้อย 2 จุดก่อน export'); return; }
+  const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const elevM = a => Math.round((parseFloat(String(a.elev).replace(/[, ]/g,''))||0) * 0.3048);
+  const cd = a => `${a.lon.toFixed(6)},${a.lat.toFixed(6)},${elevM(a)}`;
+
+  const O = rtafChain[0], D = rtafChain[rtafChain.length-1];
+  let tot = 0; const legs = [];
+  for(let i=0;i<rtafChain.length-1;i++){
+    const A=rtafChain[i], B=rtafChain[i+1];
+    const nm=rtafNM(A,B); tot+=nm;
+    const brg=Math.round(calcBearing(A.lat,A.lon,B.lat,B.lon));
+    legs.push(`${i+1}. ${A.icao} → ${B.icao}  ${String(brg).padStart(3,'0')}°  ${nm.toFixed(1)} NM`);
+  }
+  const direct=rtafNM(O,D), dBrg=Math.round(calcBearing(O.lat,O.lon,D.lat,D.lon));
+  const rn = `${O.icao}-${D.icao}`;
+  const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+
+  const wpts = rtafChain.map((a,i)=>
+`      <Placemark>
+        <name>${esc(a.icao)}</name>
+        <description><![CDATA[${(a.name||'')}${a.city?' — '+a.city:''}
+WPT ${i+1}/${rtafChain.length}${i>0?'  ·  leg '+rtafNM(rtafChain[i-1],a).toFixed(1)+' NM':''}]]></description>
+        <styleUrl>#rtWpt</styleUrl>
+        <Point><coordinates>${cd(a)}</coordinates></Point>
+      </Placemark>`).join('\n');
+
+  const directPm = rtafChain.length>=3 ?
+`    <Placemark>
+      <name>Direct ${esc(O.icao)}→${esc(D.icao)} (${direct.toFixed(0)} NM)</name>
+      <styleUrl>#rtDirect</styleUrl>
+      <LineString><tessellate>1</tessellate><coordinates>${cd(O)} ${cd(D)}</coordinates></LineString>
+    </Placemark>\n` : '';
+
+  const kml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>AIP-TH Route ${esc(rn)}</name>
+    <description><![CDATA[${rtafChain.map(a=>a.icao).join(' → ')}
+${legs.join('\n')}
+รวม ${tot.toFixed(1)} NM  ·  ระยะกระจัด ${O.icao}→${D.icao} ${String(dBrg).padStart(3,'0')}° ${direct.toFixed(1)} NM
+AIP Thailand GIS System — ${stamp}]]></description>
+    <Style id="rtLine"><LineStyle><color>ff2727e1</color><width>4</width></LineStyle></Style>
+    <Style id="rtDirect"><LineStyle><color>ffeed322</color><width>2</width></LineStyle></Style>
+    <Style id="rtWpt"><IconStyle><color>ff2727e1</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/target.png</href></Icon></IconStyle></Style>
+    <Placemark>
+      <name>Route ${esc(rn)} (${tot.toFixed(0)} NM)</name>
+      <styleUrl>#rtLine</styleUrl>
+      <LineString><tessellate>1</tessellate><coordinates>${rtafChain.map(cd).join(' ')}</coordinates></LineString>
+    </Placemark>
+${directPm}    <Folder><name>Waypoints (${rtafChain.length})</name>
+${wpts}
+    </Folder>
+  </Document>
+</kml>`;
+
+  downloadFile(`route-${rn}-${stamp}.kml`, kml, 'application/vnd.google-earth.kml+xml');
 }
 
 updateLayerCount();
