@@ -331,6 +331,48 @@
     .wx-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;}
     .wx-raw{font-family:monospace;font-size:10px;color:var(--text2);line-height:1.5;word-break:break-all;white-space:pre-wrap;}
     .wx-na{font-size:10px;color:var(--muted);font-style:italic;}
+    .fc-now{display:flex;align-items:center;gap:5px;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:6px;padding:4px 7px;font-size:10px;color:var(--text);}
+    .fc-toggle-btn{background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);color:var(--accent2);border-radius:5px;padding:1px 6px;font-size:8.5px;cursor:pointer;font-weight:600;white-space:nowrap;}
+    .fc-toggle-btn:hover{background:rgba(56,189,248,.3);}
+    .fc-detail{margin-top:5px;}
+    .fc-row{display:flex;gap:3px;margin-bottom:4px;}
+    .fc-day{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:5px;padding:4px 3px;text-align:center;}
+    .fc-day-name{font-size:7.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.2px;white-space:nowrap;}
+    .fc-day-icon{font-size:14px;margin:2px 0;}
+    .fc-day-temp{font-size:10px;font-weight:700;color:var(--text);}
+    .fc-day-temp span{color:var(--muted);font-weight:400;}
+    .fc-day-rain{font-size:8px;color:#38bdf8;margin-top:1px;}
+    .fc-hour-row{display:flex;gap:3px;margin-bottom:3px;}
+    .fc-hour{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:5px;padding:3px 3px;text-align:center;}
+    .fc-hour-time{font-size:8px;font-weight:700;color:var(--muted);}
+    .fc-hour-icon{font-size:12px;margin:1px 0;}
+    .fc-hour-temp{font-size:9px;color:var(--text);font-weight:600;}
+    .fc-hour-rain{font-size:7.5px;color:#38bdf8;}
+    .fc-src{font-size:7.5px;color:var(--muted);text-align:right;margin-top:1px;}
+    .cctv-popup{font-family:'Segoe UI',system-ui,sans-serif;width:250px;overflow:hidden;margin:-1px;}
+    .cctv-popup .leaflet-popup-content-wrapper{border-top:2px solid #06b6d4;border-radius:10px;overflow:hidden;}
+    .cctv-hdr{padding:10px 12px 8px;background:linear-gradient(135deg,rgba(6,182,212,.10) 0%,transparent 65%);border-bottom:1px solid var(--border);}
+    .cctv-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(6,182,212,.14);border:1px solid rgba(6,182,212,.3);color:#06b6d4;font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;letter-spacing:.5px;margin-bottom:5px;}
+    .cctv-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;}
+    .cctv-name-en{font-size:10px;color:var(--text2);margin-top:1px;}
+    .cctv-body{padding:7px 12px 10px;}
+    .cctv-row{display:flex;justify-content:space-between;gap:6px;padding:3px 0;border-bottom:1px solid var(--border2);font-size:10px;}
+    .cctv-row:last-of-type{border-bottom:none;}
+    .cctv-lbl{color:var(--muted);flex-shrink:0;}
+    .cctv-val{color:var(--text2);text-align:right;}
+    .cctv-live-wrap{margin-top:6px;}
+    .cctv-live-btn{width:100%;background:rgba(6,182,212,.15);border:1px solid rgba(6,182,212,.35);color:#06b6d4;border-radius:6px;padding:6px;font-size:11px;font-weight:700;cursor:pointer;}
+    .cctv-live-btn:hover{background:rgba(6,182,212,.3);}
+    .cctv-live-imgbox{position:relative;min-height:80px;border-radius:6px;overflow:hidden;background:#000;}
+    .cctv-live-img{width:100%;display:block;background:#000;min-height:80px;}
+    .cctv-live-video{width:100%;display:block;background:#000;min-height:120px;}
+    .cctv-live-wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;font-size:9px;color:var(--text2);background:rgba(0,0,0,.35);}
+    .cctv-live-label{font-size:8px;color:#06b6d4;text-align:center;margin-top:3px;font-weight:600;}
+    .cctv-src{font-size:8px;color:var(--muted);margin-top:6px;text-align:center;font-style:italic;}
+    .tmd-radar-marker{width:30px;height:30px;position:relative;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));}
+    .tmd-radar-sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg, rgba(37,99,235,.85), rgba(37,99,235,0) 65%);animation:tmdSweepSpin 2.4s linear infinite;}
+    .tmd-radar-dot{position:absolute;inset:4px;border-radius:50%;background:#0f172a;border:2px solid #2563eb;display:flex;align-items:center;justify-content:center;font-size:12px;}
+    @keyframes tmdSweepSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
 
     @keyframes spin{to{transform:rotate(360deg);}}
     .wx-spin{animation:spin .9s linear infinite;display:inline-block;}
@@ -558,35 +600,30 @@
           <span class="layer-label">Radio Nav Aids (VOR/NDB/ILS)</span>
           <div class="ltog" id="ltog-navAids"></div>
         </div>
-        <div class="layer-row" onclick="toggleLayer('ats')">
-          <div class="layer-dot" style="background:#818cf8;"></div>
-          <span class="layer-label">ATS Airspace (CTR/TMA)</span>
-          <div class="ltog" id="ltog-ats"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('accSectors')">
-          <div class="layer-dot" style="background:linear-gradient(135deg,#3b82f6,#ec4899);border-radius:2px;"></div>
-          <span class="layer-label">Bangkok ACC Sectors (12)</span>
-          <div class="ltog" id="ltog-accSectors"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('prohibited')">
-          <div class="layer-dot" style="background:#ff4444;"></div>
-          <span class="layer-label">Prohibited Areas (VTP)</span>
-          <div class="ltog" id="ltog-prohibited"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('restricted')">
-          <div class="layer-dot" style="background:#ff8800;"></div>
-          <span class="layer-label">Restricted Areas (VTR)</span>
-          <div class="ltog" id="ltog-restricted"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('danger')">
-          <div class="layer-dot" style="background:#ffdd00;"></div>
-          <span class="layer-label">Danger Areas (VTD)</span>
-          <div class="ltog" id="ltog-danger"></div>
-        </div>
         <div class="layer-row" onclick="toggleLayer('hospitals')">
           <div class="layer-dot" style="background:#ef4444;border-radius:2px;font-size:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;">+</div>
           <span class="layer-label" id="lbl-hospitals">Hospitals (OSM)</span>
           <div class="ltog" id="ltog-hospitals"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('dwrCctv')">
+          <div class="layer-dot" style="background:#0891b2;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>
+          <span class="layer-label" id="lbl-dwrCctv">กล้อง CCTV แหล่งน้ำ (DWR)</span>
+          <div class="ltog" id="ltog-dwrCctv"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('dohCctv')">
+          <div class="layer-dot" style="background:#ea580c;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;">🛣</div>
+          <span class="layer-label" id="lbl-dohCctv">กล้องทางหลวง (DOH/iTIC)</span>
+          <div class="ltog" id="ltog-dohCctv"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('tmdRadar')">
+          <div class="layer-dot" style="background:#2563eb;border-radius:2px;font-size:8px;display:flex;align-items:center;justify-content:center;">🌧</div>
+          <span class="layer-label">เรดาร์ฝน (TMD)</span>
+          <div class="ltog" id="ltog-tmdRadar"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('rainRadar')">
+          <div class="layer-dot" style="background:#0d9488;border-radius:2px;font-size:8px;display:flex;align-items:center;justify-content:center;">🌧</div>
+          <span class="layer-label">เรดาร์ฝน (RainViewer)</span>
+          <div class="ltog" id="ltog-rainRadar"></div>
         </div>
         <div class="layer-row" onclick="toggleLayer('bn2')">
           <div class="layer-dot" style="background:#f97316;border-radius:2px;"></div>
@@ -602,6 +639,11 @@
           <div class="layer-dot" style="background:#22c55e;border-radius:50%;"></div>
           <span class="layer-label">รัศมีปฏิบัติการ ฮ. (ROA)</span>
           <div class="ltog" id="ltog-heliRadius"></div>
+        </div>
+        <div class="layer-row" onclick="toggleLayer('wxForecast')">
+          <div class="layer-dot" style="background:#38bdf8;border-radius:50%;"></div>
+          <span class="layer-label">พยากรณ์อากาศ 3 วัน (Open-Meteo)</span>
+          <div class="ltog" id="ltog-wxForecast"></div>
         </div>
 
       </div>
@@ -1289,10 +1331,7 @@
 
 <div class="stats">
   <div>Aerodromes: <span id="stAP">48</span></div>
-  <div>ACC Sectors: <span id="stAccSectors">12</span></div>
   <div>Nav Aids: <span id="stNavAids">60</span></div>
-  <div>CTR/TMA: <span id="stAts">20</span></div>
-  <div>PRD/RST/DNG: <span id="stPRD">5/18/49</span></div>
   <div>AIRAC: <span>2026-09-03</span></div>
   <div id="coordDisp">Lat: — Lon: —</div>
 </div>
@@ -1303,6 +1342,7 @@
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
 <script>
 // ═══════════════════════════════════════════
 // THEME
@@ -1830,10 +1870,6 @@ initMapRotation();
 const LG={
   airports:   L.layerGroup(),
   navAids:    L.layerGroup(),
-  ats:        L.layerGroup(),
-  prohibited: L.layerGroup(),
-  restricted: L.layerGroup(),
-  danger:     L.layerGroup(),
   hospitals:  L.markerClusterGroup({
     maxClusterRadius:50,
     iconCreateFunction:cl=>L.divIcon({
@@ -1842,9 +1878,24 @@ const LG={
     })
   }),
   bn2:     L.layerGroup(),
+  dwrCctv: L.markerClusterGroup({
+    maxClusterRadius:50,
+    iconCreateFunction:cl=>L.divIcon({
+      html:`<div style="width:28px;height:28px;background:#0891b2;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.45);">${cl.getChildCount()}</div>`,
+      iconSize:[28,28],iconAnchor:[14,14],className:''
+    })
+  }),
+  dohCctv: L.markerClusterGroup({
+    maxClusterRadius:50,
+    iconCreateFunction:cl=>L.divIcon({
+      html:`<div style="width:28px;height:28px;background:#ea580c;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.45);">${cl.getChildCount()}</div>`,
+      iconSize:[28,28],iconAnchor:[14,14],className:''
+    })
+  }),
+  tmdRadar: L.layerGroup(),
 };
 // Default: only Aerodromes ON; all others OFF
-const LS={airports:true,navAids:false,ats:false,prohibited:false,restricted:false,danger:false,hospitals:false,bn2:false};
+const LS={airports:true,navAids:false,hospitals:false,bn2:false,wxForecast:false,dwrCctv:false,dohCctv:false,tmdRadar:false,rainRadar:false};
 // Add only active layers to map on startup
 Object.entries(LG).forEach(([k,g])=>{ if(LS[k]!==false) g.addTo(map); });
 
@@ -1875,6 +1926,21 @@ function toggleLayer(k){
   document.getElementById('ltog-'+k).classList.toggle('on',LS[k]);
   updateLayerCount();
   if(k==='hospitals'&&LS[k]&&!hospitalsLoaded){fetchHospitals();return;}
+  if(k==='dwrCctv'&&LS[k]&&!dwrCctvLoaded){fetchDwrCctv();return;}
+  if(k==='dohCctv'&&LS[k]&&!dohCctvLoaded){fetchDohCctv();return;}
+  if(k==='rainRadar'){ LS[k]?rainRadarStart():rainRadarStop(); return; }
+  if(k==='tmdRadar' && !LS[k]) tmdStationHide(); // clear any shown station image when the layer's turned off
+  if(k==='wxForecast'){
+    document.querySelectorAll('[id^="fc-section-"]').forEach(el=>{
+      el.style.display = LS[k] ? '' : 'none';
+      if(LS[k]){
+        const icao = el.id.replace('fc-section-','');
+        const ap = airports.find(a=>a.icao===icao);
+        if(ap) loadForecastIntoPopup(ap.icao, ap.lat, ap.lon);
+      }
+    });
+    return;
+  }
   if(k==='rtafRange'){
     if(LS[k]){ LG[k].addTo(map); rtafRouteLG.addTo(map); rtafRefresh(); }
     else { map.removeLayer(LG[k]); map.removeLayer(rtafRouteLG); rtafChain=[]; rtafRenderHud(); }
@@ -1968,6 +2034,408 @@ async function fetchHospitals(){
     alert('ไม่สามารถโหลดข้อมูลโรงพยาบาลได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
   }
 }
+
+// ═══════════════════════════════════════════
+// DWR CCTV (Department of Water Resources — telemetry station cameras, nationwide)
+//   Source: https://telemetry.dwr.go.th/api (public, no key, no published terms).
+//   The raw API embeds live camera credentials in cctvSnapshotLink/cctvVideoLink —
+//   those fields are NEVER read here. Only entity.id/stationCode/names + the
+//   station's lat/lon are kept; the live image URL is derived from stationCode
+//   at click time (mjpegStream), matching the safe pattern documented by the
+//   flukelaster/SIAHRA project (checked 2026-09-27).
+// ═══════════════════════════════════════════
+let dwrCctvLoaded=false;
+const DWR_API='https://telemetry.dwr.go.th/api';
+const DWR_CCTV_ICON=L.divIcon({
+  html:`<div style="width:26px;height:26px;background:#0891b2;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.45);">📹</div>`,
+  iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-15],className:''
+});
+
+function dwrCctvPopupHTML(it, lat, lon){
+  const name = it.nameTh || it.nameEn || it.stationCode;
+  const nameEn = it.nameEn && it.nameEn!==it.nameTh ? it.nameEn : '';
+  const wrapId = 'cctv-live-'+it.id;
+  return `<div class="cctv-popup">
+    <div class="cctv-hdr">
+      <div class="cctv-badge"><span style="width:5px;height:5px;border-radius:50%;background:#06b6d4;display:inline-block"></span>DWR CCTV</div>
+      <div class="cctv-name">${name}</div>
+      ${nameEn?`<div class="cctv-name-en">${nameEn}</div>`:''}
+    </div>
+    <div class="cctv-body">
+      ${it.place?`<div class="cctv-row"><span class="cctv-lbl">ที่ตั้ง</span><span class="cctv-val">${it.place}</span></div>`:''}
+      <div class="cctv-row"><span class="cctv-lbl">รหัสสถานี</span><span class="cctv-val">${it.stationCode}</span></div>
+      <div class="cctv-row"><span class="cctv-lbl">พิกัด</span><span class="cctv-val" style="font-family:monospace;font-size:9px;">${toDDM(lat,true)} ${toDDM(lon,false)}</span></div>
+      <div class="cctv-live-wrap" id="${wrapId}">
+        <div class="wx-na" style="font-size:10px;">⏳ กำลังเชื่อมต่อภาพสด…</div>
+      </div>
+      <div class="cctv-src">กล้องสถานีโทรมาตร กรมทรัพยากรน้ำ (DWR) — ไม่มีเงื่อนไขการใช้งานที่เผยแพร่ · เชื่อมต่อใหม่ทุก 15 วิ</div>
+    </div>
+  </div>`;
+}
+
+let _dwrLiveTimer=null, _dwrLiveStopTimer=null;
+function dwrStopLive(){
+  if(_dwrLiveTimer) clearInterval(_dwrLiveTimer);
+  if(_dwrLiveStopTimer) clearTimeout(_dwrLiveStopTimer);
+  _dwrLiveTimer=null; _dwrLiveStopTimer=null;
+}
+function dwrStartLive(stationCode, wrapId){
+  const wrap=document.getElementById(wrapId);
+  if(!wrap) return;
+  dwrStopLive();
+  const mk=()=>`${DWR_API}/public/cctv/mjpegStream?stnCode=${encodeURIComponent(stationCode)}&_=${Date.now()}`;
+  wrap.innerHTML=`<div class="cctv-live-imgbox">
+      <img class="cctv-live-img" onerror="this.parentElement.innerHTML='<div class=&quot;wx-na&quot; style=&quot;font-size:10px;&quot;>กล้องนี้ไม่ตอบสนองตอนนี้</div>'">
+      <div class="cctv-live-wait" id="${wrapId}-wait">⏳ กำลังรอภาพ…</div>
+    </div>
+    <div class="cctv-live-label">🔴 LIVE · เชื่อมต่อใหม่ทุก 15 วิ</div>`;
+  const img=wrap.querySelector('img.cctv-live-img');
+  img.addEventListener('load', ()=>{ document.getElementById(wrapId+'-wait')?.remove(); }, {once:true});
+  img.src=mk();
+  // Some DWR stations answer 200 but never send a frame — say so instead of a silent black box
+  setTimeout(()=>{
+    const waitEl=document.getElementById(wrapId+'-wait');
+    if(waitEl) waitEl.textContent='⚠ กล้องนี้อาจออฟไลน์ชั่วคราว (ไม่มีภาพส่งมา)';
+  },8000);
+  _dwrLiveTimer=setInterval(()=>{
+    const img=wrap.querySelector('img.cctv-live-img');
+    if(img) img.src=mk(); else dwrStopLive();
+  },15000);
+  _dwrLiveStopTimer=setTimeout(()=>{
+    dwrStopLive();
+    wrap.innerHTML=`<button class="cctv-live-btn" onclick="dwrStartLive('${stationCode}','${wrapId}')">▶ ดูภาพสดต่อ</button>`;
+  },300000);
+}
+map.on('popupclose', dwrStopLive);
+
+async function fetchDwrCctv(){
+  const lbl=document.getElementById('lbl-dwrCctv');
+  const tog=document.getElementById('ltog-dwrCctv');
+  if(lbl) lbl.textContent='⏳ กำลังโหลดรายชื่อกล้อง…';
+  try{
+    const listRes=await fetch(`${DWR_API}/public/reportCctv/listPaginate`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({paginate:{page:1,pageSize:200,orders:[]},search:{}})
+    });
+    if(!listRes.ok) throw new Error('HTTP '+listRes.status);
+    const listJson=await listRes.json();
+    const results=listJson?.value?.results||[];
+    // Allowlist only — never keep cctvSnapshotLink/cctvVideoLink (embed live camera credentials)
+    const items=results.map(r=>({
+      id:r?.entity?.id, stationCode:r?.entity?.stationCode,
+      nameTh:r?.entity?.stnNameTh||null, nameEn:r?.entity?.stnNameEn||null,
+      place:r?.districtNameTh||r?.provinceNameTh||null
+    })).filter(x=>x.id&&x.stationCode);
+
+    let done=0, ok=0;
+    for(const it of items){
+      if(lbl) lbl.textContent=`⏳ โหลดพิกัดกล้อง… (${done}/${items.length})`;
+      try{
+        const sr=await fetch(`${DWR_API}/public/station/getByCode/${encodeURIComponent(it.stationCode)}`);
+        if(sr.ok){
+          const sj=await sr.json();
+          const pt=sj?.value?.fullCon?.entity?.point;
+          if(pt && Number.isFinite(pt.lat) && Number.isFinite(pt.lon) && !(pt.lat===0&&pt.lon===0)){
+            const m=L.marker([pt.lat,pt.lon],{icon:DWR_CCTV_ICON});
+            m.bindPopup(dwrCctvPopupHTML(it,pt.lat,pt.lon),{maxWidth:260});
+            m.on('popupopen', ()=>dwrStartLive(it.stationCode, 'cctv-live-'+it.id));
+            LG.dwrCctv.addLayer(m);
+            ok++;
+          }
+        }
+      }catch(e){ /* skip this station, keep going */ }
+      done++;
+      await new Promise(r=>setTimeout(r,120));
+    }
+    dwrCctvLoaded=true;
+    LG.dwrCctv.addTo(map);
+    if(lbl) lbl.textContent=`กล้อง CCTV แหล่งน้ำ (DWR) (${ok})`;
+  }catch(e){
+    LS.dwrCctv=false;
+    if(tog) tog.classList.remove('on');
+    if(lbl) lbl.textContent='กล้อง CCTV แหล่งน้ำ (DWR)';
+    alert('ไม่สามารถโหลดข้อมูลกล้อง CCTV ได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+  }
+}
+
+// ═══════════════════════════════════════════
+// DOH / iTIC highway road-camera layer (HLS video)
+//   Source: camera list from Longdo (camera.longdo.com/feed/?command=json), video served
+//   by the iTIC Foundation from camerai1.iticfoundation.org. Cameras belong to the
+//   Department of Highways (กรมทางหลวง) and iTIC partner municipalities — neither built
+//   or endorses this app. NOTE: Longdo's API terms restrict redisplay of this feed; the
+//   user explicitly accepted that risk (2026-09-27) after being told so — see memory.
+//   Only camerai1 HLS URLs are used (never the camera1/mjpeg/jpeg fields on the other,
+//   unreachable host), and "tempsus" (temporarily-suspended placeholder) entries are skipped.
+// ═══════════════════════════════════════════
+let dohCctvLoaded=false;
+const DOH_FEED_URL='https://camera.longdo.com/feed/?command=json';
+const DOH_CCTV_ICON=L.divIcon({
+  html:`<div style="width:26px;height:26px;background:#ea580c;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.45);">🛣</div>`,
+  iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-15],className:''
+});
+
+function dohCctvPopupHTML(cam, lat, lon, wrapId){
+  return `<div class="cctv-popup">
+    <div class="cctv-hdr">
+      <div class="cctv-badge" style="background:rgba(234,88,12,.14);border-color:rgba(234,88,12,.3);color:#ea580c;"><span style="width:5px;height:5px;border-radius:50%;background:#ea580c;display:inline-block"></span>ทางหลวง / iTIC</div>
+      <div class="cctv-name">${cam.title||cam.camid}</div>
+    </div>
+    <div class="cctv-body">
+      ${cam.organization?`<div class="cctv-row"><span class="cctv-lbl">เจ้าของกล้อง</span><span class="cctv-val">${cam.organization}</span></div>`:''}
+      <div class="cctv-row"><span class="cctv-lbl">รหัสกล้อง</span><span class="cctv-val">${cam.camid}</span></div>
+      <div class="cctv-row"><span class="cctv-lbl">พิกัด</span><span class="cctv-val" style="font-family:monospace;font-size:9px;">${toDDM(lat,true)} ${toDDM(lon,false)}</span></div>
+      <div class="cctv-live-wrap" id="${wrapId}">
+        <div class="wx-na" style="font-size:10px;">⏳ กำลังเชื่อมต่อวิดีโอสด…</div>
+      </div>
+      <div class="cctv-src">วิดีโอโดย iTIC Foundation · กล้องของ ${cam.organization||'หน่วยงานเจ้าของ'} · รายชื่อกล้องจาก Longdo (camera.longdo.com)</div>
+    </div>
+  </div>`;
+}
+
+let _dohHls=null, _dohLiveStopTimer=null;
+function dohStopLive(){
+  if(_dohHls){ try{ _dohHls.destroy(); }catch(e){} _dohHls=null; }
+  if(_dohLiveStopTimer) clearTimeout(_dohLiveStopTimer);
+  _dohLiveStopTimer=null;
+}
+function dohStartLive(hlsUrl, wrapId){
+  const wrap=document.getElementById(wrapId);
+  if(!wrap) return;
+  dohStopLive();
+  wrap.innerHTML=`<div class="cctv-live-imgbox">
+      <video class="cctv-live-video" id="${wrapId}-video" muted autoplay playsinline controls></video>
+      <div class="cctv-live-wait" id="${wrapId}-wait">⏳ กำลังโหลดวิดีโอ…</div>
+    </div>
+    <div class="cctv-live-label">🔴 LIVE · HLS</div>`;
+  const video=document.getElementById(wrapId+'-video');
+  video.addEventListener('playing', ()=>document.getElementById(wrapId+'-wait')?.remove());
+  if(video.canPlayType('application/vnd.apple.mpegurl')){
+    video.src=hlsUrl;
+  } else if(window.Hls && Hls.isSupported()){
+    const hls=new Hls({maxBufferLength:10});
+    hls.on(Hls.Events.ERROR,(evt,data)=>{
+      if(data && data.fatal){
+        const w=document.getElementById(wrapId+'-wait');
+        if(w) w.textContent='⚠ กล้องนี้อาจออฟไลน์ชั่วคราว (โหลดวิดีโอไม่สำเร็จ)';
+      }
+    });
+    hls.loadSource(hlsUrl);
+    hls.attachMedia(video);
+    _dohHls=hls;
+  } else {
+    wrap.innerHTML=`<div class="wx-na" style="font-size:10px;">เบราว์เซอร์นี้ไม่รองรับวิดีโอ HLS</div>`;
+    return;
+  }
+  setTimeout(()=>{
+    const w=document.getElementById(wrapId+'-wait');
+    if(w) w.textContent='⚠ กล้องนี้อาจออฟไลน์ชั่วคราว (ไม่มีวิดีโอส่งมา)';
+  },8000);
+  _dohLiveStopTimer=setTimeout(()=>{
+    dohStopLive();
+    wrap.innerHTML=`<button class="cctv-live-btn" onclick="dohStartLive('${hlsUrl}','${wrapId}')">▶ ดูภาพสดต่อ</button>`;
+  },300000);
+}
+map.on('popupclose', dohStopLive);
+
+async function fetchDohCctv(){
+  const lbl=document.getElementById('lbl-dohCctv');
+  const tog=document.getElementById('ltog-dohCctv');
+  if(lbl) lbl.textContent='⏳ กำลังโหลดรายชื่อกล้อง…';
+  try{
+    const res=await fetch(DOH_FEED_URL);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const arr=await res.json();
+    let ok=0;
+    (Array.isArray(arr)?arr:[]).forEach(raw=>{
+      const hlsUrl=raw && raw.hls_url;
+      if(typeof hlsUrl!=='string') return;
+      if(!hlsUrl.startsWith('https://camerai1.iticfoundation.org/')) return; // only the reachable host
+      if(hlsUrl.includes('tempsus')) return; // iTIC's temporarily-suspended placeholder
+      const lat=parseFloat(raw.latitude), lon=parseFloat(raw.longitude);
+      if(!Number.isFinite(lat)||!Number.isFinite(lon)) return;
+      if(lat===0&&lon===0) return;
+      const camid=String(raw.camid||'');
+      if(!camid) return;
+      const cam={ camid, title:raw.title||null, organization:raw.organization||null, hlsUrl };
+      const wrapId='doh-live-'+camid.replace(/[^A-Za-z0-9_-]/g,'');
+      const m=L.marker([lat,lon],{icon:DOH_CCTV_ICON});
+      m.bindPopup(dohCctvPopupHTML(cam,lat,lon,wrapId),{maxWidth:260});
+      m.on('popupopen', ()=>dohStartLive(cam.hlsUrl, wrapId));
+      LG.dohCctv.addLayer(m);
+      ok++;
+    });
+    dohCctvLoaded=true;
+    LG.dohCctv.addTo(map);
+    if(lbl) lbl.textContent=`กล้องทางหลวง (DOH/iTIC) (${ok})`;
+  }catch(e){
+    LS.dohCctv=false;
+    if(tog) tog.classList.remove('on');
+    if(lbl) lbl.textContent='กล้องทางหลวง (DOH/iTIC)';
+    alert('ไม่สามารถโหลดข้อมูลกล้องทางหลวงได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+  }
+}
+
+// ═══════════════════════════════════════════
+// TMD RAIN RADAR — per-station markers (weather.tmd.go.th/{code}/)
+//   Redesigned 2026-09-27 (2nd rebuild this session): showing all 21 stations'
+//   images at once as overlapping map-filling overlays was "โคตรรก!!" (way too
+//   cluttered) and not actually useful — user asked for each station as its own
+//   spinning-radar marker instead, image shown only on click. Much simpler too:
+//   no combined-layer HUD, no bounds/aspect-ratio math, no legend-patch
+//   cosmetic issue (nothing is stretched onto the map any more) — just a
+//   marker per site and that station's own image in its popup, exactly like
+//   the DWR/DOH camera layers already in this app.
+//   Each site publishes one always-current "{code}{range}_latest.{jpg|gif}"
+//   image (confirmed via weather.tmd.go.th's own station pages' network
+//   requests) — no ring-buffer/index puzzle. Coordinates reused from this
+//   app's airports/navAids arrays where the station is named after that
+//   airport/town; the rest (Lamphun, Surin, Samut Songkhram, Sathing Phra —
+//   no airport in this app's data) are well-known provincial-capital coords.
+// ═══════════════════════════════════════════
+const TMD_STATIONS=[
+  {code:'mhs',name:'Mae Hong Son',     lat:19.3017,lon:97.9750},
+  {code:'cri',name:'Chiang Rai',       lat:19.9524,lon:99.8829},
+  {code:'lmp',name:'Lamphun',          lat:18.5744,lon:99.0087},
+  {code:'tak',name:'Doi Muser (Tak)',  lat:16.8960,lon:99.2537},
+  {code:'phs',name:'Phitsanulok',      lat:16.7830,lon:100.2791},
+  {code:'phb',name:'Phetchabun',       lat:16.6760,lon:101.1951},
+  {code:'kkn',name:'Khon Kaen',        lat:16.4667,lon:102.7836},
+  {code:'skn',name:'Sakon Nakhon',     lat:17.1951,lon:104.1186},
+  {code:'ubn',name:'Ubon Ratchathani', lat:15.2513,lon:104.8702},
+  {code:'srn',name:'Surin',            lat:14.8818,lon:103.4936},
+  {code:'skm',name:'Samut Songkhram',  lat:13.4098,lon:100.0022},
+  {code:'svp',name:'Suvarnabhumi',     lat:13.6858,lon:100.7489},
+  {code:'ryg',name:'Rayong',           lat:12.6797,lon:101.0050},
+  {code:'cmp',name:'Chumphon',         lat:10.7112,lon:99.3617},
+  {code:'srt',name:'Surat Thani',      lat:9.1361, lon:99.1390},
+  {code:'rng',name:'Ranong',           lat:9.7776, lon:98.5855},
+  {code:'pkt',name:'Phuket',           lat:8.1125, lon:98.3092},
+  {code:'trg',name:'Trang',            lat:7.5086, lon:99.6158},
+  {code:'hyi',name:'Hat Yai',          lat:6.9328, lon:100.3950},
+  {code:'stp',name:'Sathing Phra',     lat:7.4667, lon:100.4000},
+  {code:'nrt',name:'Narathiwat',       lat:6.5178, lon:101.7425},
+  // RainMaking + Bangkok-district radars — not in the main 21, added 2026-09-27
+  // (user: "สถานีใน Loop มันครบมั้ย ... ของ นครสวรรค์ ไม่เห็นมีเลยอ่ะ"). TMD has no
+  // station literally named "Nakhon Sawan", but the Takhli RainMaking radar
+  // sits in Nakhon Sawan province (Takhli district, same site as VTPI in this
+  // app's own airports array — reused its coordinates directly) — that's almost
+  // certainly what was meant. Takhli's site uses a DIFFERENT publishing scheme
+  // (checked directly): `tkl/tkl240_latest.png`, a static PNG — its "loop" page
+  // is a custom 6-frame JS slideshow (tkl1.png…tkl6.png), not a single animated
+  // file like the other 21, so it's shown as a static image with a `noLoop` flag
+  // rather than building a one-off slideshow player for a single station.
+  {code:'tkl', name:'Takhli (Nakhon Sawan)', lat:15.2773, lon:100.2959, noLoop:true,
+   urlFn:()=>`https://weather.tmd.go.th/tkl/tkl240_latest.png?_=${Date.now()}`},
+  // Bangkok's two district radars DO publish true single-file animated loops,
+  // just under a different naming scheme (checked directly): pic_bma{code}Loop.gif
+  {code:'bmanc', name:'Bangkok – Nong Chok', lat:13.8547, lon:100.8372,
+   urlFn:()=>`https://weather.tmd.go.th/pic_bmancLoop.gif?_=${Date.now()}`},
+  {code:'bmank', name:'Bangkok – Nong Khaem', lat:13.6975, lon:100.3539,
+   urlFn:()=>`https://weather.tmd.go.th/pic_bmankLoop.gif?_=${Date.now()}`},
+];
+const TMD_STATION_RANGE_KM=240;
+const TMD_STATION_REFRESH_MS=300000;
+
+// "Loop" version instead of the static "_latest" snapshot (user asked 2026-09-27:
+// "เอา TMD Radar Loop แทนได้มั้ย") — an animated GIF of recent frames per station,
+// confirmed at weather.tmd.go.th/{code}/{code}loop.gif (no range suffix; verified
+// on phs and kkn, same file regardless of which range variant's page loads it).
+// Browsers animate GIFs natively — no extra JS loop code needed.
+// Stations with a `urlFn` (Takhli, the 2 Bangkok radars) use their own scheme
+// instead — see TMD_STATIONS comment above.
+function tmdStationImageUrl(st, ext){
+  if(st.urlFn) return st.urlFn();
+  return tmdStationUrl(st.code, ext);
+}
+function tmdStationUrl(code,ext){
+  return `https://weather.tmd.go.th/${code}/${code}loop.${ext}?_=${Date.now()}`;
+}
+
+const TMD_RADAR_ICON=L.divIcon({
+  html:`<div class="tmd-radar-marker"><div class="tmd-radar-sweep"></div><div class="tmd-radar-dot">📡</div></div>`,
+  iconSize:[30,30], iconAnchor:[15,15], popupAnchor:[0,-17], className:''
+});
+
+// Clicking a station marker shows THAT station's image as a real georeferenced
+// L.imageOverlay directly on the map (correct scale, aspect-ratio corrected —
+// same bounds math as the session-6 combined-overlay build), replacing
+// whichever station was previously shown — only ever ONE overlay on the map
+// at a time, so this can never regress back into the "21 overlapping images"
+// clutter the user rejected. Clicking the same marker again hides it.
+// User 2026-09-27: "ทำเป็นไอคอนแบบล่าสุดแล้วเวลาฉันคลิ๊กที่สถานีนั้นๆ ให้มันแสดงภาพ
+// จากข้อมูลล่าสุดมาทับบน map ตามสเกลที่ถูกต้อง" (keep the marker icons; on click,
+// show that station's latest image on the map at the correct scale).
+let tmdActiveOverlay=null, tmdActiveCode=null, tmdActiveStation=null, tmdActiveTimer=null, tmdActiveExt='gif', tmdActiveOpacity=0.65;
+
+// aspectWH = source image width/height — several stations' images aren't square
+// (measured: e.g. rng 1152×945, ubn/srn/svp 936×797, likely a wider legend
+// block) — stretching a non-square source into square geo bounds would warp
+// the map into an ellipse, so bounds match the real aspect ratio instead.
+function tmdStationBounds(lat,lon,aspectWH){
+  const dLat=TMD_STATION_RANGE_KM/111.32;
+  const dLon=(TMD_STATION_RANGE_KM/(111.32*Math.cos(lat*Math.PI/180)))*(aspectWH||1);
+  return L.latLngBounds([lat-dLat,lon-dLon],[lat+dLat,lon+dLon]);
+}
+function tmdStationHide(){
+  if(tmdActiveTimer){ clearInterval(tmdActiveTimer); tmdActiveTimer=null; }
+  if(tmdActiveOverlay){ map.removeLayer(tmdActiveOverlay); tmdActiveOverlay=null; }
+  tmdActiveCode=null;
+  tmdActiveStation=null;
+  document.getElementById('tmdStationHud')?.remove();
+}
+function tmdStationRefreshActive(){
+  if(!tmdActiveOverlay || !tmdActiveStation) return;
+  tmdActiveOverlay.setUrl(tmdStationImageUrl(tmdActiveStation, tmdActiveExt));
+}
+function tmdStationShow(st){
+  if(tmdActiveCode===st.code){ tmdStationHide(); return; } // click same marker again = hide
+  tmdStationHide();
+  tmdActiveCode=st.code;
+  tmdActiveStation=st;
+  tmdActiveExt='gif';
+  tmdActiveOverlay=L.imageOverlay(tmdStationImageUrl(st,tmdActiveExt), tmdStationBounds(st.lat,st.lon,1), {opacity:tmdActiveOpacity, interactive:false, zIndex:440}).addTo(map);
+  tmdActiveOverlay.on('error', ()=>{
+    if(!st.urlFn && tmdActiveExt==='gif' && tmdActiveOverlay){ tmdActiveExt='jpg'; tmdActiveOverlay.setUrl(tmdStationImageUrl(st,tmdActiveExt)); }
+  });
+  const img=tmdActiveOverlay.getElement();
+  if(img) img.addEventListener('load', function onLoad(){
+    const ar=img.naturalWidth/img.naturalHeight;
+    if(ar && isFinite(ar) && Math.abs(ar-1)>0.02 && tmdActiveOverlay && tmdActiveCode===st.code) tmdActiveOverlay.setBounds(tmdStationBounds(st.lat,st.lon,ar));
+  });
+  tmdActiveTimer=setInterval(tmdStationRefreshActive, TMD_STATION_REFRESH_MS);
+  tmdStationShowHud(st);
+}
+function tmdStationSetOpacity(v){
+  tmdActiveOpacity=parseFloat(v);
+  if(tmdActiveOverlay) tmdActiveOverlay.setOpacity(tmdActiveOpacity);
+}
+function tmdStationShowHud(st){
+  let el=document.getElementById('tmdStationHud');
+  if(!el){
+    el=document.createElement('div');
+    el.id='tmdStationHud';
+    el.style.cssText='position:absolute;left:295px;bottom:34px;z-index:900;background:var(--surface);border:1px solid var(--border);border-left:3px solid #2563eb;border-radius:8px;padding:8px 10px;font-size:10px;color:var(--text2);box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:230px;';
+    document.body.appendChild(el);
+  }
+  el.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <span style="font-weight:700;color:#60a5fa;font-size:11px;">🌧 เรดาร์ฝน ${st.name}${st.noLoop?'':' (Loop)'}</span>
+      <span onclick="tmdStationHide()" style="cursor:pointer;color:var(--muted);font-size:13px;padding:0 3px;">✕</span>
+    </div>
+    <div style="margin-bottom:5px;">รัศมี ${TMD_STATION_RANGE_KM} กม. · ${st.noLoop?'ภาพนิ่งล่าสุด (สถานีนี้ไม่มีภาพเคลื่อนไหว)':'ภาพเคลื่อนไหว'} รีเฟรชทุก 5 นาที · คลิกหมุดซ้ำเพื่อซ่อน</div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+      <span style="font-size:9px;color:var(--muted);">โปร่งใส</span>
+      <input type="range" min="0.15" max="1" step="0.05" value="${tmdActiveOpacity}" oninput="tmdStationSetOpacity(this.value)" style="flex:1;">
+    </div>
+    <div style="font-size:8.5px;color:var(--muted);font-style:italic;">เรดาร์ตรวจอากาศ กรมอุตุนิยมวิทยา (TMD) — data.tmd.go.th</div>`;
+}
+
+TMD_STATIONS.forEach(st=>{
+  const m=L.marker([st.lat,st.lon],{icon:TMD_RADAR_ICON});
+  m.on('click', ()=>tmdStationShow(st));
+  LG.tmdRadar.addLayer(m);
+});
 
 // ═══════════════════════════════════════════
 // RADIO NAVIGATION AIDS LAYER
@@ -2067,86 +2535,11 @@ function flyToNav(lat,lon,id){
   if(entry) setTimeout(()=>entry.marker.openPopup(),400);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// ACC SECTORS  (ENR 2.1)
-// ═══════════════════════════════════════════════════════════════
-
-// ── Layer groups ────────────────────────────────────────────────
-LG.accSectors  = L.layerGroup();
-LS.accSectors  = false;
-// not added on startup
-
-// ── Bangkok ACC Sectors (ENR 2.1) ───────────────────────────────
-const ACC_SECTORS = [
-  { id:'Sector 1',  ul:'FL460', ll:'GND', clr:'#3b82f6',
-    pts:['162305.20N 0985436.80E','173356.83N 1010000.00E','170000.00N 1004517.30E',
-         '163201.74N 1004502.60E','161748.43N 1004455.31E']},
-  { id:'Sector 2',  ul:'FL460', ll:'GND', clr:'#06b6d4',
-    pts:['161748.43N 1004455.31E','163201.74N 1004502.60E','170000.00N 1004517.30E',
-         '173356.83N 1010000.00E','175851.00N 1030000.00E','160948.00N 1030000.00E',
-         '161329.40N 1020259.40E']},
-  { id:'Sector 3',  ul:'FL460', ll:'GND', clr:'#10b981',
-    pts:['135506.00N 1003548.10E','162305.20N 0985436.80E','161748.43N 1004455.31E',
-         '161329.40N 1020259.40E']},
-  { id:'Sector 4',  ul:'FL460', ll:'GND', clr:'#84cc16',
-    pts:['133006.00N 0991248.80E','162305.20N 0985436.80E','135506.00N 1003548.10E']},
-  { id:'Sector 5',  ul:'FL460', ll:'GND', clr:'#f59e0b',
-    pts:['141302.00N 1030000.00E','160948.00N 1030000.00E','175851.00N 1030000.00E',
-         '173356.83N 1010000.00E','175851.00N 1030000.00E','141302.00N 1030000.00E']},
-  { id:'Sector 6',  ul:'FL460', ll:'GND', clr:'#ef4444',
-    pts:['135506.00N 1003548.10E','161329.40N 1020259.40E','160948.00N 1030000.00E',
-         '141302.00N 1030000.00E']},
-  { id:'Sector 1S', ul:'FL460', ll:'GND', clr:'#8b5cf6',
-    pts:['114006.50N 0993448.70E','133006.00N 0991248.80E','135506.00N 1003548.10E',
-         '132006.10N 1004948.10E','124106.30N 1004948.10E','122500.00N 1005105.00E',
-         '104130.00N 1012502.00E','110006.80N 1005948.10E','112906.60N 0995948.50E']},
-  { id:'Sector 2S', ul:'FL460', ll:'FL270', clr:'#ec4899',
-    pts:['102334.00N 0984513.60E','114006.50N 0993448.70E','112906.60N 0995948.50E',
-         '110006.80N 1005948.10E','104130.00N 1012502.00E','100244.00N 1013740.60E',
-         '090239.80N 1000012.90E']},
-  { id:'Sector 3S', ul:'FL460', ll:'GND', clr:'#14b8a6',
-    pts:['100006.90N 0974918.00E','100006.90N 0983849.20E','102334.00N 0984513.60E',
-         '090239.80N 1000012.90E','064716.80N 1000000.00E','080650N 0981825E']},
-  { id:'Sector 4S', ul:'FL460', ll:'GND', clr:'#f97316',
-    pts:['100006.90N 0962950.10E','100006.90N 0974918.00E','080650N 0981825E',
-         '064716.80N 1000000.00E','063844.42N 1001050.18E','063007.90N 0992948.90E',
-         '071507.70N 0975949.50E']},
-  { id:'Sector 5S', ul:'FL460', ll:'GND', clr:'#a3e635',
-    pts:['100244.00N 1013740.60E','104130.00N 1012502.00E','122500.00N 1005105.00E',
-         '124106.30N 1004948.10E','132006.10N 1004948.10E','135506.00N 1003548.10E',
-         '141302.00N 1030000.00E','113654.00N 1030000.00E','100000.00N 1021500.00E']},
-  { id:'Sector 6S', ul:'FL460', ll:'GND', clr:'#fb923c',
-    pts:['063844.42N 1001050.18E','064716.80N 1000000.00E','090239.80N 1000012.90E',
-         '100244.00N 1013740.60E','100000.00N 1021500.00E','070000.00N 1030000.00E',
-         '064500.00N 1024000.00E','061500.00N 1021500.00E']},
-];
-
-ACC_SECTORS.forEach(sec => {
-  const pts = sec.pts.map(s => parseDMS(s)).filter(Boolean);
-  if (pts.length < 3) return;
-  L.polygon(pts,{
-    color: sec.clr, weight:1, fillColor: sec.clr, fillOpacity:0.08, dashArray:'6,4'
-  }).bindPopup(`<div class="as-hdr" style="background:linear-gradient(135deg,#0a1a30,#102040);border-bottom:1px solid ${sec.clr}50;">
-    <div class="as-type" style="color:${sec.clr};">ACC SECTOR · ENR 2.1</div>
-    <div class="as-des" style="color:${sec.clr};">Bangkok ${sec.id}</div>
-  </div><div class="as-body">
-    <div class="as-row"><span class="as-lbl">Upper</span><span class="as-val">${sec.ul}</span></div>
-    <div class="as-row"><span class="as-lbl">Lower</span><span class="as-val">${sec.ll}</span></div>
-    <div class="as-row"><span class="as-lbl">Class</span><span class="as-val">Class C</span></div>
-    <div class="as-row"><span class="as-lbl">Authority</span><span class="as-val">Bangkok ACC</span></div>
-  </div>`,{maxWidth:270}).addTo(LG.accSectors);
-
-  // Sector label at centroid
-  const clat = pts.reduce((s,p) => s+p[0],0)/pts.length;
-  const clon = pts.reduce((s,p) => s+p[1],0)/pts.length;
-  L.marker([clat,clon],{icon:L.divIcon({
-    html:`<div style="font-size:8px;font-weight:700;color:${sec.clr};text-shadow:0 1px 3px rgba(0,0,0,.9);opacity:.85;pointer-events:none;white-space:nowrap;">BKK ${sec.id}</div>`,
-    className:'', iconAnchor:[20,6]
-  }), interactive:false}).addTo(LG.accSectors);
-});
-
 // ═══════════════════════════════════════════
 // ATS AIRSPACE
+//   The visual layer was removed 2026-09-27 (user: rarely used, decluttering sidebar).
+//   `atsAirspace` itself is KEPT — still read by scanZones() for the Terrain & Airspace
+//   Profile PDF export, which is unrelated to the map layer.
 // ═══════════════════════════════════════════
 const atsAirspace=[
   {id:'Bangkok CTR',       cls:'C',ul:'11,000 ft',ll:'GND',     circle:{c:'135452N 1003620E',r:35}},
@@ -2171,25 +2564,12 @@ const atsAirspace=[
   {id:'Krabi CTR',         cls:'D',ul:'2,500 ft', ll:'GND',     circle:{c:'080600N 0995907E',r:8}},
   {id:'Samui CTR',         cls:'D',ul:'2,000 ft', ll:'GND',     circle:{c:'092956N 1000345E',r:7}},
 ];
-const ATS_CLR={A:'#a78bfa',B:'#c4b5fd',C:'#818cf8',D:'#93c5fd',E:'#67e8f9',G:'#6ee7b7'};
-atsAirspace.forEach(a=>{
-  const c=ATS_CLR[a.cls]||'#818cf8';
-  const pt=parseDMS(a.circle.c); if(!pt)return;
-  L.circle([pt[0],pt[1]],{radius:a.circle.r*NM,color:c,weight:1.5,fillColor:c,fillOpacity:0.07,dashArray:'8,5'})
-   .bindPopup(`<div class="as-hdr" style="background:linear-gradient(135deg,#0d1240,#1e1a60);border-bottom-color:${c}40;">
-    <div class="as-type" style="color:${c};">ATS CLASS ${a.cls}</div>
-    <div class="as-des" style="color:${c};">${a.id}</div>
-   </div><div class="as-body">
-    <div class="as-row"><span class="as-lbl">Class</span><span class="as-val">${a.cls}</span></div>
-    <div class="as-row"><span class="as-lbl">Upper</span><span class="as-val">${a.ul}</span></div>
-    <div class="as-row"><span class="as-lbl">Lower</span><span class="as-val">${a.ll}</span></div>
-   </div>`,{maxWidth:260})
-   .addTo(LG.ats);
-});
-
 
 // ═══════════════════════════════════════════
 // AIRSPACE
+//   Prohibited/Restricted/Danger visual layers removed 2026-09-27 (user: rarely used,
+//   decluttering sidebar). The data arrays below are KEPT — still read by scanZones()
+//   for the Terrain & Airspace Profile PDF export.
 // ═══════════════════════════════════════════
 const prohibitedAreas=[
   {id:"VTP4", name:"MUANG KOM",        upper:"FL 240",  lower:"GND",activity:"MON-FRI H24",      coords:["150700N 1005900E","150700N 1005000E","145500N 1005000E","145500N 1005900E"]},
@@ -2365,31 +2745,9 @@ const dangerAreas=[
 ];
 
 // Footer stats: always derive from actual array lengths so counts can't drift out of sync
-document.getElementById('stAccSectors').textContent = ACC_SECTORS.length;
 document.getElementById('stNavAids').textContent = navAids.length;
-document.getElementById('stAts').textContent = atsAirspace.length;
-document.getElementById('stPRD').textContent = `${prohibitedAreas.length}/${restrictedAreas.length}/${dangerAreas.length}`;
-
-function addArea(area,type,color,grp){
-  const opts={color,weight:1.5,fillColor:color,fillOpacity:.15,dashArray:'5,4'};
-  const pop=`<div class="as-hdr" style="background:linear-gradient(135deg,#1a0a0a,#3a1010);border-bottom-color:${color}40;">
-    <div class="as-type" style="color:${color};">${type}</div>
-    <div class="as-des" style="color:${color};">${area.id}</div>
-    <div class="as-name">${area.name}</div>
-  </div><div class="as-body">
-    <div class="as-row"><span class="as-lbl">Upper</span><span class="as-val">${area.upper}</span></div>
-    <div class="as-row"><span class="as-lbl">Lower</span><span class="as-val">${area.lower}</span></div>
-    <div class="as-row"><span class="as-lbl">Activity</span><span class="as-val">${area.activity}</span></div>
-  </div>`;
-  let s;
-  if(area.circle){const pt=parseDMS(area.circle.c);if(!pt)return;s=L.circle([pt[0],pt[1]],{radius:area.circle.r*NM,...opts});}
-  else if(area.latlng){if(area.latlng.length<2)return;s=L.polygon(area.latlng,opts);}
-  else if(area.coords){const pts=area.coords.map(p=>parseDMS(p)).filter(Boolean);if(pts.length<2)return;s=L.polygon(pts,opts);}
-  if(s){s.bindPopup(pop,{maxWidth:260});grp.addLayer(s);}
-}
-prohibitedAreas.forEach(a=>addArea(a,'PROHIBITED AREA','#ff4444',LG.prohibited));
-restrictedAreas.forEach(a=>addArea(a,'RESTRICTED AREA','#ff8800',LG.restricted));
-dangerAreas    .forEach(a=>addArea(a,'DANGER AREA',    '#ffdd00',LG.danger));
+// prohibitedAreas/restrictedAreas/dangerAreas: no map layer any more (removed 2026-09-27),
+// arrays kept only for scanZones() in the Terrain & Airspace Profile PDF export.
 
 // ═══════════════════════════════════════════
 // BN.2 TRAINING AREA (พท.การฝึก บน.2)
@@ -3362,6 +3720,156 @@ function makeDraggablePanel(panelId, handleSel, storeKey){
 makeDraggablePanel('rtafHud', '.rt-title', 'rtafHudPos');
 makeDraggablePanel('heliHud', '.hp-title', 'heliHudPos');
 
+// ═══════════════════════════════════════════
+// RAIN RADAR (RainViewer — global precipitation radar, free public API, no key)
+//   Replaces an earlier Windy iframe-embed attempt (2026-09-27): Windy's embed
+//   is a full separate interactive map, not tile data, so it can never blend
+//   transparently onto this app's own Leaflet map — user asked for a real
+//   on-map layer instead. RainViewer publishes actual {z}/{x}/{y} tiles, so
+//   this is a genuine L.tileLayer sitting directly on the map (unlike the TMD
+//   radar layer above, which could only be an <img> overlay because TMD blocks
+//   fetch() cross-origin). Real per-frame timestamps, ~13 frames = last ~2h.
+// ═══════════════════════════════════════════
+let rainRadarLayerA=null, rainRadarLayerB=null, rainRadarActive='A', rainRadarTransitioning=false;
+let rainRadarTimer=null, rainRadarFrames=[], rainRadarIdx=0, rainRadarPlaying=true, rainRadarFetchedAt=0, rainRadarOpacity=0.6;
+
+// RainViewer's real native max zoom is 7 — verified 2026-09-27 with correctly
+// computed tile x/y (earlier maxNativeZoom:10 guess was wrong: it was quietly
+// tiling RainViewer's own "Zoom Level Not Supported" placeholder image past
+// z7, which is what showed up on screen once zoomed in). Requesting 512px
+// tiles with zoomOffset:-1 buys one extra map-zoom level of real detail for
+// free (a 512px tile at native z7 covers the same area — and has 4x the
+// source pixels — a 256px tile at z8 would, it just doesn't exist at z8).
+function rainRadarTileUrl(frame){
+  return `${frame.host}${frame.path}/512/{z}/{x}/{y}/2/1_1.png`;
+}
+async function rainRadarFetchFrames(){
+  const now=Date.now();
+  if(rainRadarFrames.length && (now-rainRadarFetchedAt)<300000) return rainRadarFrames;
+  const r=await fetch('https://api.rainviewer.com/public/weather-maps.json');
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const j=await r.json();
+  const host=j.host;
+  const past=(j.radar?.past||[]).map(f=>({time:f.time,host,path:f.path,kind:'past'}));
+  const nowcast=(j.radar?.nowcast||[]).map(f=>({time:f.time,host,path:f.path,kind:'nowcast'}));
+  rainRadarFrames=[...past,...nowcast];
+  rainRadarFetchedAt=now;
+  return rainRadarFrames;
+}
+function rainRadarLabel(frame){
+  const diffMin=Math.round((frame.time*1000-Date.now())/60000);
+  if(frame.kind==='nowcast') return `พยากรณ์ +${diffMin} นาที`;
+  if(Math.abs(diffMin)<=2) return 'ล่าสุด (เมื่อครู่)';
+  return `${Math.abs(diffMin)} นาทีที่แล้ว`;
+}
+// Crossfade between two stacked tile layers: load the next frame into the
+// currently-hidden one, only swap opacity once its tiles are actually ready —
+// avoids the flash-to-blank flicker of repeatedly setUrl()'ing a single layer.
+function rainRadarShowFrame(i){
+  return new Promise(resolve=>{
+    const frame=rainRadarFrames[i];
+    if(!frame){ resolve(); return; }
+    rainRadarIdx=i;
+    const hiddenName = rainRadarActive==='A' ? 'B' : 'A';
+    const hiddenLayer = hiddenName==='A' ? rainRadarLayerA : rainRadarLayerB;
+    const visibleLayer = rainRadarActive==='A' ? rainRadarLayerA : rainRadarLayerB;
+    if(!hiddenLayer){ resolve(); return; }
+    rainRadarTransitioning=true;
+    let done=false;
+    function finish(){
+      if(done) return;
+      done=true;
+      hiddenLayer.off('load', finish);
+      hiddenLayer.setOpacity(rainRadarOpacity);
+      if(visibleLayer) visibleLayer.setOpacity(0);
+      rainRadarActive=hiddenName;
+      rainRadarTransitioning=false;
+      rainRadarRenderHud();
+      resolve();
+    }
+    hiddenLayer.on('load', finish);
+    hiddenLayer.setUrl(rainRadarTileUrl(frame));
+    setTimeout(finish, 2000); // safety net if 'load' never fires (e.g. zero visible tiles)
+  });
+}
+function rainRadarTick(){
+  if(!rainRadarFrames.length || rainRadarTransitioning) return;
+  rainRadarShowFrame((rainRadarIdx+1)%rainRadarFrames.length);
+}
+async function rainRadarStart(){
+  if(rainRadarLayerA) return;
+  const opts={opacity:0,zIndex:450,tileSize:512,zoomOffset:-1,maxNativeZoom:8,maxZoom:19,attribution:'Radar &copy; RainViewer'};
+  rainRadarLayerA=L.tileLayer('',opts).addTo(map);
+  rainRadarLayerB=L.tileLayer('',opts).addTo(map);
+  // CSS transition on each layer's own pane so setOpacity() crossfades smoothly
+  // instead of snapping instantly — the tile-load gate (rainRadarShowFrame's
+  // 'load' handler) already prevents a blank flash; this makes the actual
+  // frame-to-frame swap read as a gentle dissolve instead of a hard cut.
+  [rainRadarLayerA,rainRadarLayerB].forEach(l=>{
+    const c=l.getContainer && l.getContainer();
+    if(c) c.style.transition='opacity 350ms linear';
+  });
+  rainRadarActive='A';
+  rainRadarShowHud();
+  try{
+    await rainRadarFetchFrames();
+    if(!LS.rainRadar) return; // user toggled off while loading
+    await rainRadarShowFrame(rainRadarFrames.length-1); // start on latest observed frame
+    rainRadarPlaying=true;
+    rainRadarTimer=setInterval(rainRadarTick,600); // > the 350ms fade, so each frame settles before the next starts
+  }catch(e){
+    LS.rainRadar=false;
+    document.getElementById('ltog-rainRadar')?.classList.remove('on');
+    rainRadarStop();
+    alert('ไม่สามารถโหลดข้อมูลเรดาร์ฝนได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+  }
+}
+function rainRadarStop(){
+  if(rainRadarTimer) clearInterval(rainRadarTimer);
+  rainRadarTimer=null;
+  if(rainRadarLayerA){ map.removeLayer(rainRadarLayerA); rainRadarLayerA=null; }
+  if(rainRadarLayerB){ map.removeLayer(rainRadarLayerB); rainRadarLayerB=null; }
+  rainRadarActive='A';
+  rainRadarTransitioning=false;
+  rainRadarHideHud();
+}
+function rainRadarTogglePlay(){
+  rainRadarPlaying=!rainRadarPlaying;
+  if(rainRadarPlaying){ if(!rainRadarTimer) rainRadarTimer=setInterval(rainRadarTick,600); }
+  else { clearInterval(rainRadarTimer); rainRadarTimer=null; }
+  rainRadarRenderHud();
+}
+function rainRadarSetOpacity(v){
+  rainRadarOpacity=parseFloat(v);
+  const visibleLayer = rainRadarActive==='A' ? rainRadarLayerA : rainRadarLayerB;
+  if(visibleLayer) visibleLayer.setOpacity(rainRadarOpacity);
+}
+function rainRadarShowHud(){
+  let el=document.getElementById('rainRadarHud');
+  if(!el){
+    el=document.createElement('div');
+    el.id='rainRadarHud';
+    el.style.cssText='position:absolute;left:295px;bottom:34px;z-index:900;background:var(--surface);border:1px solid var(--border);border-left:3px solid #0d9488;border-radius:8px;padding:8px 10px;font-size:10px;color:var(--text2);box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:230px;';
+    document.body.appendChild(el);
+  }
+  rainRadarRenderHud();
+}
+function rainRadarHideHud(){ document.getElementById('rainRadarHud')?.remove(); }
+function rainRadarRenderHud(){
+  const el=document.getElementById('rainRadarHud');
+  if(!el) return;
+  const frame=rainRadarFrames[rainRadarIdx];
+  const label=frame?rainRadarLabel(frame):'⏳ กำลังโหลด…';
+  const op=rainRadarOpacity;
+  el.innerHTML=`<div style="font-weight:700;color:#2dd4bf;font-size:11px;margin-bottom:4px;">🌧 เรดาร์ฝน (RainViewer)</div>
+    <div style="margin-bottom:5px;">${label}</div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+      <button onclick="rainRadarTogglePlay()" style="background:rgba(13,148,136,.15);border:1px solid rgba(13,148,136,.35);color:#2dd4bf;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer;">${rainRadarPlaying?'⏸ หยุด':'▶ เล่น'}</button>
+      <input type="range" min="0.2" max="1" step="0.05" value="${op}" oninput="rainRadarSetOpacity(this.value)" style="flex:1;">
+    </div>
+    <div style="font-size:8.5px;color:var(--muted);font-style:italic;">เรดาร์ฝนทั่วโลก โดย RainViewer.com</div>`;
+}
+
 updateLayerCount();
 
 // ═══════════════════════════════════════════
@@ -3591,10 +4099,18 @@ airports.forEach(ap=>{
     <div class="pu-row"><span class="pu-lbl">Operator</span><span class="pu-val"><span class="pu-op" style="background:${opBg(ap.op)};color:${c};">${ap.op}</span></span></div>
     <a href="${ap.url}" target="_blank" class="pu-link">✈ View AIP Aerodrome Data</a>
     ${wxHTML(ap.icao)}
+    ${fcHTML(ap.icao, ap.lat, ap.lon)}
   </div>`,{maxWidth:295,maxHeight:520});
   m.on('popupopen', ()=>{
     // Wait for Leaflet to render popup DOM, then load weather
-    requestAnimationFrame(()=>requestAnimationFrame(()=>loadWXIntoPopup(ap.icao)));
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      loadWXIntoPopup(ap.icao);
+      const fcSec = document.getElementById('fc-section-'+ap.icao);
+      if(fcSec){
+        fcSec.style.display = LS.wxForecast ? '' : 'none';
+        if(LS.wxForecast) loadForecastIntoPopup(ap.icao, ap.lat, ap.lon);
+      }
+    }));
   });
   m.on('click',(e)=>{
     // Heli ROA planner: while placing, a click on an airport drops the helicopter
@@ -5883,6 +6399,144 @@ function wxHTML(icao){
       <div class="wx-block"><div class="wx-raw wx-na">Click Refresh to load weather</div></div>
     </div>
   </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// WEATHER FORECAST — current + 3-day + next-3-hour (Open-Meteo, free, no API key)
+//   Section is always in the popup DOM but hidden unless the "wxForecast" layer is on
+//   (toggled in toggleLayer()); fetched lazily on popupopen, cached 30 min per airport.
+// ═══════════════════════════════════════════════════════════════
+const FC_CACHE = {}; // { ICAO: { data, ts } }
+
+const WMO_WX = {
+  0:['☀️','ท้องฟ้าแจ่มใส'], 1:['🌤','แจ่มใสเป็นส่วนใหญ่'], 2:['⛅','มีเมฆบางส่วน'], 3:['☁️','มีเมฆมาก'],
+  45:['🌫','หมอก'], 48:['🌫','หมอกน้ำแข็ง'],
+  51:['🌦','ฝนปรอยเบา'], 53:['🌦','ฝนปรอย'], 55:['🌦','ฝนปรอยหนัก'],
+  56:['🌧❄','ฝนปรอยเย็นจัดเบา'], 57:['🌧❄','ฝนปรอยเย็นจัดหนัก'],
+  61:['🌧','ฝนเล็กน้อย'], 63:['🌧','ฝนปานกลาง'], 65:['🌧','ฝนหนัก'],
+  66:['🌧❄','ฝนเย็นจัดเบา'], 67:['🌧❄','ฝนเย็นจัดหนัก'],
+  71:['🌨','หิมะเล็กน้อย'], 73:['🌨','หิมะปานกลาง'], 75:['🌨','หิมะหนัก'], 77:['🌨','เกล็ดหิมะ'],
+  80:['🌧','ฝนตกเป็นช่วงเบา'], 81:['🌧','ฝนตกเป็นช่วงปานกลาง'], 82:['🌧','ฝนตกเป็นช่วงหนัก'],
+  85:['🌨','หิมะตกเป็นช่วงเบา'], 86:['🌨','หิมะตกเป็นช่วงหนัก'],
+  95:['⛈','พายุฝนฟ้าคะนอง'], 96:['⛈','พายุฝนฟ้าคะนอง+ลูกเห็บเบา'], 99:['⛈','พายุฝนฟ้าคะนอง+ลูกเห็บหนัก']
+};
+function wmoIcon(c){ return (WMO_WX[c]||['❓','ไม่ทราบ'])[0]; }
+function wmoText(c){ return (WMO_WX[c]||['❓','ไม่ทราบ'])[1]; }
+
+async function fetchForecast(icao, lat, lon){
+  const key = icao.toUpperCase();
+  const now = Date.now();
+  const cache = FC_CACHE[key];
+  if(cache && (now - cache.ts) < 1800000) return cache.data; // 30 min
+
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+    + `&current_weather=true`
+    + `&hourly=temperature_2m,weathercode,precipitation_probability,windspeed_10m,winddirection_10m`
+    + `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,winddirection_10m_dominant`
+    + `&timezone=Asia%2FBangkok&forecast_days=3&windspeed_unit=kn`;
+  const data = await fetch(url).then(r=>r.json());
+  if(data && data.error) throw new Error(data.reason || 'Open-Meteo error');
+  FC_CACHE[key] = { data, ts: now };
+  return data;
+}
+
+function fcDayLabel(iso){
+  const d = new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'});
+}
+
+function buildForecastHTML(data, icao){
+  if(!data || !data.daily) return `<div class="wx-block"><div class="wx-raw wx-na">ไม่สามารถโหลดพยากรณ์อากาศได้</div></div>`;
+  const cw = data.current_weather;
+  const nowRow = cw ? `<div class="fc-now">
+      <span style="font-size:15px;">${wmoIcon(cw.weathercode)}</span>
+      <span><b>${Math.round(cw.temperature)}°C</b> · ${wmoText(cw.weathercode)}</span>
+      <span style="margin-left:auto;color:var(--muted);font-size:9px;">💨 ${cw.winddirection}° ${Math.round(cw.windspeed)}kt</span>
+      <button class="fc-toggle-btn" id="fc-toggle-${icao}" onclick="toggleForecastDetail('${icao}')">▾ 3 วัน</button>
+    </div>` : '';
+
+  // Daily (3 days)
+  const dTime = data.daily.time || [];
+  const dayCards = dTime.map((iso,i)=>{
+    const code = data.daily.weathercode[i];
+    const tmax = Math.round(data.daily.temperature_2m_max[i]);
+    const tmin = Math.round(data.daily.temperature_2m_min[i]);
+    const rain = data.daily.precipitation_probability_max[i];
+    return `<div class="fc-day">
+      <div class="fc-day-name">${i===0?'วันนี้':fcDayLabel(iso)}</div>
+      <div class="fc-day-icon">${wmoIcon(code)}</div>
+      <div class="fc-day-temp">${tmax}° <span>/ ${tmin}°</span></div>
+      <div class="fc-day-rain">💧 ${rain}%</div>
+    </div>`;
+  }).join('');
+
+  // Hourly (next 3 hours after "now")
+  const hTime = (data.hourly && data.hourly.time) || [];
+  const nowIso = (cw && cw.time) || hTime[0];
+  let startIdx = hTime.findIndex(t => t > nowIso);
+  if(startIdx < 0) startIdx = 0;
+  const hourCards = hTime.slice(startIdx, startIdx+3).map((iso,k)=>{
+    const i = startIdx+k;
+    const code = data.hourly.weathercode[i];
+    const t = Math.round(data.hourly.temperature_2m[i]);
+    const rain = data.hourly.precipitation_probability[i];
+    const hh = (iso.split('T')[1]||'').slice(0,5);
+    return `<div class="fc-hour">
+      <div class="fc-hour-time">${hh}</div>
+      <div class="fc-hour-icon">${wmoIcon(code)}</div>
+      <div class="fc-hour-temp">${t}°C</div>
+      <div class="fc-hour-rain">💧 ${rain}%</div>
+    </div>`;
+  }).join('');
+
+  return `${nowRow}
+    <div id="fc-detail-${icao}" class="fc-detail" style="display:none;">
+      <div class="wx-label">พยากรณ์ 3 วัน</div>
+      <div class="fc-row">${dayCards}</div>
+      <div class="wx-label">ชั่วโมงถัดไป</div>
+      <div class="fc-hour-row">${hourCards}</div>
+      <div class="fc-src">ข้อมูลจาก Open-Meteo (ไม่ใช่ AIP)</div>
+    </div>`;
+}
+
+function toggleForecastDetail(icao){
+  const d = document.getElementById('fc-detail-'+icao);
+  const btn = document.getElementById('fc-toggle-'+icao);
+  if(!d) return;
+  const show = d.style.display === 'none';
+  d.style.display = show ? '' : 'none';
+  if(btn) btn.textContent = show ? '▴ ซ่อน' : '▾ 3 วัน';
+}
+
+// Build the forecast HTML fragment (empty shell — filled by loadForecastIntoPopup, hidden unless layer on)
+function fcHTML(icao, lat, lon){
+  return `<div class="wx-section" id="fc-section-${icao}" style="display:none;">
+    <div class="wx-header">
+      <span class="wx-title">🌦 Forecast</span>
+      <span id="fc-status-${icao}" class="wx-status loading">⏳</span>
+      <button class="wx-refresh" onclick="loadForecastIntoPopup('${icao}',${lat},${lon},true)">↻</button>
+    </div>
+    <div id="fc-block-${icao}">
+      <div class="wx-block"><div class="wx-raw wx-na">Loading forecast…</div></div>
+    </div>
+  </div>`;
+}
+
+async function loadForecastIntoPopup(icao, lat, lon, force=false){
+  if(force) delete FC_CACHE[icao.toUpperCase()];
+  const el = document.getElementById('fc-block-'+icao);
+  if(!el) return;
+  el.innerHTML = `<div class="wx-block"><div class="wx-raw wx-na">Loading forecast…</div></div>`;
+  const stEl = document.getElementById('fc-status-'+icao);
+  if(stEl){ stEl.className='wx-status loading'; stEl.textContent='⏳'; }
+  try{
+    const data = await fetchForecast(icao, lat, lon);
+    el.innerHTML = buildForecastHTML(data, icao);
+    if(stEl){ stEl.className='wx-status fresh'; stEl.textContent='✓ Live'; }
+  }catch(err){
+    el.innerHTML = `<div class="wx-block"><div class="wx-raw wx-na">Error loading forecast (${err.message||'network error'})</div></div>`;
+    if(stEl){ stEl.className='wx-status error'; stEl.textContent='✕ Error'; }
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
