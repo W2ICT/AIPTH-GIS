@@ -369,55 +369,36 @@
     .cctv-live-wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;font-size:9px;color:var(--text2);background:rgba(0,0,0,.35);}
     .cctv-live-label{font-size:8px;color:#06b6d4;text-align:center;margin-top:3px;font-weight:600;}
     .cctv-src{font-size:8px;color:var(--muted);margin-top:6px;text-align:center;font-style:italic;}
-    .tmd-radar-marker{width:30px;height:30px;position:relative;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));}
-    .tmd-radar-sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg, rgba(37,99,235,.85), rgba(37,99,235,0) 65%);animation:tmdSweepSpin 2.4s linear infinite;}
-    .tmd-radar-dot{position:absolute;inset:4px;border-radius:50%;background:#0f172a;border:2px solid #2563eb;display:flex;align-items:center;justify-content:center;font-size:12px;}
-    @keyframes tmdSweepSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+    .tmd-radar-marker{width:26px;height:26px;border-radius:50%;background:rgba(37,99,235,.16);border:1.5px solid #2563eb;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 1px 5px rgba(0,0,0,.4);}
+    .tmd-radar-marker.active{background:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.35),0 1px 5px rgba(0,0,0,.4);}
 
     @keyframes spin{to{transform:rotate(360deg);}}
     .wx-spin{animation:spin .9s linear infinite;display:inline-block;}
     #wxGlobalDot{width:8px;height:8px;border-radius:50%;background:#6b7b8d;display:inline-block;align-self:center;flex-shrink:0;cursor:help;transition:background .3s;}
 
-    /* ══ E6B SIDEBAR ══ */
-    .e6b-sb{width:290px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width .25s,min-width .25s;}
-    .e6b-sb.collapsed{width:0;min-width:0;border-left:none;}
-    .e6b-tog{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:900;width:18px;height:44px;background:#dc2626;border:1px solid #b91c1c;border-right:none;border-radius:7px 0 0 7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;transition:right .25s,background .15s;box-shadow:-2px 0 6px rgba(220,38,38,.4);}
-    .e6b-tog:hover{background:#b91c1c;color:#fff;}
-    .e6b-hdr{background:linear-gradient(135deg,#0d1a3a,#132260);padding:8px 10px;display:flex;align-items:center;gap:8px;flex-shrink:0;border-bottom:1px solid var(--border);}
-    .e6b-badge{background:rgba(14,165,233,.2);border:1px solid rgba(14,165,233,.5);color:#38bdf8;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;}
-    .e6b-body{display:flex;flex:1;overflow:hidden;}
-    .e6b-nav{width:82px;flex-shrink:0;background:var(--bg);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
-    .e6b-nav::-webkit-scrollbar{width:0;}
-    .e6b-nav-item{padding:9px 5px 8px;text-align:center;cursor:pointer;border-left:2px solid transparent;border-bottom:1px solid var(--border2);font-size:8.5px;color:var(--muted);font-weight:600;transition:background .12s,color .12s,border-color .12s;line-height:1.3;user-select:none;}
-    .e6b-nav-item:hover{background:var(--surface);color:var(--text2);}
-    .e6b-nav-item:last-child{border-bottom:none;}
-    .e6b-nav-item.active{border-left-color:var(--accent);background:var(--surface2);color:var(--accent2);font-weight:700;}
-    .e6b-nav-item .ni-icon{font-size:14px;display:block;margin-bottom:3px;}
-    .e6b-content{flex:1;overflow-y:auto;padding:9px;min-width:0;}
-    .e6b-content::-webkit-scrollbar{width:3px;}
-    .e6b-content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-    .e6b-panel{display:none;}
-    .e6b-panel.show{display:block;}
-    .e6b-sect-title{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border2);}
-    .e6b-row{margin-bottom:7px;}
-    .e6b-lbl{display:block;font-size:9px;color:var(--muted);margin-bottom:2px;font-weight:600;}
-    .e6b-irow{display:flex;align-items:center;gap:4px;margin-bottom:3px;}
-    .e6b-inp{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:4px 7px;font-size:10px;outline:none;min-width:0;}
-    .e6b-inp:focus{border-color:var(--accent);}
-    .e6b-inp::placeholder{color:var(--muted);}
-    .e6b-unit{font-size:9px;color:var(--muted);white-space:nowrap;flex-shrink:0;}
-    .e6b-sel{background:var(--bg);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:3px 4px;font-size:9px;outline:none;flex-shrink:0;}
-    .e6b-result-box{background:rgba(14,165,233,.05);border:1px solid rgba(14,165,233,.2);border-radius:7px;padding:8px;margin-top:8px;}
-    .e6b-result-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid var(--border2);}
-    .e6b-result-row:last-child{border-bottom:none;}
-    .e6b-result-row.hi .e6b-result-val{color:var(--accent2);font-size:12px;font-weight:700;}
-    .e6b-result-lbl{font-size:9px;color:var(--muted);font-weight:600;}
-    .e6b-result-val{font-size:10px;color:var(--text2);font-family:monospace;font-weight:600;}
-    .e6b-hint{font-size:9px;color:var(--muted);text-align:center;padding:5px 0;}
-    .e6b-hint-sm{font-size:9px;color:var(--muted);margin-bottom:6px;font-style:italic;}
-    .e6b-conv-group{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border2);}
-    .e6b-conv-group:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
-    .e6b-conv-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+/* ══ TMD RADAR ON-MAP LABEL HUD ══ */
+    #tmdHud{position:absolute;right:12px;top:64px;z-index:800;background:var(--surface);border:1px solid var(--border);border-left:3px solid #2563eb;border-radius:9px;padding:10px 11px;width:250px;max-height:calc(100vh - 150px);overflow-y:auto;box-shadow:0 4px 20px var(--shadow);display:none;font-size:10px;}
+    #tmdHud.show{display:block;}
+    #tmdHud .tmh-title{font-size:11px;font-weight:700;color:#60a5fa;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+    #tmdHud .tmh-title .dt-x{cursor:pointer;color:var(--muted);font-size:13px;}
+    #tmdHud .tmh-title .dt-x:hover{color:var(--text);}
+
+    /* ══ RAINVIEWER RADAR ON-MAP LABEL HUD ══ */
+    #rainHud{position:absolute;right:12px;top:340px;z-index:800;background:var(--surface);border:1px solid var(--border);border-left:3px solid #0d9488;border-radius:9px;padding:10px 11px;width:230px;box-shadow:0 4px 20px var(--shadow);display:none;font-size:10px;}
+    #rainHud.show{display:block;}
+    #rainHud .rah-title{font-size:11px;font-weight:700;color:#2dd4bf;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+    #rainHud .rah-title .dt-x{cursor:pointer;color:var(--muted);font-size:13px;}
+    #rainHud .rah-title .dt-x:hover{color:var(--text);}
+
+    /* ══ Shared content styling for the radar HUDs above ══ */
+    .radar-hint{font-size:9px;color:var(--muted);text-align:center;padding:10px 0;}
+    .radar-station-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border2);}
+    .radar-station-row:last-child{border-bottom:none;}
+    .radar-station-name{flex:1;font-size:10px;color:var(--text2);}
+    .radar-station-x{cursor:pointer;color:var(--muted);font-size:12px;padding:2px 4px;}
+    .radar-station-x:hover{color:#ef4444;}
+    .radar-opacity-row{display:flex;align-items:center;gap:6px;margin-top:6px;}
+    .radar-opacity-row span{font-size:9px;color:var(--muted);white-space:nowrap;}
 
     /* ══ iOS SAFE-AREA & HEIGHT FIX ══ */
     body{height:100dvh;}
@@ -487,25 +468,10 @@
       .sb-toggle{left:0;border-radius:7px;border-left:1px solid var(--border);}
       .sidebar.mobile-open ~ .sb-toggle{left:285px;border-radius:0 7px 7px 0;}
 
-      /* E6B sidebar — fullscreen overlay from right */
-      .e6b-sb{
-        position:fixed !important;right:0;top:0;bottom:0;
-        width:88vw !important;max-width:340px;
-        z-index:950;
-        border-left:1px solid var(--border);
-        border-radius:12px 0 0 12px;
-        box-shadow:-6px 0 28px rgba(0,0,0,.65);
-        transform:translateX(0);
-        transition:transform .3s ease !important;
-      }
-      .e6b-sb.collapsed{
-        width:88vw !important;min-width:0 !important;
-        transform:translateX(105%);
-      }
-      .e6b-tog{
-        width:28px;height:56px;font-size:12px;
-        right:0 !important;
-      }
+      /* TMD / RainViewer radar HUDs — pin to right edge, narrower */
+      #tmdHud, #rainHud{right:8px;width:auto;max-width:230px;}
+      #tmdHud{top:auto;bottom:44px;max-height:40vh;}
+      #rainHud{top:auto;bottom:44px;}
 
       /* Distance tool */
       #map{flex:1;}
@@ -605,11 +571,6 @@
           <span class="layer-label" id="lbl-hospitals">Hospitals (OSM)</span>
           <div class="ltog" id="ltog-hospitals"></div>
         </div>
-        <div class="layer-row" onclick="toggleLayer('dwrCctv')">
-          <div class="layer-dot" style="background:#0891b2;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>
-          <span class="layer-label" id="lbl-dwrCctv">กล้อง CCTV แหล่งน้ำ (DWR)</span>
-          <div class="ltog" id="ltog-dwrCctv"></div>
-        </div>
         <div class="layer-row" onclick="toggleLayer('dohCctv')">
           <div class="layer-dot" style="background:#ea580c;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;">🛣</div>
           <span class="layer-label" id="lbl-dohCctv">กล้องทางหลวง (DOH/iTIC)</span>
@@ -639,11 +600,6 @@
           <div class="layer-dot" style="background:#22c55e;border-radius:50%;"></div>
           <span class="layer-label">รัศมีปฏิบัติการ ฮ. (ROA)</span>
           <div class="ltog" id="ltog-heliRadius"></div>
-        </div>
-        <div class="layer-row" onclick="toggleLayer('wxForecast')">
-          <div class="layer-dot" style="background:#38bdf8;border-radius:50%;"></div>
-          <span class="layer-label">พยากรณ์อากาศ 3 วัน (Open-Meteo)</span>
-          <div class="ltog" id="ltog-wxForecast"></div>
         </div>
 
       </div>
@@ -697,332 +653,6 @@
     <div id="hint3d">🖱 ลาก = เลื่อน · Ctrl+ลาก / สองนิ้ว = หมุน+เอียง · Scroll = ซูม · Esc = กลับ 2D</div>
   </div>
 
-  <!-- E6B TOGGLE -->
-  <div class="e6b-tog" id="e6bTog" onclick="toggleE6B()">◀</div>
-
-  <!-- E6B SIDEBAR -->
-  <div class="e6b-sb collapsed" id="e6bSb">
-    <div class="e6b-hdr">
-      <span style="font-size:15px;">✈</span>
-      <div>
-        <div style="font-size:11px;font-weight:700;color:#fff;">E6B Flight Computer</div>
-        <div style="font-size:9px;color:rgba(255,255,255,.55);">Aviation Calculator</div>
-      </div>
-      <div class="e6b-badge" style="margin-left:auto;">E6B</div>
-    </div>
-
-    <div class="e6b-body">
-      <div class="e6b-nav">
-        <div class="e6b-nav-item active" data-e6b="wind" onclick="e6bTab('wind')"><span class="ni-icon">💨</span>Wind</div>
-        <div class="e6b-nav-item" data-e6b="tas"  onclick="e6bTab('tas')"><span class="ni-icon">✈</span>TAS / DA</div>
-        <div class="e6b-nav-item" data-e6b="tsd"  onclick="e6bTab('tsd')"><span class="ni-icon">⏱</span>T · S · D</div>
-        <div class="e6b-nav-item" data-e6b="fuel" onclick="e6bTab('fuel')"><span class="ni-icon">⛽</span>Fuel</div>
-        <div class="e6b-nav-item" data-e6b="conv" onclick="e6bTab('conv')"><span class="ni-icon">⇌</span>Convert</div>
-        <div class="e6b-nav-item" data-e6b="pa"   onclick="e6bTab('pa')"><span class="ni-icon">🔼</span>PA / QNH</div>
-        <div class="e6b-nav-item" data-e6b="rwy"  onclick="e6bTab('rwy')"><span class="ni-icon">🛬</span>RWY Wind</div>
-        <div class="e6b-nav-item" data-e6b="cld"  onclick="e6bTab('cld')"><span class="ni-icon">☁</span>Cloud Base</div>
-        <div class="e6b-nav-item" data-e6b="hold" onclick="e6bTab('hold')"><span class="ni-icon">🔄</span>Holding</div>
-        <div class="e6b-nav-item" data-e6b="tod"  onclick="e6bTab('tod')"><span class="ni-icon">📉</span>TOD</div>
-        <div class="e6b-nav-item" data-e6b="rdd"  onclick="e6bTab('rdd')"><span class="ni-icon">📐</span>Rate / Dist</div>
-      </div>
-
-    <div class="e6b-content">
-
-      <!-- ── WIND TRIANGLE ── -->
-      <div class="e6b-panel show" id="e6b-wind">
-        <div class="e6b-sect-title">Wind Correction Angle &amp; Ground Speed</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">True Course (TC)</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="w_tc"  type="number" min="0" max="360" placeholder="090" oninput="calcWind()"><span class="e6b-unit">°</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">True Airspeed (TAS)</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="w_tas" type="number" min="0" placeholder="120" oninput="calcWind()"><span class="e6b-unit">kts</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Wind From</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="w_wd"  type="number" min="0" max="360" placeholder="360" oninput="calcWind()"><span class="e6b-unit">°</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Wind Speed</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="w_ws"  type="number" min="0" placeholder="20" oninput="calcWind()"><span class="e6b-unit">kts</span></div>
-        </div>
-        <div class="e6b-result-box" id="wind-result"><div class="e6b-hint">Fill all fields above</div></div>
-      </div>
-
-      <!-- ── TAS / DENSITY ALTITUDE ── -->
-      <div class="e6b-panel" id="e6b-tas">
-        <div class="e6b-sect-title">True Airspeed &amp; Density Altitude</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">CAS / IAS</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="t_ias" type="number" min="0" placeholder="120" oninput="calcTASe6b()"><span class="e6b-unit">kts</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Pressure Altitude</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="t_alt" type="number" placeholder="5000" oninput="calcTASe6b()"><span class="e6b-unit">ft</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Outside Air Temp (OAT)</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="t_oat" type="number" placeholder="15" oninput="calcTASe6b()"><span class="e6b-unit">°C</span></div>
-        </div>
-        <div class="e6b-result-box" id="tas-result"><div class="e6b-hint">Fill all fields above</div></div>
-      </div>
-
-      <!-- ── TIME / SPEED / DISTANCE ── -->
-      <div class="e6b-panel" id="e6b-tsd">
-        <div class="e6b-sect-title">Time · Speed · Distance</div>
-        <div class="e6b-hint-sm">Leave exactly one field blank — it will be solved</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Distance</label>
-          <div class="e6b-irow">
-            <input class="e6b-inp" id="tsd_d" type="number" min="0" placeholder="blank to solve" oninput="calcTSD()">
-            <select class="e6b-sel" id="tsd_du" onchange="calcTSD()">
-              <option value="nm">nm</option><option value="km">km</option><option value="sm">sm</option>
-            </select>
-          </div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Speed</label>
-          <div class="e6b-irow">
-            <input class="e6b-inp" id="tsd_s" type="number" min="0" placeholder="blank to solve" oninput="calcTSD()">
-            <select class="e6b-sel" id="tsd_su" onchange="calcTSD()">
-              <option value="kts">kts</option><option value="kmh">km/h</option><option value="mph">mph</option>
-            </select>
-          </div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Time (blank to solve)</label>
-          <div class="e6b-irow">
-            <input class="e6b-inp" id="tsd_h" type="number" min="0" max="99" placeholder="h" oninput="calcTSD()" style="width:56px;flex:none;">
-            <span class="e6b-unit">h</span>
-            <input class="e6b-inp" id="tsd_m" type="number" min="0" max="59" placeholder="min" oninput="calcTSD()" style="width:56px;flex:none;">
-            <span class="e6b-unit">min</span>
-          </div>
-        </div>
-        <div class="e6b-result-box" id="tsd-result"><div class="e6b-hint">Leave one field blank</div></div>
-      </div>
-
-      <!-- ── FUEL PLANNING ── -->
-      <div class="e6b-panel" id="e6b-fuel">
-        <div class="e6b-sect-title">Fuel Planning</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Fuel Flow</label>
-          <div class="e6b-irow">
-            <input class="e6b-inp" id="f_flow" type="number" min="0" placeholder="50" oninput="calcFuel()">
-            <select class="e6b-sel" id="f_flowu" onchange="calcFuel()">
-              <option value="lh">L/hr</option><option value="usg">USG/hr</option><option value="kgh">kg/hr</option>
-            </select>
-          </div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Flight Time</label>
-          <div class="e6b-irow">
-            <input class="e6b-inp" id="f_h" type="number" min="0" max="24" placeholder="h" oninput="calcFuel()" style="width:56px;flex:none;">
-            <span class="e6b-unit">h</span>
-            <input class="e6b-inp" id="f_m" type="number" min="0" max="59" placeholder="min" oninput="calcFuel()" style="width:56px;flex:none;">
-            <span class="e6b-unit">min</span>
-          </div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Fuel Available</label>
-          <div class="e6b-irow">
-            <input class="e6b-inp" id="f_avail" type="number" min="0" placeholder="optional" oninput="calcFuel()">
-            <select class="e6b-sel" id="f_availu" onchange="calcFuel()">
-              <option value="L">L</option><option value="USG">USG</option><option value="kg">kg</option>
-            </select>
-          </div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Reserve</label>
-          <div class="e6b-irow">
-            <input class="e6b-inp" id="f_res" type="number" min="0" placeholder="45" oninput="calcFuel()">
-            <span class="e6b-unit">min</span>
-          </div>
-        </div>
-        <div class="e6b-result-box" id="fuel-result"><div class="e6b-hint">Enter fuel flow + time or fuel available</div></div>
-      </div>
-
-      <!-- ── UNIT CONVERSIONS ── -->
-      <div class="e6b-panel" id="e6b-conv">
-        <div class="e6b-sect-title">Unit Conversions</div>
-
-        <div class="e6b-conv-group">
-          <div class="e6b-conv-label">Distance</div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_nm"  type="number" placeholder="nm"   oninput="cvDist('nm')"> <span class="e6b-unit" style="min-width:30px;">nm</span></div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_km"  type="number" placeholder="km"   oninput="cvDist('km')"> <span class="e6b-unit" style="min-width:30px;">km</span></div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_sm"  type="number" placeholder="sm"   oninput="cvDist('sm')"> <span class="e6b-unit" style="min-width:30px;">sm</span></div>
-        </div>
-
-        <div class="e6b-conv-group">
-          <div class="e6b-conv-label">Altitude</div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_ft"  type="number" placeholder="ft"   oninput="cvAlt('ft')">  <span class="e6b-unit" style="min-width:30px;">ft</span></div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_m"   type="number" placeholder="m"    oninput="cvAlt('m')">   <span class="e6b-unit" style="min-width:30px;">m</span></div>
-        </div>
-
-        <div class="e6b-conv-group">
-          <div class="e6b-conv-label">Speed</div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_kts" type="number" placeholder="kts"  oninput="cvSpd('kts')"> <span class="e6b-unit" style="min-width:30px;">kts</span></div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_kmh" type="number" placeholder="km/h" oninput="cvSpd('kmh')"> <span class="e6b-unit" style="min-width:30px;">km/h</span></div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_mph" type="number" placeholder="mph"  oninput="cvSpd('mph')"> <span class="e6b-unit" style="min-width:30px;">mph</span></div>
-        </div>
-
-        <div class="e6b-conv-group">
-          <div class="e6b-conv-label">Pressure</div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_hpa"  type="number" placeholder="hPa"  oninput="cvPres('hpa')">  <span class="e6b-unit" style="min-width:30px;">hPa</span></div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_inhg" type="number" placeholder="inHg" oninput="cvPres('inhg')" step="0.01"> <span class="e6b-unit" style="min-width:30px;">inHg</span></div>
-        </div>
-
-        <div class="e6b-conv-group">
-          <div class="e6b-conv-label">Temperature</div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_c" type="number" placeholder="°C" oninput="cvTemp('c')"> <span class="e6b-unit" style="min-width:30px;">°C</span></div>
-          <div class="e6b-irow"><input class="e6b-inp" id="cv_f" type="number" placeholder="°F" oninput="cvTemp('f')"> <span class="e6b-unit" style="min-width:30px;">°F</span></div>
-        </div>
-
-      </div><!-- /conv -->
-
-      <!-- ── PRESSURE ALTITUDE ── -->
-      <div class="e6b-panel" id="e6b-pa">
-        <div class="e6b-sect-title">Pressure Altitude</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Field / Airport Elevation</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="pa_elev" type="number" placeholder="0" oninput="calcPA()"><span class="e6b-unit">ft MSL</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Altimeter Setting (QNH)</label>
-          <div class="e6b-irow">
-            <input class="e6b-inp" id="pa_qnh" type="number" placeholder="29.92" step="0.01" oninput="calcPA()">
-            <select class="e6b-sel" id="pa_qnh_u" onchange="calcPA()">
-              <option value="inhg">inHg</option>
-              <option value="hpa">hPa</option>
-            </select>
-          </div>
-        </div>
-        <div class="e6b-result-box" id="pa-result"><div class="e6b-hint">Fill fields above</div></div>
-      </div>
-
-      <!-- ── RUNWAY WIND COMPONENTS ── -->
-      <div class="e6b-panel" id="e6b-rwy">
-        <div class="e6b-sect-title">Runway Wind Components</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Runway Number (01–36)</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="rwy_hdg" type="number" min="1" max="36" placeholder="27" oninput="calcRWY()"><span class="e6b-unit">RWY</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Wind From</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="rwy_wdfrom" type="number" min="0" max="360" placeholder="270" oninput="calcRWY()"><span class="e6b-unit">°</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Wind Speed</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="rwy_wspd" type="number" min="0" placeholder="15" oninput="calcRWY()"><span class="e6b-unit">kts</span></div>
-        </div>
-        <div class="e6b-result-box" id="rwy-result"><div class="e6b-hint">Fill all fields above</div></div>
-      </div>
-
-      <!-- ── CLOUD BASE ── -->
-      <div class="e6b-panel" id="e6b-cld">
-        <div class="e6b-sect-title">Cloud Base Estimate</div>
-        <div class="e6b-hint-sm">Based on temp/dewpoint spread (convective clouds)</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Temperature (OAT)</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="cld_temp" type="number" placeholder="25" oninput="calcCloud()"><span class="e6b-unit">°C</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Dewpoint</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="cld_dp" type="number" placeholder="14" oninput="calcCloud()"><span class="e6b-unit">°C</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Station Elevation</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="cld_elev" type="number" placeholder="0" oninput="calcCloud()"><span class="e6b-unit">ft (optional)</span></div>
-        </div>
-        <div class="e6b-result-box" id="cld-result"><div class="e6b-hint">Fill temperature and dewpoint</div></div>
-      </div>
-
-      <!-- ── HOLDING PATTERN ENTRY ── -->
-      <div class="e6b-panel" id="e6b-hold">
-        <div class="e6b-sect-title">Holding Pattern Entry</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Aircraft Heading</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="h_hdg" type="number" min="0" max="360" placeholder="045" oninput="calcHolding()"><span class="e6b-unit">°</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Inbound Course (to fix)</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="h_inbound" type="number" min="0" max="360" placeholder="090" oninput="calcHolding()"><span class="e6b-unit">°</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Turn Direction</label>
-          <div class="e6b-irow">
-            <select class="e6b-sel" id="h_turn" onchange="calcHolding()" style="flex:1;">
-              <option value="R">Right — Standard</option>
-              <option value="L">Left — Non-standard</option>
-            </select>
-          </div>
-        </div>
-        <div class="e6b-result-box" id="hold-result"><div class="e6b-hint">Fill aircraft heading and inbound course</div></div>
-      </div>
-
-      <!-- ── TOP OF DESCENT ── -->
-      <div class="e6b-panel" id="e6b-tod">
-        <div class="e6b-sect-title">Top of Descent (TOD)</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Current Altitude</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="tod_cur" type="number" placeholder="10000" oninput="calcTOD()"><span class="e6b-unit">ft</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Target Altitude</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="tod_tgt" type="number" placeholder="3000" oninput="calcTOD()"><span class="e6b-unit">ft</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Ground Speed</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="tod_gs" type="number" placeholder="250" oninput="calcTOD()"><span class="e6b-unit">kts</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Descent Angle</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="tod_angle" type="number" placeholder="3.0" step="0.1" oninput="calcTOD()"><span class="e6b-unit">° (default 3°)</span></div>
-        </div>
-        <div class="e6b-result-box" id="tod-result"><div class="e6b-hint">Fill altitude and ground speed</div></div>
-      </div>
-
-      <!-- ── RATE OF DESCENT vs DISTANCE ── -->
-      <div class="e6b-panel" id="e6b-rdd">
-        <div class="e6b-sect-title">Rate of Descent ↔ Distance</div>
-        <div class="e6b-hint-sm">Enter GS + angle OR GS + rate — the other is solved</div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Ground Speed</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="rdd_gs" type="number" min="1" placeholder="140" oninput="calcRDD()"><span class="e6b-unit">kts</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Descent Angle</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="rdd_angle" type="number" step="0.1" placeholder="3.0 (blank to solve)" oninput="calcRDD()"><span class="e6b-unit">°</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Descent Rate</label>
-          <div class="e6b-irow"><input class="e6b-inp" id="rdd_rate" type="number" placeholder="750 (blank to solve)" oninput="calcRDD()"><span class="e6b-unit">ft/min</span></div>
-        </div>
-        <div class="e6b-row">
-          <label class="e6b-lbl">Altitude to Lose <span style="font-weight:400;">(optional)</span></label>
-          <div class="e6b-irow"><input class="e6b-inp" id="rdd_alt" type="number" placeholder="3000" oninput="calcRDD()"><span class="e6b-unit">ft</span></div>
-        </div>
-        <div class="e6b-result-box" id="rdd-result"><div class="e6b-hint">Enter ground speed to start</div></div>
-
-        <!-- Quick reference table -->
-        <div style="margin-top:10px;">
-          <div class="e6b-sect-title" style="margin-bottom:5px;">3° ILS Quick Reference</div>
-          <table style="width:100%;border-collapse:collapse;font-size:9px;">
-            <thead>
-              <tr style="color:var(--muted);font-weight:700;">
-                <th style="text-align:left;padding:2px 4px;border-bottom:1px solid var(--border2);">GS (kts)</th>
-                <th style="text-align:right;padding:2px 4px;border-bottom:1px solid var(--border2);">Rate (ft/min)</th>
-                <th style="text-align:right;padding:2px 4px;border-bottom:1px solid var(--border2);">nm/1000ft</th>
-              </tr>
-            </thead>
-            <tbody id="rdd-ref-table"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </div><!-- /e6b-content -->
-    </div><!-- /e6b-body -->
-  </div><!-- /e6b-sb -->
 
 </div>
 
@@ -1329,6 +959,16 @@
   <div class="hp-disc">ประมาณการวางแผน (still-air) — ไม่ใช้แทน RFM / DASH-10 / performance charts / checklist</div>
 </div>
 
+<div id="tmdHud">
+  <div class="tmh-title">🌧 เรดาร์ฝน TMD<span class="dt-x" onclick="toggleLayer('tmdRadar')">✕</span></div>
+  <div id="tmdHudBody"></div>
+</div>
+
+<div id="rainHud">
+  <div class="rah-title">🌐 RainViewer<span class="dt-x" onclick="toggleLayer('rainRadar')">✕</span></div>
+  <div id="rainHudBody"></div>
+</div>
+
 <div class="stats">
   <div>Aerodromes: <span id="stAP">48</span></div>
   <div>Nav Aids: <span id="stNavAids">60</span></div>
@@ -1354,12 +994,6 @@ function toggleTheme(){
   currentTheme = themes[(themes.indexOf(currentTheme)+1) % themes.length];
   document.documentElement.setAttribute('data-theme', currentTheme);
   document.getElementById('themeBtn').textContent = icons[currentTheme];
-  // Only swap CARTO tiles — leave satellite/hybrid/OSM untouched if active
-  const cartoActive = map.hasLayer(darkTile) || map.hasLayer(lightTile);
-  if(cartoActive){
-    [darkTile,lightTile].forEach(t=>map.removeLayer(t));
-    (currentTheme==='light' ? lightTile : darkTile).addTo(map);
-  }
 }
 // keep isDark as alias for any legacy references
 Object.defineProperty(window,'isDark',{get:()=>currentTheme==='dark'});
@@ -1576,14 +1210,11 @@ const map=L.map('map',{center:[13,101],zoom:6,zoomControl:false,rotate:true,touc
 L.control.zoom({position:'bottomright'}).addTo(map);
 
 // maxNativeZoom = tile provider's actual limit; maxZoom = Leaflet upscales beyond native
-const darkTile  = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxNativeZoom:19,maxZoom:23});
-const lightTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxNativeZoom:19,maxZoom:23});
 const satTile   = L.tileLayer('https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{attribution:'&copy; Google',subdomains:['0','1','2','3'],maxNativeZoom:22,maxZoom:23});
 const satHybrid = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',{attribution:'&copy; Google',subdomains:['0','1','2','3'],maxNativeZoom:22,maxZoom:23});
-const osmTile   = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OSM',maxNativeZoom:19,maxZoom:23});
 
 satTile.addTo(map);
-L.control.layers({"🌑 Dark":darkTile,"☀️ Light":lightTile,"🛰 Satellite":satTile,"🛰 Hybrid":satHybrid,"🗺 OSM":osmTile},{},{position:'bottomright'}).addTo(map);
+L.control.layers({"🛰 Satellite":satTile,"🛰 Hybrid":satHybrid},{},{position:'bottomright'}).addTo(map);
 
 // Live coordinate readout + on-pause terrain elevation (SRTM via _fetchElev).
 // Elevation is fetched only when the pointer settles (debounced), cached by a
@@ -1878,13 +1509,6 @@ const LG={
     })
   }),
   bn2:     L.layerGroup(),
-  dwrCctv: L.markerClusterGroup({
-    maxClusterRadius:50,
-    iconCreateFunction:cl=>L.divIcon({
-      html:`<div style="width:28px;height:28px;background:#0891b2;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.45);">${cl.getChildCount()}</div>`,
-      iconSize:[28,28],iconAnchor:[14,14],className:''
-    })
-  }),
   dohCctv: L.markerClusterGroup({
     maxClusterRadius:50,
     iconCreateFunction:cl=>L.divIcon({
@@ -1895,7 +1519,7 @@ const LG={
   tmdRadar: L.layerGroup(),
 };
 // Default: only Aerodromes ON; all others OFF
-const LS={airports:true,navAids:false,hospitals:false,bn2:false,wxForecast:false,dwrCctv:false,dohCctv:false,tmdRadar:false,rainRadar:false};
+const LS={airports:true,navAids:false,hospitals:false,bn2:false,dohCctv:false,tmdRadar:false,rainRadar:false};
 // Add only active layers to map on startup
 Object.entries(LG).forEach(([k,g])=>{ if(LS[k]!==false) g.addTo(map); });
 
@@ -1926,21 +1550,9 @@ function toggleLayer(k){
   document.getElementById('ltog-'+k).classList.toggle('on',LS[k]);
   updateLayerCount();
   if(k==='hospitals'&&LS[k]&&!hospitalsLoaded){fetchHospitals();return;}
-  if(k==='dwrCctv'&&LS[k]&&!dwrCctvLoaded){fetchDwrCctv();return;}
   if(k==='dohCctv'&&LS[k]&&!dohCctvLoaded){fetchDohCctv();return;}
   if(k==='rainRadar'){ LS[k]?rainRadarStart():rainRadarStop(); return; }
-  if(k==='tmdRadar' && !LS[k]) tmdStationHide(); // clear any shown station image when the layer's turned off
-  if(k==='wxForecast'){
-    document.querySelectorAll('[id^="fc-section-"]').forEach(el=>{
-      el.style.display = LS[k] ? '' : 'none';
-      if(LS[k]){
-        const icao = el.id.replace('fc-section-','');
-        const ap = airports.find(a=>a.icao===icao);
-        if(ap) loadForecastIntoPopup(ap.icao, ap.lat, ap.lon);
-      }
-    });
-    return;
-  }
+  if(k==='tmdRadar'){ if(!LS[k]){ tmdStationHideAll(); tmdCompositeHide(); } tmdHudRender(); }
   if(k==='rtafRange'){
     if(LS[k]){ LG[k].addTo(map); rtafRouteLG.addTo(map); rtafRefresh(); }
     else { map.removeLayer(LG[k]); map.removeLayer(rtafRouteLG); rtafChain=[]; rtafRenderHud(); }
@@ -2032,130 +1644,6 @@ async function fetchHospitals(){
     if(tog) tog.classList.remove('on');
     if(lbl) lbl.textContent='Hospitals (OSM)';
     alert('ไม่สามารถโหลดข้อมูลโรงพยาบาลได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
-  }
-}
-
-// ═══════════════════════════════════════════
-// DWR CCTV (Department of Water Resources — telemetry station cameras, nationwide)
-//   Source: https://telemetry.dwr.go.th/api (public, no key, no published terms).
-//   The raw API embeds live camera credentials in cctvSnapshotLink/cctvVideoLink —
-//   those fields are NEVER read here. Only entity.id/stationCode/names + the
-//   station's lat/lon are kept; the live image URL is derived from stationCode
-//   at click time (mjpegStream), matching the safe pattern documented by the
-//   flukelaster/SIAHRA project (checked 2026-09-27).
-// ═══════════════════════════════════════════
-let dwrCctvLoaded=false;
-const DWR_API='https://telemetry.dwr.go.th/api';
-const DWR_CCTV_ICON=L.divIcon({
-  html:`<div style="width:26px;height:26px;background:#0891b2;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.45);">📹</div>`,
-  iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-15],className:''
-});
-
-function dwrCctvPopupHTML(it, lat, lon){
-  const name = it.nameTh || it.nameEn || it.stationCode;
-  const nameEn = it.nameEn && it.nameEn!==it.nameTh ? it.nameEn : '';
-  const wrapId = 'cctv-live-'+it.id;
-  return `<div class="cctv-popup">
-    <div class="cctv-hdr">
-      <div class="cctv-badge"><span style="width:5px;height:5px;border-radius:50%;background:#06b6d4;display:inline-block"></span>DWR CCTV</div>
-      <div class="cctv-name">${name}</div>
-      ${nameEn?`<div class="cctv-name-en">${nameEn}</div>`:''}
-    </div>
-    <div class="cctv-body">
-      ${it.place?`<div class="cctv-row"><span class="cctv-lbl">ที่ตั้ง</span><span class="cctv-val">${it.place}</span></div>`:''}
-      <div class="cctv-row"><span class="cctv-lbl">รหัสสถานี</span><span class="cctv-val">${it.stationCode}</span></div>
-      <div class="cctv-row"><span class="cctv-lbl">พิกัด</span><span class="cctv-val" style="font-family:monospace;font-size:9px;">${toDDM(lat,true)} ${toDDM(lon,false)}</span></div>
-      <div class="cctv-live-wrap" id="${wrapId}">
-        <div class="wx-na" style="font-size:10px;">⏳ กำลังเชื่อมต่อภาพสด…</div>
-      </div>
-      <div class="cctv-src">กล้องสถานีโทรมาตร กรมทรัพยากรน้ำ (DWR) — ไม่มีเงื่อนไขการใช้งานที่เผยแพร่ · เชื่อมต่อใหม่ทุก 15 วิ</div>
-    </div>
-  </div>`;
-}
-
-let _dwrLiveTimer=null, _dwrLiveStopTimer=null;
-function dwrStopLive(){
-  if(_dwrLiveTimer) clearInterval(_dwrLiveTimer);
-  if(_dwrLiveStopTimer) clearTimeout(_dwrLiveStopTimer);
-  _dwrLiveTimer=null; _dwrLiveStopTimer=null;
-}
-function dwrStartLive(stationCode, wrapId){
-  const wrap=document.getElementById(wrapId);
-  if(!wrap) return;
-  dwrStopLive();
-  const mk=()=>`${DWR_API}/public/cctv/mjpegStream?stnCode=${encodeURIComponent(stationCode)}&_=${Date.now()}`;
-  wrap.innerHTML=`<div class="cctv-live-imgbox">
-      <img class="cctv-live-img" onerror="this.parentElement.innerHTML='<div class=&quot;wx-na&quot; style=&quot;font-size:10px;&quot;>กล้องนี้ไม่ตอบสนองตอนนี้</div>'">
-      <div class="cctv-live-wait" id="${wrapId}-wait">⏳ กำลังรอภาพ…</div>
-    </div>
-    <div class="cctv-live-label">🔴 LIVE · เชื่อมต่อใหม่ทุก 15 วิ</div>`;
-  const img=wrap.querySelector('img.cctv-live-img');
-  img.addEventListener('load', ()=>{ document.getElementById(wrapId+'-wait')?.remove(); }, {once:true});
-  img.src=mk();
-  // Some DWR stations answer 200 but never send a frame — say so instead of a silent black box
-  setTimeout(()=>{
-    const waitEl=document.getElementById(wrapId+'-wait');
-    if(waitEl) waitEl.textContent='⚠ กล้องนี้อาจออฟไลน์ชั่วคราว (ไม่มีภาพส่งมา)';
-  },8000);
-  _dwrLiveTimer=setInterval(()=>{
-    const img=wrap.querySelector('img.cctv-live-img');
-    if(img) img.src=mk(); else dwrStopLive();
-  },15000);
-  _dwrLiveStopTimer=setTimeout(()=>{
-    dwrStopLive();
-    wrap.innerHTML=`<button class="cctv-live-btn" onclick="dwrStartLive('${stationCode}','${wrapId}')">▶ ดูภาพสดต่อ</button>`;
-  },300000);
-}
-map.on('popupclose', dwrStopLive);
-
-async function fetchDwrCctv(){
-  const lbl=document.getElementById('lbl-dwrCctv');
-  const tog=document.getElementById('ltog-dwrCctv');
-  if(lbl) lbl.textContent='⏳ กำลังโหลดรายชื่อกล้อง…';
-  try{
-    const listRes=await fetch(`${DWR_API}/public/reportCctv/listPaginate`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({paginate:{page:1,pageSize:200,orders:[]},search:{}})
-    });
-    if(!listRes.ok) throw new Error('HTTP '+listRes.status);
-    const listJson=await listRes.json();
-    const results=listJson?.value?.results||[];
-    // Allowlist only — never keep cctvSnapshotLink/cctvVideoLink (embed live camera credentials)
-    const items=results.map(r=>({
-      id:r?.entity?.id, stationCode:r?.entity?.stationCode,
-      nameTh:r?.entity?.stnNameTh||null, nameEn:r?.entity?.stnNameEn||null,
-      place:r?.districtNameTh||r?.provinceNameTh||null
-    })).filter(x=>x.id&&x.stationCode);
-
-    let done=0, ok=0;
-    for(const it of items){
-      if(lbl) lbl.textContent=`⏳ โหลดพิกัดกล้อง… (${done}/${items.length})`;
-      try{
-        const sr=await fetch(`${DWR_API}/public/station/getByCode/${encodeURIComponent(it.stationCode)}`);
-        if(sr.ok){
-          const sj=await sr.json();
-          const pt=sj?.value?.fullCon?.entity?.point;
-          if(pt && Number.isFinite(pt.lat) && Number.isFinite(pt.lon) && !(pt.lat===0&&pt.lon===0)){
-            const m=L.marker([pt.lat,pt.lon],{icon:DWR_CCTV_ICON});
-            m.bindPopup(dwrCctvPopupHTML(it,pt.lat,pt.lon),{maxWidth:260});
-            m.on('popupopen', ()=>dwrStartLive(it.stationCode, 'cctv-live-'+it.id));
-            LG.dwrCctv.addLayer(m);
-            ok++;
-          }
-        }
-      }catch(e){ /* skip this station, keep going */ }
-      done++;
-      await new Promise(r=>setTimeout(r,120));
-    }
-    dwrCctvLoaded=true;
-    LG.dwrCctv.addTo(map);
-    if(lbl) lbl.textContent=`กล้อง CCTV แหล่งน้ำ (DWR) (${ok})`;
-  }catch(e){
-    LS.dwrCctv=false;
-    if(tog) tog.classList.remove('on');
-    if(lbl) lbl.textContent='กล้อง CCTV แหล่งน้ำ (DWR)';
-    alert('ไม่สามารถโหลดข้อมูลกล้อง CCTV ได้ — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
   }
 }
 
@@ -2279,60 +1767,76 @@ async function fetchDohCctv(){
 
 // ═══════════════════════════════════════════
 // TMD RAIN RADAR — per-station markers (weather.tmd.go.th/{code}/)
-//   Redesigned 2026-09-27 (2nd rebuild this session): showing all 21 stations'
-//   images at once as overlapping map-filling overlays was "โคตรรก!!" (way too
-//   cluttered) and not actually useful — user asked for each station as its own
-//   spinning-radar marker instead, image shown only on click. Much simpler too:
-//   no combined-layer HUD, no bounds/aspect-ratio math, no legend-patch
-//   cosmetic issue (nothing is stretched onto the map any more) — just a
-//   marker per site and that station's own image in its popup, exactly like
-//   the DWR/DOH camera layers already in this app.
-//   Each site publishes one always-current "{code}{range}_latest.{jpg|gif}"
-//   image (confirmed via weather.tmd.go.th's own station pages' network
-//   requests) — no ring-buffer/index puzzle. Coordinates reused from this
-//   app's airports/navAids arrays where the station is named after that
-//   airport/town; the rest (Lamphun, Surin, Samut Songkhram, Sathing Phra —
-//   no airport in this app's data) are well-known provincial-capital coords.
+//   Redesigned 2026-09-27 (rebuild #4, nationwide pass): expanded from the
+//   original 21 + 3 special stations to the FULL set TMD actually publishes —
+//   found by reading weather.tmd.go.th's own menu (its <a href> list), not by
+//   guessing: **Nakhon Nayok** (code `kkw`, "Khao Khiao Radar") was a real gap
+//   in the main 21; **Omkoi** and **Phimai** (RainMaking Dept radars,
+//   alongside Takhli) were missing entirely. User: "งั้นสถานีให้ครบได้มั้ย" +
+//   "ถ้าสถานีไหนมีทั้งภาพนิ่งกับ loop ให้เอา loop ก่อน ถ้าไม่มีก็ใช้ภาพนิ่ง" — kkw has a
+//   real single-file loop (`kkw/kkwLoop.gif`, note the capital L — TMD's own
+//   filename, not a typo) so it uses that; Omkoi/Phimai's "loop" pages (like
+//   Takhli's) are actually a custom 6-frame JS slideshow, not a real animated
+//   file, so — per the user's own fallback rule — they use the static
+//   "_latest.png" snapshot with `noLoop:true`, same as Takhli.
+//   Each standard-network site publishes one always-current
+//   "{code}/{code}loop.{gif|jpg}" image; special ones (Takhli/Omkoi/Phimai
+//   static PNGs, the 2 Bangkok district GIFs, Nakhon Nayok's capitalised
+//   filename) carry their own `urlFn`. Coordinates reused from this app's
+//   airports/navAids arrays where the station is named after that
+//   airport/town; the rest (Lamphun, Surin, Samut Songkhram, Sathing Phra,
+//   Nakhon Nayok, Omkoi, Phimai — no airport in this app's data) are
+//   well-known district/provincial-capital coords.
 // ═══════════════════════════════════════════
 const TMD_STATIONS=[
-  {code:'mhs',name:'Mae Hong Son',     lat:19.3017,lon:97.9750},
+  {code:'mhs',name:'Mae Hong Son',     lat:19.3017,lon:97.9750, cal:{bounds:[[16.646718,95.427246],[21.698265,100.371094]]}},
   {code:'cri',name:'Chiang Rai',       lat:19.9524,lon:99.8829},
-  {code:'lmp',name:'Lamphun',          lat:18.5744,lon:99.0087},
-  {code:'tak',name:'Doi Muser (Tak)',  lat:16.8960,lon:99.2537},
-  {code:'phs',name:'Phitsanulok',      lat:16.7830,lon:100.2791},
-  {code:'phb',name:'Phetchabun',       lat:16.6760,lon:101.1951},
-  {code:'kkn',name:'Khon Kaen',        lat:16.4667,lon:102.7836},
-  {code:'skn',name:'Sakon Nakhon',     lat:17.1951,lon:104.1186},
-  {code:'ubn',name:'Ubon Ratchathani', lat:15.2513,lon:104.8702},
-  {code:'srn',name:'Surin',            lat:14.8818,lon:103.4936},
-  {code:'skm',name:'Samut Songkhram',  lat:13.4098,lon:100.0022},
-  {code:'svp',name:'Suvarnabhumi',     lat:13.6858,lon:100.7489},
-  {code:'ryg',name:'Rayong',           lat:12.6797,lon:101.0050},
-  {code:'cmp',name:'Chumphon',         lat:10.7112,lon:99.3617},
-  {code:'srt',name:'Surat Thani',      lat:9.1361, lon:99.1390},
-  {code:'rng',name:'Ranong',           lat:9.7776, lon:98.5855},
-  {code:'pkt',name:'Phuket',           lat:8.1125, lon:98.3092},
-  {code:'trg',name:'Trang',            lat:7.5086, lon:99.6158},
-  {code:'hyi',name:'Hat Yai',          lat:6.9328, lon:100.3950},
-  {code:'stp',name:'Sathing Phra',     lat:7.4667, lon:100.4000},
-  {code:'nrt',name:'Narathiwat',       lat:6.5178, lon:101.7425},
-  // RainMaking + Bangkok-district radars — not in the main 21, added 2026-09-27
-  // (user: "สถานีใน Loop มันครบมั้ย ... ของ นครสวรรค์ ไม่เห็นมีเลยอ่ะ"). TMD has no
-  // station literally named "Nakhon Sawan", but the Takhli RainMaking radar
-  // sits in Nakhon Sawan province (Takhli district, same site as VTPI in this
-  // app's own airports array — reused its coordinates directly) — that's almost
-  // certainly what was meant. Takhli's site uses a DIFFERENT publishing scheme
-  // (checked directly): `tkl/tkl240_latest.png`, a static PNG — its "loop" page
-  // is a custom 6-frame JS slideshow (tkl1.png…tkl6.png), not a single animated
-  // file like the other 21, so it's shown as a static image with a `noLoop` flag
-  // rather than building a one-off slideshow player for a single station.
-  {code:'tkl', name:'Takhli (Nakhon Sawan)', lat:15.2773, lon:100.2959, noLoop:true,
+  {code:'lmp',name:'Lamphun',          lat:18.5744,lon:99.0087, cal:{bounds:[[16.225224,96.558838],[20.848545,101.304932]]}},
+  {code:'tak',name:'Doi Muser (Tak)',  lat:16.8960,lon:99.2537, cal:{bounds:[[14.466596,96.196289],[19.093267,101.810303]]}},
+  {code:'phs',name:'Phitsanulok',      lat:16.7830,lon:100.2791, cal:{bounds:[[14.376472,97.582789],[19.114029,102.480469]]}},
+  {code:'phb',name:'Phetchabun',       lat:16.6760,lon:101.1951, cal:{cx:0.3761,cy:0.4651,rH:0.5009}},
+  {code:'kkn',name:'Khon Kaen',        lat:16.4667,lon:102.7836, cal:{bounds:[[14.040673,100.074463],[18.788125,105.021895]]}},
+  {code:'skn',name:'Sakon Nakhon',     lat:17.1951,lon:104.1186, cal:{bounds:[[14.753635,101.337891],[19.435514,106.402588]]}},
+  {code:'ubn',name:'Ubon Ratchathani', lat:15.2513,lon:104.8702, cal:{bounds:[[13.036669,102.249756],[17.455473,107.457275]]}},
+  {code:'srn',name:'Surin',            lat:14.8818,lon:103.4936, cal:{bounds:[[12.715368,100.854492],[17.004262,106.116943]]}},
+  {code:'skm',name:'Samut Songkhram',  lat:13.4098,lon:100.0022, cal:{bounds:[[10.97355,97.437744],[15.749963,102.194824]]}},
+  {code:'svp',name:'Suvarnabhumi',     lat:13.6858,lon:100.7489, cal:{bounds:[[11.523088,98.173828],[15.792254,103.326416]]}},
+  {code:'ryg',name:'Rayong',           lat:12.6797,lon:101.0050, cal:{bounds:[[10.432552,99.146118],[14.785456,105.095215]]}},
+  {code:'cmp',name:'Chumphon',         lat:10.7112,lon:99.3617, cal:{bounds:[[8.331083,96.416016],[12.618897,101.876221]]}},
+  {code:'srt',name:'Surat Thani',      lat:9.1361, lon:99.1390, cal:{bounds:[[6.67552,96.536865],[11.490791,101.326904]]}},
+  {code:'rng',name:'Ranong',           lat:9.7776, lon:98.5855, cal:{bounds:[[7.547656,96.421509],[12.136005,102.030029]]}},
+  {code:'pkt',name:'Phuket',           lat:8.1125, lon:98.3092, cal:{bounds:[[5.889261,95.844727],[10.31575,100.552368]]}},
+  {code:'trg',name:'Trang',            lat:7.5086, lon:99.6158, cal:{bounds:[[5.36446,97.470703],[9.654908,103.139648]]}},
+  {code:'hyi',name:'Hat Yai',          lat:6.9328, lon:100.3950, cal:{bounds:[[4.66403,97.987061],[9.091249,102.645264]]},
+   urlFn:()=>`https://weather.tmd.go.th/hyi/hyiLoop.gif?_=${Date.now()}`},
+  {code:'stp',name:'Sathing Phra',     lat:7.4667, lon:100.4000, cal:{bounds:[[5.287887,98.22876],[9.60075,102.678223]]}},
+  {code:'nrt',name:'Narathiwat',       lat:6.5178, lon:101.7425, cal:{bounds:[[4.247812,99.239502],[8.581021,104.359131]]}},
+  // Nakhon Nayok — real gap in the main network list, found via TMD's own
+  // menu (kkw.php / kkwloop.php). Same 936×797 template family as ubn/srn/svp
+  // (measured directly, near-centered — see TMD_CAL note below).
+  {code:'kkw', name:'Nakhon Nayok (Khao Khiao)', lat:14.2069, lon:101.2130, cal:{bounds:[[12.200442,98.833008],[16.425548,103.897705]]},
+   urlFn:()=>`https://weather.tmd.go.th/kkw/kkwLoop.gif?_=${Date.now()}`},
+  // RainMaking Dept radars (Royal Rainmaking, not TMD's main network) — a
+  // different vendor/rendering pipeline (Rainbow/Selex-ES CAPPI product,
+  // legend as a separate white side-panel, own printed km/pixel resolution).
+  // Takhli calibrated directly (crosshair pixel + printed "0.600 km/pixel");
+  // Omkoi/Phimai share the exact same template (same "RainMaking Radar" menu
+  // section, same rendering script) — same structural rule applied: circle
+  // diameter = image height, flush against the LEFT edge, vertically
+  // centered — cx = (H/2)/W.
+  {code:'tkl', name:'Takhli (Nakhon Sawan)', lat:15.2773, lon:100.2959, noLoop:true, cal:{bounds:[[13.090179,98.140869],[17.37161,103.743896]]},
    urlFn:()=>`https://weather.tmd.go.th/tkl/tkl240_latest.png?_=${Date.now()}`},
+  {code:'omk', name:'Omkoi (Chiang Mai)', lat:17.7961, lon:98.4067, noLoop:true, cal:{cx:0.373,cy:0.5,rH:0.5},
+   urlFn:()=>`https://weather.tmd.go.th/omk/omk240_latest.png?_=${Date.now()}`},
+  {code:'pmi', name:'Phimai (Nakhon Ratchasima)', lat:15.2186, lon:102.4928, noLoop:true, cal:{bounds:[[13.012586,100.340881],[17.266728,105.699463]]},
+   urlFn:()=>`https://weather.tmd.go.th/pmi/pmi240_latest.png?_=${Date.now()}`},
   // Bangkok's two district radars DO publish true single-file animated loops,
-  // just under a different naming scheme (checked directly): pic_bma{code}Loop.gif
-  {code:'bmanc', name:'Bangkok – Nong Chok', lat:13.8547, lon:100.8372,
+  // just under a different naming scheme (checked directly): pic_bma{code}Loop.gif.
+  // Same standard TMD template as the main network (colorbar-left legend),
+  // just a narrower canvas — measured directly, near-centered.
+  {code:'bmanc', name:'Bangkok – Nong Chok', lat:13.8547, lon:100.8372, cal:{bounds:[[12.747516,99.53064],[14.897013,102.145386]]},
    urlFn:()=>`https://weather.tmd.go.th/pic_bmancLoop.gif?_=${Date.now()}`},
-  {code:'bmank', name:'Bangkok – Nong Khaem', lat:13.6975, lon:100.3539,
+  {code:'bmank', name:'Bangkok – Nong Khaem', lat:13.6975, lon:100.3539, cal:{bounds:[[12.645698,99.047241],[14.827991,101.651001]]},
    urlFn:()=>`https://weather.tmd.go.th/pic_bmankLoop.gif?_=${Date.now()}`},
 ];
 const TMD_STATION_RANGE_KM=240;
@@ -2343,8 +1847,7 @@ const TMD_STATION_REFRESH_MS=300000;
 // confirmed at weather.tmd.go.th/{code}/{code}loop.gif (no range suffix; verified
 // on phs and kkn, same file regardless of which range variant's page loads it).
 // Browsers animate GIFs natively — no extra JS loop code needed.
-// Stations with a `urlFn` (Takhli, the 2 Bangkok radars) use their own scheme
-// instead — see TMD_STATIONS comment above.
+// Stations with a `urlFn` use their own scheme instead — see TMD_STATIONS comment above.
 function tmdStationImageUrl(st, ext){
   if(st.urlFn) return st.urlFn();
   return tmdStationUrl(st.code, ext);
@@ -2354,88 +1857,253 @@ function tmdStationUrl(code,ext){
 }
 
 const TMD_RADAR_ICON=L.divIcon({
-  html:`<div class="tmd-radar-marker"><div class="tmd-radar-sweep"></div><div class="tmd-radar-dot">📡</div></div>`,
-  iconSize:[30,30], iconAnchor:[15,15], popupAnchor:[0,-17], className:''
+  html:'<div class="tmd-radar-marker">📡</div>',
+  iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-15], className:''
+});
+const TMD_RADAR_ICON_ACTIVE=L.divIcon({
+  html:'<div class="tmd-radar-marker active">📡</div>',
+  iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-15], className:''
 });
 
-// Clicking a station marker shows THAT station's image as a real georeferenced
-// L.imageOverlay directly on the map (correct scale, aspect-ratio corrected —
-// same bounds math as the session-6 combined-overlay build), replacing
-// whichever station was previously shown — only ever ONE overlay on the map
-// at a time, so this can never regress back into the "21 overlapping images"
-// clutter the user rejected. Clicking the same marker again hides it.
-// User 2026-09-27: "ทำเป็นไอคอนแบบล่าสุดแล้วเวลาฉันคลิ๊กที่สถานีนั้นๆ ให้มันแสดงภาพ
-// จากข้อมูลล่าสุดมาทับบน map ตามสเกลที่ถูกต้อง" (keep the marker icons; on click,
-// show that station's latest image on the map at the correct scale).
-let tmdActiveOverlay=null, tmdActiveCode=null, tmdActiveStation=null, tmdActiveTimer=null, tmdActiveExt='gif', tmdActiveOpacity=0.65;
+// Multi-select (2026-09-27): clicking a station toggles THAT station's image
+// on/off independently — several stations can be shown at once (e.g. along a
+// flight route) instead of only ever one at a time. Managed from the Radar
+// Properties panel (right sidebar) instead of a floating per-click HUD.
+//
+// Position/scale calibration (2026-09-27, refined same day after a user
+// report that Takhli specifically still looked off): weather.tmd.go.th's
+// station images are NOT one single template — measured three genuinely
+// different layouts directly (crosshair pixel + printed resolution/range
+// where available, cross-checked two ways per sample):
+//   - 800×800 "standard" family (measured on Phitsanulok): colorbar legend
+//     eats into a SQUARE canvas, station sits at ~54.6%/49.1% of W/H, ring
+//     reaches ~45.6% of H. This is TMD_CAL, the default for any station
+//     below with no explicit `cal`.
+//   - 936×797 family (measured on the new Nakhon Nayok station, same
+//     dimensions as ubn/srn/svp per an earlier session's measurement):
+//     near-perfectly centered, circle fills the full height.
+//   - RainMaking/CAPPI family (Takhli/Omkoi/Phimai): circle diameter = image
+//     height, flush against the LEFT edge (legend is a separate panel on the
+//     right) — see the TMD_STATIONS comment above.
+// Each station's `cal:{cx,cy,rH}` overrides TMD_CAL when present. This is
+// still a per-station-FAMILY model, not a per-station lab fit — the ~15
+// stations with no override are assumed to match Phitsanulok's template
+// (unverified individually); if one of those still looks off, that's the
+// next one to measure and give its own `cal`.
+//
+// Measurement method upgraded 2026-09-27 (session 4, user reported 9 more
+// stations off): earlier sessions found the crosshair pixel by zooming the
+// browser tool 3x and reading it off a screenshot — that turned out to be
+// unreliable, because the tool's screenshot pixel grid does NOT map onto the
+// CSS viewport by the naive `viewport_size/screenshot_size` ratio (confirmed
+// by placing a marker div at a known CSS position and observing where it
+// actually rendered — off by ~25% from the assumed ratio). Every `cal` from
+// this session on was instead derived by fetching the image with `fetch()` +
+// `createImageBitmap` and reading raw pixel data on an offscreen canvas — no
+// screenshot involved, so no scale-factor guessing:
+//   - Where the station prints its own resolution/range (the CMAX/Rainbow-
+//     LEONARDO family — Rayong, Phetchabun, Trang, Ranong, and presumably
+//     more southern/eastern stations not yet checked individually): fit a
+//     circle (Kasa least-squares, iterated 15-20x against the densest-
+//     populated radius bin) to every near-neutral-gray pixel — the ring/grid
+//     color — to get the center; the radius comes from the printed km/pixel
+//     instead of the fit (concentric rings share a center regardless of
+//     which one gets fit, but only the printed value is exact).
+//   - Where the station draws a solid crosshair line in one dominant color
+//     (red for the Phitsanulok-style template, black for the 2 Bangkok
+//     district radars): find the single column/row with the overwhelmingly
+//     highest match-count — it wins by 5-10x over the next best, unlike text
+//     or admin-boundary lines, so there's no ambiguity.
+const TMD_CAL = { cx:0.546, cy:0.491, rH:0.456 };
+function tmdStationBounds(lat, lon, w, h, cal){
+  // Manual drag/resize calibration (tmdCalibrateLock) stores an explicit
+  // bounds override — skip all the cx/cy/rH pixel math entirely when present.
+  if(cal && cal.bounds) return L.latLngBounds(cal.bounds[0], cal.bounds[1]);
+  const c = cal || TMD_CAL;
+  const W=w||1, H=h||1;
+  const kmPerPx = TMD_STATION_RANGE_KM/(c.rH*H);
+  const leftPx=c.cx*W, rightPx=W-leftPx;
+  const topPx=c.cy*H, bottomPx=H-topPx;
+  const cosLat=Math.cos(lat*Math.PI/180);
+  const dLatN=topPx*kmPerPx/111.32, dLatS=bottomPx*kmPerPx/111.32;
+  const dLonW=leftPx*kmPerPx/(111.32*cosLat), dLonE=rightPx*kmPerPx/(111.32*cosLat);
+  return L.latLngBounds([lat-dLatS,lon-dLonW],[lat+dLatN,lon+dLonE]);
+}
 
-// aspectWH = source image width/height — several stations' images aren't square
-// (measured: e.g. rng 1152×945, ubn/srn/svp 936×797, likely a wider legend
-// block) — stretching a non-square source into square geo bounds would warp
-// the map into an ellipse, so bounds match the real aspect ratio instead.
-function tmdStationBounds(lat,lon,aspectWH){
-  const dLat=TMD_STATION_RANGE_KM/111.32;
-  const dLon=(TMD_STATION_RANGE_KM/(111.32*Math.cos(lat*Math.PI/180)))*(aspectWH||1);
-  return L.latLngBounds([lat-dLat,lon-dLon],[lat+dLat,lon+dLon]);
+let tmdOverlays = {};  // code -> {overlay, station, ext, timer}
+let tmdMarkers  = {};  // code -> marker (icon swapped active/inactive)
+let tmdOpacity  = 0.65;
+
+function tmdStationToggle(st){
+  if(tmdOverlays[st.code]) tmdStationRemove(st.code);
+  else tmdStationAdd(st);
 }
-function tmdStationHide(){
-  if(tmdActiveTimer){ clearInterval(tmdActiveTimer); tmdActiveTimer=null; }
-  if(tmdActiveOverlay){ map.removeLayer(tmdActiveOverlay); tmdActiveOverlay=null; }
-  tmdActiveCode=null;
-  tmdActiveStation=null;
-  document.getElementById('tmdStationHud')?.remove();
-}
-function tmdStationRefreshActive(){
-  if(!tmdActiveOverlay || !tmdActiveStation) return;
-  tmdActiveOverlay.setUrl(tmdStationImageUrl(tmdActiveStation, tmdActiveExt));
-}
-function tmdStationShow(st){
-  if(tmdActiveCode===st.code){ tmdStationHide(); return; } // click same marker again = hide
-  tmdStationHide();
-  tmdActiveCode=st.code;
-  tmdActiveStation=st;
-  tmdActiveExt='gif';
-  tmdActiveOverlay=L.imageOverlay(tmdStationImageUrl(st,tmdActiveExt), tmdStationBounds(st.lat,st.lon,1), {opacity:tmdActiveOpacity, interactive:false, zIndex:440}).addTo(map);
-  tmdActiveOverlay.on('error', ()=>{
-    if(!st.urlFn && tmdActiveExt==='gif' && tmdActiveOverlay){ tmdActiveExt='jpg'; tmdActiveOverlay.setUrl(tmdStationImageUrl(st,tmdActiveExt)); }
+function tmdStationAdd(st){
+  const initialBounds = tmdStationBounds(st.lat, st.lon, 800, 800, st.cal);
+  const overlay = L.imageOverlay(tmdStationImageUrl(st,'gif'), initialBounds, {opacity:tmdOpacity, interactive:false, zIndex:440}).addTo(map);
+  const rec = {overlay, station:st, ext:'gif', timer:null};
+  overlay.on('error', ()=>{
+    if(!st.urlFn && rec.ext==='gif' && tmdOverlays[st.code]){ rec.ext='jpg'; overlay.setUrl(tmdStationImageUrl(st,rec.ext)); }
   });
-  const img=tmdActiveOverlay.getElement();
+  const img = overlay.getElement();
   if(img) img.addEventListener('load', function onLoad(){
-    const ar=img.naturalWidth/img.naturalHeight;
-    if(ar && isFinite(ar) && Math.abs(ar-1)>0.02 && tmdActiveOverlay && tmdActiveCode===st.code) tmdActiveOverlay.setBounds(tmdStationBounds(st.lat,st.lon,ar));
+    if(!tmdOverlays[st.code]) return; // removed while the image was loading
+    overlay.setBounds(tmdStationBounds(st.lat, st.lon, img.naturalWidth, img.naturalHeight, st.cal));
   });
-  tmdActiveTimer=setInterval(tmdStationRefreshActive, TMD_STATION_REFRESH_MS);
-  tmdStationShowHud(st);
+  rec.timer = setInterval(()=>{ if(tmdOverlays[st.code]) overlay.setUrl(tmdStationImageUrl(st, rec.ext)); }, TMD_STATION_REFRESH_MS);
+  tmdOverlays[st.code] = rec;
+  tmdMarkers[st.code]?.setIcon(TMD_RADAR_ICON_ACTIVE);
+  tmdHudRender();
 }
-function tmdStationSetOpacity(v){
-  tmdActiveOpacity=parseFloat(v);
-  if(tmdActiveOverlay) tmdActiveOverlay.setOpacity(tmdActiveOpacity);
+function tmdStationRemove(code){
+  const rec = tmdOverlays[code];
+  if(!rec) return;
+  if(tmdCalibrate && tmdCalibrate.code===code) tmdCalibrateCancel();
+  if(rec.timer) clearInterval(rec.timer);
+  map.removeLayer(rec.overlay);
+  delete tmdOverlays[code];
+  tmdMarkers[code]?.setIcon(TMD_RADAR_ICON);
+  tmdHudRender();
 }
-function tmdStationShowHud(st){
-  let el=document.getElementById('tmdStationHud');
+function tmdStationHideAll(){
+  Object.keys(tmdOverlays).forEach(tmdStationRemove);
+}
+function tmdSetOpacityAll(v){
+  tmdOpacity = parseFloat(v);
+  Object.values(tmdOverlays).forEach(r=>r.overlay.setOpacity(tmdOpacity));
+}
+
+// ── Manual drag/resize calibration (2026-09-27) ─────────────────────────────
+// After several rounds of reverse-engineering individual station images by
+// pixel-forensics (crosshair detection, ring circle-fits, landmark
+// triangulation — see memory/comments above) still not landing "เป๊ะ" for
+// every station, the user asked for a direct tool instead: drag the image to
+// move it, drag a corner to resize width/height independently, then "lock"
+// it in. Password-gated (5259) purely to stop an accidental drag while just
+// panning the map — not a real security boundary.
+let tmdCalibrate = null; // {code, swMarker, neMarker, moveMarker, origBounds}
+function tmdCalibrateToggle(code){
+  if(tmdCalibrate){ tmdCalibrateCancel(); return; }
+  const pass = prompt('รหัสผ่านสำหรับปรับตำแหน่ง/ขนาดภาพเรดาร์:');
+  if(pass===null) return;
+  if(pass!=='5259'){ alert('รหัสผ่านไม่ถูกต้อง'); return; }
+  const rec = tmdOverlays[code];
+  if(!rec) return;
+  const b = rec.overlay.getBounds();
+  const origBounds = L.latLngBounds(b.getSouthWest(), b.getNorthEast());
+  const handleIcon = (color,size)=>L.divIcon({
+    html:`<div style="width:${size}px;height:${size}px;background:${color};border:2px solid #fff;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,.7);cursor:move;"></div>`,
+    iconSize:[size,size], iconAnchor:[size/2,size/2], className:''
+  });
+  const swMarker = L.marker(b.getSouthWest(), {icon:handleIcon('#f97316',16), draggable:true}).addTo(map);
+  const neMarker = L.marker(b.getNorthEast(), {icon:handleIcon('#f97316',16), draggable:true}).addTo(map);
+  const moveMarker = L.marker(b.getCenter(), {icon:handleIcon('#22c55e',20), draggable:true}).addTo(map);
+  let lastCenter = b.getCenter();
+  function updateBounds(){ rec.overlay.setBounds(L.latLngBounds(swMarker.getLatLng(), neMarker.getLatLng())); }
+  swMarker.on('drag', updateBounds);
+  neMarker.on('drag', updateBounds);
+  moveMarker.on('drag', ()=>{
+    const c = moveMarker.getLatLng();
+    const dLat = c.lat-lastCenter.lat, dLng = c.lng-lastCenter.lng;
+    lastCenter = c;
+    const sw = swMarker.getLatLng(), ne = neMarker.getLatLng();
+    swMarker.setLatLng([sw.lat+dLat, sw.lng+dLng]);
+    neMarker.setLatLng([ne.lat+dLat, ne.lng+dLng]);
+    updateBounds();
+  });
+  tmdCalibrate = {code, station:rec.station, swMarker, neMarker, moveMarker, origBounds};
+  tmdCalibrateShowPanel();
+  tmdHudRender();
+}
+function tmdCalibrateShowPanel(){
+  let el = document.getElementById('tmdCalPanel');
   if(!el){
-    el=document.createElement('div');
-    el.id='tmdStationHud';
-    el.style.cssText='position:absolute;left:295px;bottom:34px;z-index:900;background:var(--surface);border:1px solid var(--border);border-left:3px solid #2563eb;border-radius:8px;padding:8px 10px;font-size:10px;color:var(--text2);box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:230px;';
+    el=document.createElement('div'); el.id='tmdCalPanel';
+    el.style.cssText='position:absolute;left:295px;bottom:34px;z-index:950;background:var(--surface);border:1px solid var(--border);border-left:3px solid #f97316;border-radius:8px;padding:9px 11px;font-size:10px;color:var(--text2);box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:260px;';
     document.body.appendChild(el);
   }
-  el.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-      <span style="font-weight:700;color:#60a5fa;font-size:11px;">🌧 เรดาร์ฝน ${st.name}${st.noLoop?'':' (Loop)'}</span>
-      <span onclick="tmdStationHide()" style="cursor:pointer;color:var(--muted);font-size:13px;padding:0 3px;">✕</span>
-    </div>
-    <div style="margin-bottom:5px;">รัศมี ${TMD_STATION_RANGE_KM} กม. · ${st.noLoop?'ภาพนิ่งล่าสุด (สถานีนี้ไม่มีภาพเคลื่อนไหว)':'ภาพเคลื่อนไหว'} รีเฟรชทุก 5 นาที · คลิกหมุดซ้ำเพื่อซ่อน</div>
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
-      <span style="font-size:9px;color:var(--muted);">โปร่งใส</span>
-      <input type="range" min="0.15" max="1" step="0.05" value="${tmdActiveOpacity}" oninput="tmdStationSetOpacity(this.value)" style="flex:1;">
-    </div>
-    <div style="font-size:8.5px;color:var(--muted);font-style:italic;">เรดาร์ตรวจอากาศ กรมอุตุนิยมวิทยา (TMD) — data.tmd.go.th</div>`;
+  el.innerHTML = `<div style="font-weight:700;color:#f97316;margin-bottom:5px;">🔧 ปรับภาพ: ${tmdCalibrate.station?tmdCalibrate.station.name:tmdCalibrate.code}</div>
+    <div style="margin-bottom:7px;line-height:1.5;">🟢 จุดกลาง = ลากย้ายทั้งภาพ<br>🟠 มุม = ลากปรับขนาด (กว้าง/ยาวอิสระ)</div>
+    <div style="display:flex;gap:6px;">
+      <button onclick="tmdCalibrateLock()" style="flex:1;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);color:#22c55e;border-radius:5px;padding:5px;cursor:pointer;font-weight:700;">🔒 ล็อค</button>
+      <button onclick="tmdCalibrateCancel()" style="flex:1;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#ef4444;border-radius:5px;padding:5px;cursor:pointer;">ยกเลิก</button>
+    </div>`;
+}
+function tmdCalibrateCleanupHandles(){
+  if(!tmdCalibrate) return;
+  map.removeLayer(tmdCalibrate.swMarker);
+  map.removeLayer(tmdCalibrate.neMarker);
+  map.removeLayer(tmdCalibrate.moveMarker);
+}
+function tmdCalibrateCancel(){
+  if(!tmdCalibrate) return;
+  tmdOverlays[tmdCalibrate.code]?.overlay.setBounds(tmdCalibrate.origBounds);
+  tmdCalibrateCleanupHandles();
+  document.getElementById('tmdCalPanel')?.remove();
+  tmdCalibrate = null;
+  tmdHudRender();
+}
+function tmdCalibrateLock(){
+  if(!tmdCalibrate) return;
+  const sw = tmdCalibrate.swMarker.getLatLng(), ne = tmdCalibrate.neMarker.getLatLng();
+  const code = tmdCalibrate.code;
+  const st = TMD_STATIONS.find(s=>s.code===code);
+  const boundsArr = [[+sw.lat.toFixed(6),+sw.lng.toFixed(6)],[+ne.lat.toFixed(6),+ne.lng.toFixed(6)]];
+  st.cal = {bounds:boundsArr};
+  tmdOverlays[code]?.overlay.setBounds(L.latLngBounds(sw,ne));
+  tmdCalibrateCleanupHandles();
+  const text = `cal:{bounds:${JSON.stringify(boundsArr)}}`;
+  const el = document.getElementById('tmdCalPanel');
+  if(el){
+    el.innerHTML = `<div style="font-weight:700;color:#22c55e;margin-bottom:5px;">🔒 ล็อคแล้ว: ${st.name}</div>
+      <div id="tmdCalLockText" style="font-family:monospace;font-size:9px;background:var(--bg);padding:6px;border-radius:5px;word-break:break-all;margin-bottom:6px;">${text}</div>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('tmdCalLockText').textContent).then(()=>{this.textContent='คัดลอกแล้ว ✓';});" style="width:100%;background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.4);color:#38bdf8;border-radius:5px;padding:5px;cursor:pointer;margin-bottom:5px;">📋 คัดลอกค่านี้ไปให้ Claude</button>
+      <button onclick="document.getElementById('tmdCalPanel').remove();" style="width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--muted);border-radius:5px;padding:4px;cursor:pointer;">ปิด</button>`;
+  }
+  tmdCalibrate = null;
+  tmdHudRender();
 }
 
 TMD_STATIONS.forEach(st=>{
   const m=L.marker([st.lat,st.lon],{icon:TMD_RADAR_ICON});
-  m.on('click', ()=>tmdStationShow(st));
+  m.on('click', ()=>tmdStationToggle(st));
+  tmdMarkers[st.code]=m;
   LG.tmdRadar.addLayer(m);
 });
+
+// ── Nationwide composite (2026-09-27) ───────────────────────────────────────
+// User: "อยากได้แบบครอบคลุมทั้งประเทศ". Rather than guess-calibrating every
+// individual station image (each has its own legend layout, see above),
+// weather.tmd.go.th's own interactive radar monitor
+// (composite/index_composite.html, a MapLibre app) already publishes ONE
+// pre-mosaicked, pre-georeferenced nationwide rain-rate image with NO legend
+// baked in — and its bounds come straight from that page's own map config
+// (`CFG.RADAR_COORDS`), not from pixel-measuring — so this one is exact, not
+// a best-effort fit.
+const TMD_COMPOSITE = {
+  url: 'https://weather.tmd.go.th/composite/images/zr/00.png',
+  bounds: L.latLngBounds([4,95],[22.5,108])
+};
+let tmdCompositeOverlay=null, tmdCompositeOn=false, tmdCompositeTimer=null, tmdCompositeOpacity=0.6;
+function tmdCompositeToggle(){
+  tmdCompositeOn = !tmdCompositeOn;
+  if(tmdCompositeOn){
+    tmdCompositeOverlay = L.imageOverlay(TMD_COMPOSITE.url+'?_='+Date.now(), TMD_COMPOSITE.bounds, {opacity:tmdCompositeOpacity, interactive:false, zIndex:435}).addTo(map);
+    tmdCompositeTimer = setInterval(()=>{ if(tmdCompositeOverlay) tmdCompositeOverlay.setUrl(TMD_COMPOSITE.url+'?_='+Date.now()); }, TMD_STATION_REFRESH_MS);
+  } else {
+    if(tmdCompositeTimer) clearInterval(tmdCompositeTimer);
+    tmdCompositeTimer=null;
+    if(tmdCompositeOverlay){ map.removeLayer(tmdCompositeOverlay); tmdCompositeOverlay=null; }
+  }
+  tmdHudRender();
+}
+function tmdCompositeSetOpacity(v){
+  tmdCompositeOpacity=parseFloat(v);
+  if(tmdCompositeOverlay) tmdCompositeOverlay.setOpacity(tmdCompositeOpacity);
+}
+function tmdCompositeHide(){
+  if(tmdCompositeOn) tmdCompositeToggle();
+}
 
 // ═══════════════════════════════════════════
 // RADIO NAVIGATION AIDS LAYER
@@ -3719,6 +3387,8 @@ function makeDraggablePanel(panelId, handleSel, storeKey){
 }
 makeDraggablePanel('rtafHud', '.rt-title', 'rtafHudPos');
 makeDraggablePanel('heliHud', '.hp-title', 'heliHudPos');
+makeDraggablePanel('tmdHud', '.tmh-title', 'tmdHudPos');
+makeDraggablePanel('rainHud', '.rah-title', 'rainHudPos');
 
 // ═══════════════════════════════════════════
 // RAIN RADAR (RainViewer — global precipitation radar, free public API, no key)
@@ -3784,7 +3454,7 @@ function rainRadarShowFrame(i){
       if(visibleLayer) visibleLayer.setOpacity(0);
       rainRadarActive=hiddenName;
       rainRadarTransitioning=false;
-      rainRadarRenderHud();
+      rainHudRender();
       resolve();
     }
     hiddenLayer.on('load', finish);
@@ -3810,7 +3480,7 @@ async function rainRadarStart(){
     if(c) c.style.transition='opacity 350ms linear';
   });
   rainRadarActive='A';
-  rainRadarShowHud();
+  rainHudRender();
   try{
     await rainRadarFetchFrames();
     if(!LS.rainRadar) return; // user toggled off while loading
@@ -3831,43 +3501,34 @@ function rainRadarStop(){
   if(rainRadarLayerB){ map.removeLayer(rainRadarLayerB); rainRadarLayerB=null; }
   rainRadarActive='A';
   rainRadarTransitioning=false;
-  rainRadarHideHud();
+  rainHudRender();
 }
 function rainRadarTogglePlay(){
   rainRadarPlaying=!rainRadarPlaying;
   if(rainRadarPlaying){ if(!rainRadarTimer) rainRadarTimer=setInterval(rainRadarTick,600); }
   else { clearInterval(rainRadarTimer); rainRadarTimer=null; }
-  rainRadarRenderHud();
+  rainHudRender();
 }
 function rainRadarSetOpacity(v){
   rainRadarOpacity=parseFloat(v);
   const visibleLayer = rainRadarActive==='A' ? rainRadarLayerA : rainRadarLayerB;
   if(visibleLayer) visibleLayer.setOpacity(rainRadarOpacity);
 }
-function rainRadarShowHud(){
-  let el=document.getElementById('rainRadarHud');
-  if(!el){
-    el=document.createElement('div');
-    el.id='rainRadarHud';
-    el.style.cssText='position:absolute;left:295px;bottom:34px;z-index:900;background:var(--surface);border:1px solid var(--border);border-left:3px solid #0d9488;border-radius:8px;padding:8px 10px;font-size:10px;color:var(--text2);box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:230px;';
-    document.body.appendChild(el);
-  }
-  rainRadarRenderHud();
-}
-function rainRadarHideHud(){ document.getElementById('rainRadarHud')?.remove(); }
-function rainRadarRenderHud(){
-  const el=document.getElementById('rainRadarHud');
-  if(!el) return;
-  const frame=rainRadarFrames[rainRadarIdx];
-  const label=frame?rainRadarLabel(frame):'⏳ กำลังโหลด…';
-  const op=rainRadarOpacity;
-  el.innerHTML=`<div style="font-weight:700;color:#2dd4bf;font-size:11px;margin-bottom:4px;">🌧 เรดาร์ฝน (RainViewer)</div>
-    <div style="margin-bottom:5px;">${label}</div>
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+function rainHudRender(){
+  const hud = document.getElementById('rainHud');
+  if(!hud) return;
+  hud.classList.toggle('show', !!LS.rainRadar);
+  if(!LS.rainRadar) return;
+  const frame = rainRadarFrames[rainRadarIdx];
+  const label = frame ? rainRadarLabel(frame) : '⏳ กำลังโหลด…';
+  const body = document.getElementById('rainHudBody');
+  if(!body) return;
+  body.innerHTML = `<div style="font-size:10px;color:var(--text2);margin-bottom:6px;">${label}</div>
+    <div style="display:flex;align-items:center;gap:6px;">
       <button onclick="rainRadarTogglePlay()" style="background:rgba(13,148,136,.15);border:1px solid rgba(13,148,136,.35);color:#2dd4bf;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer;">${rainRadarPlaying?'⏸ หยุด':'▶ เล่น'}</button>
-      <input type="range" min="0.2" max="1" step="0.05" value="${op}" oninput="rainRadarSetOpacity(this.value)" style="flex:1;">
+      <input type="range" min="0.2" max="1" step="0.05" value="${rainRadarOpacity}" oninput="rainRadarSetOpacity(this.value)" style="flex:1;">
     </div>
-    <div style="font-size:8.5px;color:var(--muted);font-style:italic;">เรดาร์ฝนทั่วโลก โดย RainViewer.com</div>`;
+    <div style="font-size:8.5px;color:var(--muted);margin-top:6px;font-style:italic;">เรดาร์ฝนทั่วโลก โดย RainViewer.com</div>`;
 }
 
 updateLayerCount();
@@ -4099,17 +3760,11 @@ airports.forEach(ap=>{
     <div class="pu-row"><span class="pu-lbl">Operator</span><span class="pu-val"><span class="pu-op" style="background:${opBg(ap.op)};color:${c};">${ap.op}</span></span></div>
     <a href="${ap.url}" target="_blank" class="pu-link">✈ View AIP Aerodrome Data</a>
     ${wxHTML(ap.icao)}
-    ${fcHTML(ap.icao, ap.lat, ap.lon)}
   </div>`,{maxWidth:295,maxHeight:520});
   m.on('popupopen', ()=>{
     // Wait for Leaflet to render popup DOM, then load weather
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       loadWXIntoPopup(ap.icao);
-      const fcSec = document.getElementById('fc-section-'+ap.icao);
-      if(fcSec){
-        fcSec.style.display = LS.wxForecast ? '' : 'none';
-        if(LS.wxForecast) loadForecastIntoPopup(ap.icao, ap.lat, ap.lon);
-      }
     }));
   });
   m.on('click',(e)=>{
@@ -5613,7 +5268,6 @@ function closeMobileOverlays(){
     sb.classList.remove('mobile-open');
     sb.classList.add('collapsed');
   }
-  if(e6bOpen) toggleE6B();
   document.getElementById('mobileBackdrop').classList.remove('show');
 }
 
@@ -6030,361 +5684,41 @@ checkAIRAC();
 setInterval(checkAIRAC, 3600000);
 
 // ═══════════════════════════════════════════
-// E6B FLIGHT COMPUTER
+// RADAR ON-MAP LABEL HUDS (TMD + RainViewer)
+// Replaces the old right-sidebar "Radar Properties" panel (2026-09-28) —
+// user asked for the opacity controls to live as a floating on-map label
+// instead, matching the rtafHud/heliHud pattern, with the sidebar removed.
 // ═══════════════════════════════════════════
-let e6bOpen = false;
-
-function toggleE6B(){
-  e6bOpen = !e6bOpen;
-  const sb  = document.getElementById('e6bSb');
-  const tog = document.getElementById('e6bTog');
-  sb.classList.toggle('collapsed', !e6bOpen);
-  tog.textContent = e6bOpen ? '▶' : '◀';
-  if(isMobile()){
-    tog.style.right = '0';
-    document.getElementById('mobileBackdrop').classList.toggle('show', e6bOpen);
+function tmdHudRender(){
+  const hud = document.getElementById('tmdHud');
+  if(!hud) return;
+  hud.classList.toggle('show', !!LS.tmdRadar);
+  if(!LS.tmdRadar) return;
+  const codes = Object.keys(tmdOverlays);
+  let html = '';
+  if(codes.length){
+    html += codes.map(c=>{
+      const o = tmdOverlays[c];
+      return `<div class="radar-station-row"><span class="radar-station-name">${o.station.name}${o.station.noLoop?' (ภาพนิ่ง)':''}</span><span class="radar-station-x" onclick="tmdCalibrateToggle('${c}')" title="ปรับตำแหน่ง/ขนาด" style="color:${tmdCalibrate&&tmdCalibrate.code===c?'#f97316':'var(--muted)'};">🔧</span><span class="radar-station-x" onclick="tmdStationRemove('${c}')" title="ซ่อน">✕</span></div>`;
+    }).join('');
+    html += `<div class="radar-opacity-row"><span>โปร่งใส</span><input type="range" min="0.15" max="1" step="0.05" value="${tmdOpacity}" oninput="tmdSetOpacityAll(this.value)" style="flex:1;"></div>
+      <div style="font-size:8.5px;color:var(--muted);margin-top:6px;">คลิกหมุดสถานีบนแผนที่เพื่อเพิ่ม/ลบสถานี · รีเฟรชทุก 5 นาที</div>`;
   } else {
-    tog.style.right = e6bOpen ? '290px' : '0';
+    html += `<div class="radar-hint">คลิกหมุดสถานี 📡 บนแผนที่เพื่อแสดงภาพเรดาร์ (เลือกได้หลายสถานีพร้อมกัน)</div>`;
   }
-  setTimeout(()=>map.invalidateSize(), 260);
-}
-
-function e6bTab(name){
-  document.querySelectorAll('.e6b-nav-item').forEach(el=>el.classList.toggle('active', el.dataset.e6b===name));
-  document.querySelectorAll('.e6b-panel').forEach(el=>el.classList.toggle('show', el.id==='e6b-'+name));
-}
-
-// ── Wind Triangle ──────────────────────────────────────────────────────────
-function calcWind(){
-  const TC=parseFloat(document.getElementById('w_tc').value);
-  const TAS=parseFloat(document.getElementById('w_tas').value);
-  const WD=parseFloat(document.getElementById('w_wd').value);
-  const WS=parseFloat(document.getElementById('w_ws').value);
-  const el=document.getElementById('wind-result');
-  if([TC,TAS,WD,WS].some(isNaN)){el.innerHTML='<div class="e6b-hint">Fill all fields above</div>';return;}
-
-  const TCr=TC*Math.PI/180, WDr=WD*Math.PI/180;
-  const wE=-WS*Math.sin(WDr), wN=-WS*Math.cos(WDr);
-  const Wa=wE*Math.sin(TCr)+wN*Math.cos(TCr);
-  const disc=Wa*Wa-(WS*WS-TAS*TAS);
-  if(disc<0){el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">No solution — wind speed exceeds TAS</div>';return;}
-
-  const GS=Wa+Math.sqrt(disc);
-  const airE=GS*Math.sin(TCr)-wE, airN=GS*Math.cos(TCr)-wN;
-  let TH=Math.atan2(airE,airN)*180/Math.PI;
-  if(TH<0)TH+=360; if(TH>=360)TH-=360;
-  let WCA=TH-TC; if(WCA>180)WCA-=360; if(WCA<-180)WCA+=360;
-
-  const relA=(WD-TC)*Math.PI/180;
-  const xw=WS*Math.sin(relA), hw=WS*Math.cos(relA);
-
-  el.innerHTML=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">True Heading</span><span class="e6b-result-val">${TH.toFixed(1)}°</span></div>
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Ground Speed</span><span class="e6b-result-val">${GS.toFixed(1)} kts</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Wind Correction</span><span class="e6b-result-val">${WCA>=0?'+':''}${WCA.toFixed(1)}° ${WCA>=0?'(Right)':'(Left)'}</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Crosswind</span><span class="e6b-result-val">${Math.abs(xw).toFixed(1)} kts ${xw>=0?'from Right':'from Left'}</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">H/W Component</span><span class="e6b-result-val">${Math.abs(hw).toFixed(1)} kts ${hw>=0?'Headwind':'Tailwind'}</span></div>`;
-}
-
-// ── TAS / Density Altitude ──────────────────────────────────────────────────
-function calcTASe6b(){
-  const IAS=parseFloat(document.getElementById('t_ias').value);
-  const alt=parseFloat(document.getElementById('t_alt').value);
-  const OAT=parseFloat(document.getElementById('t_oat').value);
-  const el=document.getElementById('tas-result');
-  if([IAS,alt,OAT].some(isNaN)){el.innerHTML='<div class="e6b-hint">Fill all fields above</div>';return;}
-
-  const T_K=OAT+273.15;
-  const pRatio=Math.pow(1-6.8756e-6*alt, 5.2561);
-  const TAS=IAS/Math.sqrt(pRatio/(T_K/288.15));
-  const ISA_T=15-0.001981*alt;
-  const DA=alt+120*(OAT-ISA_T);
-  const sos=661.5*Math.sqrt(T_K/288.15);
-  const Mach=TAS/sos;
-
-  el.innerHTML=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">True Airspeed</span><span class="e6b-result-val">${TAS.toFixed(1)} kts</span></div>
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Density Altitude</span><span class="e6b-result-val">${Math.round(DA).toLocaleString()} ft</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Mach Number</span><span class="e6b-result-val">M ${Mach.toFixed(3)}</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">ISA Deviation</span><span class="e6b-result-val">${(OAT-ISA_T)>=0?'+':''}${(OAT-ISA_T).toFixed(1)} °C</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Speed of Sound</span><span class="e6b-result-val">${sos.toFixed(1)} kts</span></div>`;
-}
-
-// ── Time / Speed / Distance ─────────────────────────────────────────────────
-function calcTSD(){
-  const dv=document.getElementById('tsd_d').value;
-  const sv=document.getElementById('tsd_s').value;
-  const hv=document.getElementById('tsd_h').value;
-  const mv=document.getElementById('tsd_m').value;
-  const el=document.getElementById('tsd-result');
-  const DC={nm:1,km:1/1.852,sm:1/1.15078};
-  const SC={kts:1,kmh:1/1.852,mph:1/1.15078};
-  const hasD=dv!==''&&!isNaN(+dv);
-  const hasS=sv!==''&&!isNaN(+sv);
-  const hasT=(hv!==''&&!isNaN(+hv))||(mv!==''&&!isNaN(+mv));
-  const blanks=[!hasD,!hasS,!hasT].filter(Boolean).length;
-  if(blanks!==1){el.innerHTML=`<div class="e6b-hint">${blanks===0?'Leave one field blank to solve':'Fill at least two fields'}</div>`;return;}
-  const D_nm=hasD?+dv*DC[document.getElementById('tsd_du').value]:null;
-  const S_kts=hasS?+sv*SC[document.getElementById('tsd_su').value]:null;
-  const T_hrs=hasT?(+hv||0)+(+mv||0)/60:null;
-  let rd,rs,rt;
-  if(!hasD){rd=S_kts*T_hrs;rs=S_kts;rt=T_hrs;}
-  else if(!hasS){rd=D_nm;rs=T_hrs>0?D_nm/T_hrs:null;rt=T_hrs;}
-  else{rd=D_nm;rs=S_kts;rt=S_kts>0?D_nm/S_kts:null;}
-  if(rd==null||rs==null||rt==null||rs<=0||rt<0){el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">Invalid values</div>';return;}
-  const th=Math.floor(rt), tm=Math.round((rt-th)*60);
-  el.innerHTML=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Distance</span><span class="e6b-result-val">${rd.toFixed(1)} nm · ${(rd*1.852).toFixed(1)} km</span></div>
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Speed</span><span class="e6b-result-val">${rs.toFixed(1)} kts · ${(rs*1.852).toFixed(1)} km/h</span></div>
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Time</span><span class="e6b-result-val">${th}h ${String(tm).padStart(2,'0')}m (${(rt*60).toFixed(0)} min)</span></div>`;
-}
-
-// ── Fuel Planning ───────────────────────────────────────────────────────────
-function calcFuel(){
-  const flow=parseFloat(document.getElementById('f_flow').value);
-  const fh=parseFloat(document.getElementById('f_h').value)||0;
-  const fm=parseFloat(document.getElementById('f_m').value)||0;
-  const avail=parseFloat(document.getElementById('f_avail').value);
-  const res=parseFloat(document.getElementById('f_res').value)||0;
-  const fu=document.getElementById('f_flowu').value;
-  const el=document.getElementById('fuel-result');
-  const ul=fu==='lh'?'L':fu==='usg'?'USG':'kg';
-  if(isNaN(flow)){el.innerHTML='<div class="e6b-hint">Enter fuel flow first</div>';return;}
-  const tHrs=fh+fm/60;
-  const hasT=fh>0||fm>0, hasA=!isNaN(avail)&&avail>0;
-  if(!hasT&&!hasA){el.innerHTML='<div class="e6b-hint">Enter flight time or fuel available</div>';return;}
-  let rows=[];
-  if(hasT){
-    const need=flow*tHrs, resF=flow*(res/60), total=need+resF;
-    rows.push(`<div class="e6b-result-row hi"><span class="e6b-result-lbl">Fuel Required</span><span class="e6b-result-val">${need.toFixed(1)} ${ul}</span></div>`);
-    if(res>0) rows.push(`<div class="e6b-result-row"><span class="e6b-result-lbl">Reserve (${res} min)</span><span class="e6b-result-val">${resF.toFixed(1)} ${ul}</span></div>`);
-    rows.push(`<div class="e6b-result-row hi"><span class="e6b-result-lbl">Total incl. Reserve</span><span class="e6b-result-val">${total.toFixed(1)} ${ul}</span></div>`);
+  html += `<div class="radar-opacity-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);">
+      <label style="display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text2);cursor:pointer;">
+        <input type="checkbox" ${tmdCompositeOn?'checked':''} onchange="tmdCompositeToggle()"> 🇹🇭 ภาพรวมทั้งประเทศ (Composite)
+      </label>
+    </div>`;
+  if(tmdCompositeOn){
+    html += `<div class="radar-opacity-row"><span>โปร่งใส</span><input type="range" min="0.15" max="1" step="0.05" value="${tmdCompositeOpacity}" oninput="tmdCompositeSetOpacity(this.value)" style="flex:1;"></div>
+      <div style="font-size:8.5px;color:var(--muted);margin-top:4px;">ภาพเรดาร์รวมทั้งประเทศจาก TMD Radar Monitor · รีเฟรชทุก 5 นาที</div>`;
   }
-  if(hasA){
-    const endHrs=avail/flow, useHrs=Math.max(0,endHrs-res/60);
-    const eh=Math.floor(endHrs), em=Math.round((endHrs-eh)*60);
-    const uh=Math.floor(useHrs), um=Math.round((useHrs-uh)*60);
-    rows.push(`<div class="e6b-result-row hi"><span class="e6b-result-lbl">Total Endurance</span><span class="e6b-result-val">${eh}h ${String(em).padStart(2,'0')}m</span></div>`);
-    if(res>0) rows.push(`<div class="e6b-result-row hi"><span class="e6b-result-lbl">Usable (after res.)</span><span class="e6b-result-val">${uh}h ${String(um).padStart(2,'0')}m</span></div>`);
-  }
-  el.innerHTML=rows.join('');
+  const body = document.getElementById('tmdHudBody');
+  if(body) body.innerHTML = html;
 }
 
-// ── Unit Conversions ────────────────────────────────────────────────────────
-function cvDist(f){
-  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
-  const N={nm:1,km:1.852,sm:1.15078}, nm=v/N[f];
-  ['nm','km','sm'].forEach(u=>{if(u!==f)document.getElementById('cv_'+u).value=(nm*N[u]).toFixed(3);});
-}
-function cvAlt(f){
-  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
-  f==='ft'?document.getElementById('cv_m').value=(v*0.3048).toFixed(1)
-          :document.getElementById('cv_ft').value=(v/0.3048).toFixed(1);
-}
-function cvSpd(f){
-  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
-  const k=f==='kts'?v:f==='kmh'?v/1.852:v/1.15078;
-  if(f!=='kts') document.getElementById('cv_kts').value=k.toFixed(2);
-  if(f!=='kmh') document.getElementById('cv_kmh').value=(k*1.852).toFixed(2);
-  if(f!=='mph') document.getElementById('cv_mph').value=(k*1.15078).toFixed(2);
-}
-function cvPres(f){
-  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
-  f==='hpa'?document.getElementById('cv_inhg').value=(v*0.02953).toFixed(2)
-           :document.getElementById('cv_hpa').value=(v/0.02953).toFixed(1);
-}
-function cvTemp(f){
-  const v=parseFloat(document.getElementById('cv_'+f).value); if(isNaN(v))return;
-  f==='c'?document.getElementById('cv_f').value=(v*9/5+32).toFixed(1)
-         :document.getElementById('cv_c').value=((v-32)*5/9).toFixed(1);
-}
-
-// ── Pressure Altitude ───────────────────────────────────────────────────────
-function calcPA(){
-  const elev=parseFloat(document.getElementById('pa_elev').value)||0;
-  let qnh=parseFloat(document.getElementById('pa_qnh').value);
-  const unit=document.getElementById('pa_qnh_u').value;
-  const el=document.getElementById('pa-result');
-  if(isNaN(qnh)){el.innerHTML='<div class="e6b-hint">Enter altimeter setting (QNH)</div>';return;}
-  if(unit==='hpa') qnh=qnh*0.02953; // convert hPa → inHg
-  const PA=Math.round((29.92-qnh)*1000+elev);
-  const qnhHpa=(qnh/0.02953).toFixed(1);
-  const ISA_T=(15-0.001981*PA).toFixed(1);
-  const corr=Math.round((29.92-qnh)*1000);
-  el.innerHTML=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Pressure Altitude</span><span class="e6b-result-val">${PA.toLocaleString()} ft</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">QNH</span><span class="e6b-result-val">${qnh.toFixed(2)} inHg · ${qnhHpa} hPa</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Correction</span><span class="e6b-result-val">${corr>=0?'+':''}${corr} ft from field elev</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">ISA Temp at PA</span><span class="e6b-result-val">${ISA_T} °C</span></div>`;
-}
-
-// ── Runway Wind Components ──────────────────────────────────────────────────
-function calcRWY(){
-  const rwyNum=parseFloat(document.getElementById('rwy_hdg').value);
-  const wdfrom=parseFloat(document.getElementById('rwy_wdfrom').value);
-  const wspd=parseFloat(document.getElementById('rwy_wspd').value);
-  const el=document.getElementById('rwy-result');
-  if([rwyNum,wdfrom,wspd].some(isNaN)){el.innerHTML='<div class="e6b-hint">Fill all fields above</div>';return;}
-  const rwyHdg=rwyNum*10;
-  const angleRad=(wdfrom-rwyHdg)*Math.PI/180;
-  const hw=wspd*Math.cos(angleRad);   // + = headwind
-  const xw=wspd*Math.sin(angleRad);   // + = from right
-  // wind angle to runway (0–180)
-  let windAngle=Math.abs(((wdfrom-rwyHdg)+180)%360-180);
-  const maxXW_limit=[10,13,15,20]; // common crosswind limits
-  el.innerHTML=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">${hw>=0?'Headwind':'Tailwind'}</span><span class="e6b-result-val">${Math.abs(hw).toFixed(1)} kts ${hw>=0?'⬆':'⬇'}</span></div>
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Crosswind</span><span class="e6b-result-val">${Math.abs(xw).toFixed(1)} kts ${xw>=0?'from Right ➡':'from Left ⬅'}</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">RWY Heading</span><span class="e6b-result-val">RWY ${String(rwyNum).padStart(2,'0')} · ${rwyHdg}° mag</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Wind Angle to RWY</span><span class="e6b-result-val">${windAngle.toFixed(0)}° ${xw>=0?'right':'left'}</span></div>`;
-}
-
-// ── Cloud Base ─────────────────────────────────────────────────────────────
-function calcCloud(){
-  const T=parseFloat(document.getElementById('cld_temp').value);
-  const Td=parseFloat(document.getElementById('cld_dp').value);
-  const elev=parseFloat(document.getElementById('cld_elev').value)||0;
-  const el=document.getElementById('cld-result');
-  if(isNaN(T)||isNaN(Td)){el.innerHTML='<div class="e6b-hint">Fill temperature and dewpoint</div>';return;}
-  if(T<Td){el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">Temp must be ≥ Dewpoint</div>';return;}
-  const spread=T-Td;
-  const base_AGL=Math.round(spread*400);   // spread × 400 ft rule
-  const base_MSL=base_AGL+elev;
-  const RH=Math.max(0,Math.min(100,Math.round(100-5*spread)));
-  const outlook=spread<3?'⚠ Fog / very low cloud likely':spread<6?'Low cloud, reduced vis possible':spread>20?'Clear & dry':spread>12?'Scattered cloud':'Moderate cloud likely';
-  el.innerHTML=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Cloud Base AGL</span><span class="e6b-result-val">${base_AGL.toLocaleString()} ft</span></div>
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Cloud Base MSL</span><span class="e6b-result-val">${base_MSL.toLocaleString()} ft</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">T/DP Spread</span><span class="e6b-result-val">${spread.toFixed(1)} °C</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Approx. RH</span><span class="e6b-result-val">~${RH}%</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Outlook</span><span class="e6b-result-val" style="white-space:normal;">${outlook}</span></div>`;
-}
-
-// ── Holding Pattern Entry ───────────────────────────────────────────────────
-function calcHolding(){
-  const hdg=parseFloat(document.getElementById('h_hdg').value);
-  const inbound=parseFloat(document.getElementById('h_inbound').value);
-  const turn=document.getElementById('h_turn').value;
-  const el=document.getElementById('hold-result');
-  if(isNaN(hdg)||isNaN(inbound)){el.innerHTML='<div class="e6b-hint">Fill aircraft heading and inbound course</div>';return;}
-  const outbound=(inbound+180)%360;
-  let angle=hdg-outbound;
-  while(angle>180)angle-=360; while(angle<-180)angle+=360;
-
-  let entry,color,desc;
-  if(turn==='R'){
-    if(angle>=-70&&angle<=110){entry='Direct';color='#22c55e';desc='Proceed directly to the fix, then turn right to fly outbound.';}
-    else if(angle>110){entry='Parallel';color='#f59e0b';desc='Fly parallel (outbound direction) past the fix, turn right 180° to intercept inbound.';}
-    else{entry='Teardrop';color='#38bdf8';desc='Cross the fix, fly 30° into the holding side outbound ~1 min, then turn right to intercept inbound.';}
-  } else {
-    if(angle<=70&&angle>=-110){entry='Direct';color='#22c55e';desc='Proceed directly to the fix, then turn left to fly outbound.';}
-    else if(angle<-110){entry='Parallel';color='#f59e0b';desc='Fly parallel (outbound direction) past the fix, turn left 180° to intercept inbound.';}
-    else{entry='Teardrop';color='#38bdf8';desc='Cross the fix, fly 30° into the holding side outbound ~1 min, then turn left to intercept inbound.';}
-  }
-  el.innerHTML=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Entry Type</span><span class="e6b-result-val" style="color:${color};font-size:13px;font-weight:800;">${entry} Entry</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Inbound / Outbound</span><span class="e6b-result-val">${inbound}° / ${outbound}°</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Holds</span><span class="e6b-result-val">${turn==='R'?'Right (Standard)':'Left (Non-std)'}</span></div>
-    <div style="margin-top:6px;padding:5px 6px;background:var(--bg);border-radius:5px;font-size:9px;color:var(--text2);line-height:1.55;">${desc}</div>`;
-}
-
-// ── Top of Descent ─────────────────────────────────────────────────────────
-function calcTOD(){
-  const curAlt=parseFloat(document.getElementById('tod_cur').value);
-  const tgtAlt=parseFloat(document.getElementById('tod_tgt').value);
-  const gs=parseFloat(document.getElementById('tod_gs').value);
-  const angle=parseFloat(document.getElementById('tod_angle').value)||3.0;
-  const el=document.getElementById('tod-result');
-  if([curAlt,tgtAlt,gs].some(isNaN)){el.innerHTML='<div class="e6b-hint">Fill altitude and ground speed</div>';return;}
-  const dAlt=curAlt-tgtAlt;
-  if(dAlt<=0){el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">Current alt must be above target</div>';return;}
-  const tanA=Math.tan(angle*Math.PI/180);
-  const dist_nm=dAlt/(tanA*6076.12);
-  const rate_fpm=gs/60*6076.12*tanA;
-  const time_min=dist_nm/gs*60;
-  const tm=Math.floor(time_min), ts=Math.round((time_min-tm)*60);
-  const thumb=Math.round(dAlt/1000*3); // 3° rule of thumb
-  el.innerHTML=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Start Descent</span><span class="e6b-result-val">${dist_nm.toFixed(1)} nm from target</span></div>
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Descent Rate</span><span class="e6b-result-val">${Math.round(rate_fpm)} ft/min</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Time to Descend</span><span class="e6b-result-val">${tm}m ${ts}s</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Alt to Lose</span><span class="e6b-result-val">${dAlt.toLocaleString()} ft @ ${angle}°</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">3° Rule of Thumb</span><span class="e6b-result-val">~${thumb} nm (alt/1000 × 3)</span></div>`;
-}
-
-// ── Rate of Descent vs Distance ─────────────────────────────────────────────
-function calcRDD(){
-  const gs    = parseFloat(document.getElementById('rdd_gs').value);
-  const aVal  = document.getElementById('rdd_angle').value.trim();
-  const rVal  = document.getElementById('rdd_rate').value.trim();
-  const altV  = parseFloat(document.getElementById('rdd_alt').value);
-  const el    = document.getElementById('rdd-result');
-
-  if(isNaN(gs)||gs<=0){ el.innerHTML='<div class="e6b-hint">Enter Ground Speed first</div>'; buildRddTable(null); return; }
-
-  const hasA = aVal!==''&&!isNaN(+aVal);
-  const hasR = rVal!==''&&!isNaN(+rVal);
-
-  if(!hasA&&!hasR){
-    // show 3° reference only
-    const r3 = gs*101.269*Math.tan(3*Math.PI/180);
-    const d3 = 1000/(Math.tan(3*Math.PI/180)*6076.12);
-    el.innerHTML=`
-      <div class="e6b-result-row hi"><span class="e6b-result-lbl">3° Rate @ ${gs} kts</span><span class="e6b-result-val">${Math.round(r3)} ft/min</span></div>
-      <div class="e6b-result-row"><span class="e6b-result-lbl">Dist per 1,000 ft (3°)</span><span class="e6b-result-val">${d3.toFixed(2)} nm</span></div>
-      <div class="e6b-hint-sm" style="margin-top:5px;">Enter angle or rate to solve ↑</div>`;
-    buildRddTable(gs); return;
-  }
-
-  let A, R;
-  if(hasA && hasR){ A=+aVal; R=+rVal; }
-  else if(hasA)   { A=+aVal; R=gs*101.269*Math.tan(A*Math.PI/180); }
-  else            { R=+rVal; A=Math.atan(R/(gs*101.269))*180/Math.PI; }
-
-  if(A<=0||A>30){ el.innerHTML='<div class="e6b-hint" style="color:#ef4444;">Angle must be 0°–30°</div>'; return; }
-
-  const tanA = Math.tan(A*Math.PI/180);
-  const dist_per_1000 = 1000/(tanA*6076.12);        // nm per 1000 ft lost
-  const grad_ftnm     = tanA*6076.12;                // ft lost per nm
-  const grad_pct      = tanA*100;                    // %
-  const rate_3deg     = gs*101.269*Math.tan(3*Math.PI/180);
-  const diff          = R - rate_3deg;
-
-  let rows = `
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Descent Angle</span><span class="e6b-result-val">${A.toFixed(2)}°</span></div>
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Descent Rate</span><span class="e6b-result-val">${Math.round(R)} ft/min</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Dist per 1,000 ft</span><span class="e6b-result-val">${dist_per_1000.toFixed(2)} nm</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Gradient</span><span class="e6b-result-val">${grad_ftnm.toFixed(0)} ft/nm · ${grad_pct.toFixed(1)}%</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">vs 3° ILS</span><span class="e6b-result-val" style="color:${Math.abs(diff)<30?'#22c55e':Math.abs(diff)<80?'#f59e0b':'#ef4444'}">${diff>=0?'+':''}${Math.round(diff)} ft/min from 3°</span></div>`;
-
-  if(!isNaN(altV)&&altV>0){
-    const dist_total = altV/(tanA*6076.12);
-    const time_min   = dist_total/gs*60;
-    const tm=Math.floor(time_min), ts=Math.round((time_min-tm)*60);
-    rows+=`
-    <div class="e6b-result-row hi"><span class="e6b-result-lbl">Dist to lose ${altV.toLocaleString()} ft</span><span class="e6b-result-val">${dist_total.toFixed(1)} nm</span></div>
-    <div class="e6b-result-row"><span class="e6b-result-lbl">Time to lose</span><span class="e6b-result-val">${tm}m ${ts}s</span></div>`;
-  }
-  el.innerHTML = rows;
-  buildRddTable(gs);
-}
-
-function buildRddTable(gs){
-  const tbody = document.getElementById('rdd-ref-table');
-  if(!tbody) return;
-  const GS_LIST = [70,80,90,100,110,120,130,140,150,160,180,200];
-  const tan3 = Math.tan(3*Math.PI/180);
-  tbody.innerHTML = GS_LIST.map(g=>{
-    const r = Math.round(g*101.269*tan3);
-    const d = (1000/(tan3*6076.12)).toFixed(2);
-    const hi = gs && Math.abs(g-gs)<=5;
-    return `<tr style="${hi?'color:var(--accent2);font-weight:700;background:rgba(14,165,233,.07);':'color:var(--text2);'}">
-      <td style="padding:2px 4px;">${g}</td>
-      <td style="padding:2px 4px;text-align:right;">${r}</td>
-      <td style="padding:2px 4px;text-align:right;">${d}</td>
-    </tr>`;
-  }).join('');
-}
 
 // Build the weather HTML fragment (empty shell — filled by loadWXIntoPopup)
 function wxHTML(icao){
@@ -6399,144 +5733,6 @@ function wxHTML(icao){
       <div class="wx-block"><div class="wx-raw wx-na">Click Refresh to load weather</div></div>
     </div>
   </div>`;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// WEATHER FORECAST — current + 3-day + next-3-hour (Open-Meteo, free, no API key)
-//   Section is always in the popup DOM but hidden unless the "wxForecast" layer is on
-//   (toggled in toggleLayer()); fetched lazily on popupopen, cached 30 min per airport.
-// ═══════════════════════════════════════════════════════════════
-const FC_CACHE = {}; // { ICAO: { data, ts } }
-
-const WMO_WX = {
-  0:['☀️','ท้องฟ้าแจ่มใส'], 1:['🌤','แจ่มใสเป็นส่วนใหญ่'], 2:['⛅','มีเมฆบางส่วน'], 3:['☁️','มีเมฆมาก'],
-  45:['🌫','หมอก'], 48:['🌫','หมอกน้ำแข็ง'],
-  51:['🌦','ฝนปรอยเบา'], 53:['🌦','ฝนปรอย'], 55:['🌦','ฝนปรอยหนัก'],
-  56:['🌧❄','ฝนปรอยเย็นจัดเบา'], 57:['🌧❄','ฝนปรอยเย็นจัดหนัก'],
-  61:['🌧','ฝนเล็กน้อย'], 63:['🌧','ฝนปานกลาง'], 65:['🌧','ฝนหนัก'],
-  66:['🌧❄','ฝนเย็นจัดเบา'], 67:['🌧❄','ฝนเย็นจัดหนัก'],
-  71:['🌨','หิมะเล็กน้อย'], 73:['🌨','หิมะปานกลาง'], 75:['🌨','หิมะหนัก'], 77:['🌨','เกล็ดหิมะ'],
-  80:['🌧','ฝนตกเป็นช่วงเบา'], 81:['🌧','ฝนตกเป็นช่วงปานกลาง'], 82:['🌧','ฝนตกเป็นช่วงหนัก'],
-  85:['🌨','หิมะตกเป็นช่วงเบา'], 86:['🌨','หิมะตกเป็นช่วงหนัก'],
-  95:['⛈','พายุฝนฟ้าคะนอง'], 96:['⛈','พายุฝนฟ้าคะนอง+ลูกเห็บเบา'], 99:['⛈','พายุฝนฟ้าคะนอง+ลูกเห็บหนัก']
-};
-function wmoIcon(c){ return (WMO_WX[c]||['❓','ไม่ทราบ'])[0]; }
-function wmoText(c){ return (WMO_WX[c]||['❓','ไม่ทราบ'])[1]; }
-
-async function fetchForecast(icao, lat, lon){
-  const key = icao.toUpperCase();
-  const now = Date.now();
-  const cache = FC_CACHE[key];
-  if(cache && (now - cache.ts) < 1800000) return cache.data; // 30 min
-
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
-    + `&current_weather=true`
-    + `&hourly=temperature_2m,weathercode,precipitation_probability,windspeed_10m,winddirection_10m`
-    + `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,winddirection_10m_dominant`
-    + `&timezone=Asia%2FBangkok&forecast_days=3&windspeed_unit=kn`;
-  const data = await fetch(url).then(r=>r.json());
-  if(data && data.error) throw new Error(data.reason || 'Open-Meteo error');
-  FC_CACHE[key] = { data, ts: now };
-  return data;
-}
-
-function fcDayLabel(iso){
-  const d = new Date(iso+'T00:00:00');
-  return d.toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short'});
-}
-
-function buildForecastHTML(data, icao){
-  if(!data || !data.daily) return `<div class="wx-block"><div class="wx-raw wx-na">ไม่สามารถโหลดพยากรณ์อากาศได้</div></div>`;
-  const cw = data.current_weather;
-  const nowRow = cw ? `<div class="fc-now">
-      <span style="font-size:15px;">${wmoIcon(cw.weathercode)}</span>
-      <span><b>${Math.round(cw.temperature)}°C</b> · ${wmoText(cw.weathercode)}</span>
-      <span style="margin-left:auto;color:var(--muted);font-size:9px;">💨 ${cw.winddirection}° ${Math.round(cw.windspeed)}kt</span>
-      <button class="fc-toggle-btn" id="fc-toggle-${icao}" onclick="toggleForecastDetail('${icao}')">▾ 3 วัน</button>
-    </div>` : '';
-
-  // Daily (3 days)
-  const dTime = data.daily.time || [];
-  const dayCards = dTime.map((iso,i)=>{
-    const code = data.daily.weathercode[i];
-    const tmax = Math.round(data.daily.temperature_2m_max[i]);
-    const tmin = Math.round(data.daily.temperature_2m_min[i]);
-    const rain = data.daily.precipitation_probability_max[i];
-    return `<div class="fc-day">
-      <div class="fc-day-name">${i===0?'วันนี้':fcDayLabel(iso)}</div>
-      <div class="fc-day-icon">${wmoIcon(code)}</div>
-      <div class="fc-day-temp">${tmax}° <span>/ ${tmin}°</span></div>
-      <div class="fc-day-rain">💧 ${rain}%</div>
-    </div>`;
-  }).join('');
-
-  // Hourly (next 3 hours after "now")
-  const hTime = (data.hourly && data.hourly.time) || [];
-  const nowIso = (cw && cw.time) || hTime[0];
-  let startIdx = hTime.findIndex(t => t > nowIso);
-  if(startIdx < 0) startIdx = 0;
-  const hourCards = hTime.slice(startIdx, startIdx+3).map((iso,k)=>{
-    const i = startIdx+k;
-    const code = data.hourly.weathercode[i];
-    const t = Math.round(data.hourly.temperature_2m[i]);
-    const rain = data.hourly.precipitation_probability[i];
-    const hh = (iso.split('T')[1]||'').slice(0,5);
-    return `<div class="fc-hour">
-      <div class="fc-hour-time">${hh}</div>
-      <div class="fc-hour-icon">${wmoIcon(code)}</div>
-      <div class="fc-hour-temp">${t}°C</div>
-      <div class="fc-hour-rain">💧 ${rain}%</div>
-    </div>`;
-  }).join('');
-
-  return `${nowRow}
-    <div id="fc-detail-${icao}" class="fc-detail" style="display:none;">
-      <div class="wx-label">พยากรณ์ 3 วัน</div>
-      <div class="fc-row">${dayCards}</div>
-      <div class="wx-label">ชั่วโมงถัดไป</div>
-      <div class="fc-hour-row">${hourCards}</div>
-      <div class="fc-src">ข้อมูลจาก Open-Meteo (ไม่ใช่ AIP)</div>
-    </div>`;
-}
-
-function toggleForecastDetail(icao){
-  const d = document.getElementById('fc-detail-'+icao);
-  const btn = document.getElementById('fc-toggle-'+icao);
-  if(!d) return;
-  const show = d.style.display === 'none';
-  d.style.display = show ? '' : 'none';
-  if(btn) btn.textContent = show ? '▴ ซ่อน' : '▾ 3 วัน';
-}
-
-// Build the forecast HTML fragment (empty shell — filled by loadForecastIntoPopup, hidden unless layer on)
-function fcHTML(icao, lat, lon){
-  return `<div class="wx-section" id="fc-section-${icao}" style="display:none;">
-    <div class="wx-header">
-      <span class="wx-title">🌦 Forecast</span>
-      <span id="fc-status-${icao}" class="wx-status loading">⏳</span>
-      <button class="wx-refresh" onclick="loadForecastIntoPopup('${icao}',${lat},${lon},true)">↻</button>
-    </div>
-    <div id="fc-block-${icao}">
-      <div class="wx-block"><div class="wx-raw wx-na">Loading forecast…</div></div>
-    </div>
-  </div>`;
-}
-
-async function loadForecastIntoPopup(icao, lat, lon, force=false){
-  if(force) delete FC_CACHE[icao.toUpperCase()];
-  const el = document.getElementById('fc-block-'+icao);
-  if(!el) return;
-  el.innerHTML = `<div class="wx-block"><div class="wx-raw wx-na">Loading forecast…</div></div>`;
-  const stEl = document.getElementById('fc-status-'+icao);
-  if(stEl){ stEl.className='wx-status loading'; stEl.textContent='⏳'; }
-  try{
-    const data = await fetchForecast(icao, lat, lon);
-    el.innerHTML = buildForecastHTML(data, icao);
-    if(stEl){ stEl.className='wx-status fresh'; stEl.textContent='✓ Live'; }
-  }catch(err){
-    el.innerHTML = `<div class="wx-block"><div class="wx-raw wx-na">Error loading forecast (${err.message||'network error'})</div></div>`;
-    if(stEl){ stEl.className='wx-status error'; stEl.textContent='✕ Error'; }
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════
