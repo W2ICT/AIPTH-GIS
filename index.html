@@ -561,6 +561,12 @@
           <span class="layer-label">Aerodromes</span>
           <div class="ltog on" id="ltog-airports"></div>
         </div>
+        <div class="layer-row" onclick="toggleLayer('bkkVtr')">
+          <div class="layer-dot" style="background:#ef4444;border-radius:50%;"></div>
+          <span class="layer-label">พื้นที่ห้ามบิน กทม. (VTR1/2/80-83)</span>
+          <div class="ltog" id="ltog-bkkVtr"></div>
+        </div>
+        <div id="vtrCtl" style="display:none;padding:4px 8px 6px 22px;"></div>
         <div class="layer-row" onclick="toggleLayer('navAids')">
           <div class="layer-dot" style="background:#a78bfa;border-radius:50%;"></div>
           <span class="layer-label">Radio Nav Aids (VOR/NDB/ILS)</span>
@@ -1556,6 +1562,11 @@ function toggleLayer(k){
   if(k==='rtafRange'){
     if(LS[k]){ LG[k].addTo(map); rtafRouteLG.addTo(map); rtafRefresh(); }
     else { map.removeLayer(LG[k]); map.removeLayer(rtafRouteLG); rtafChain=[]; rtafRenderHud(); }
+    return;
+  }
+  if(k==='bkkVtr'){
+    LS[k] ? LG[k].addTo(map) : map.removeLayer(LG[k]);
+    vtrRenderCtl();
     return;
   }
   if(k==='heliRadius'){
@@ -2791,6 +2802,70 @@ updateLayerCount();
 // (Heli_Radius_Planner_Data_Template.xlsx, filled 2026-09-07) — NOT RFM / DASH-10.
 LG.heliRadius = L.layerGroup();
 LS.heliRadius = false;
+
+// ═══════════════════════════════════════════
+// BANGKOK RESTRICTED AREAS (VTR1, VTR2, VTR80–83) — circles from reference KML
+// ═══════════════════════════════════════════
+// Source: bangkok_restricted_areas_reference.kml (center + radius; verify vs current AIP/NOTAM).
+// Each area has its own on/off + opacity (slider = outline opacity; fill = 35% of it). Saved in localStorage 'bkkVtr'.
+LG.bkkVtr = L.layerGroup();
+LS.bkkVtr = false;
+const VTR_NM = 1852;
+const VTR_AIP_URL = 'https://aip.caat.or.th/2026-09-03-AIRAC/html/eAIP/VT-ENR-5.1-en-GB.html#ENR-5.1';
+const VTR_AREAS = [
+  {id:'VTR1',  name:'BANGKOK CITY',        lat:13.76500000, lon:100.53833333, nm:10},
+  {id:'VTR2',  name:'CHITRLADA PALACE',    lat:13.76810556, lon:100.52123333, nm:1},
+  {id:'VTR80', name:'SRAPATHUM PALACE',    lat:13.74796944, lon:100.53220000, nm:1},
+  {id:'VTR81', name:'JAKRIBONGKOT PALACE', lat:13.94675278, lon:100.52413889, nm:1},
+  {id:'VTR82', name:'AMPHORN ROYAL PALACE',lat:13.77263889, lon:100.51118889, nm:1},
+  {id:'VTR83', name:'SUKOTHAI PALACE',     lat:13.78240556, lon:100.50930833, nm:1},
+];
+let vtrState = {};
+try{ vtrState = JSON.parse(localStorage.getItem('bkkVtr')||'{}') || {}; }catch(e){}
+VTR_AREAS.forEach(a=>{
+  const s = vtrState[a.id] || {};
+  a.on  = s.on !== false;
+  a.op  = typeof s.op === 'number' ? s.op : 0.8;
+  a.circle = L.circle([a.lat,a.lon],{radius:a.nm*VTR_NM,color:'#ff0000',weight:2,fillColor:'#ff0000'})
+    .bindTooltip(`${a.id} – ${a.name}<br>${a.nm} NM · ${a.lat.toFixed(5)}, ${a.lon.toFixed(5)}`,{sticky:true})
+    .bindPopup(`<b>${a.id} – ${a.name}</b><br>${a.nm} NM · ${a.lat.toFixed(5)}, ${a.lon.toFixed(5)}<br><a href="${VTR_AIP_URL}" target="_blank" rel="noopener">📖 AIP ENR 5.1</a>`);
+  a.center = L.circleMarker([a.lat,a.lon],{radius:3,color:'#fde047',weight:1,fillColor:'#fde047',fillOpacity:1})
+    .bindTooltip(`${a.id} center`);
+  vtrApply(a);
+});
+function vtrApply(a){
+  a.circle.setStyle({opacity:a.op, fillOpacity:a.op*0.35});
+  a.center.setStyle({opacity:a.op, fillOpacity:a.op});
+  [a.circle,a.center].forEach(l=>{
+    if(a.on) LG.bkkVtr.addLayer(l); else LG.bkkVtr.removeLayer(l);
+  });
+}
+function vtrSave(){
+  const o={}; VTR_AREAS.forEach(a=>o[a.id]={on:a.on,op:a.op});
+  try{ localStorage.setItem('bkkVtr',JSON.stringify(o)); }catch(e){}
+}
+function vtrToggle(id){
+  const a=VTR_AREAS.find(x=>x.id===id); a.on=!a.on; vtrApply(a); vtrSave(); vtrRenderCtl();
+}
+function vtrOpacity(id,v){
+  const a=VTR_AREAS.find(x=>x.id===id); a.op=v/100; vtrApply(a); vtrSave();
+  const t=document.getElementById('vtrop-'+id); if(t) t.textContent=v+'%';
+}
+function vtrZoom(id){
+  const a=VTR_AREAS.find(x=>x.id===id); map.fitBounds(a.circle.getBounds(),{padding:[30,30]});
+}
+function vtrRenderCtl(){
+  const box=document.getElementById('vtrCtl'); if(!box) return;
+  box.style.display = LS.bkkVtr ? 'block' : 'none';
+  if(!LS.bkkVtr) return;
+  box.innerHTML = VTR_AREAS.map(a=>`
+    <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:11px;color:var(--text2);${a.on?'':'opacity:.55;'}">
+      <input type="checkbox" ${a.on?'checked':''} onchange="vtrToggle('${a.id}')" title="เปิด/ปิด">
+      <span style="flex:1;min-width:0;cursor:pointer;" onclick="vtrZoom('${a.id}')" title="${a.name} · ${a.nm} NM (คลิกเพื่อซูม)"><b>${a.id}</b> <span style="color:var(--muted)">${a.nm}NM</span></span>
+      <input type="range" min="0" max="100" value="${Math.round(a.op*100)}" style="width:70px;" oninput="vtrOpacity('${a.id}',this.value)" ${a.on?'':'disabled'}>
+      <span id="vtrop-${a.id}" style="width:32px;text-align:right;color:var(--muted);">${Math.round(a.op*100)}%</span>
+    </div>`).join('') + `<a href="${VTR_AIP_URL}" target="_blank" rel="noopener" style="display:block;margin-top:4px;font-size:11px;color:var(--accent2);text-decoration:none;">📖 AIP ENR 5.1 (CAAT, AIRAC 2026-09-03) ↗</a>`;
+}
 
 const HELI_FUEL_DENSITY   = 0.80;   // kg/L  (Project Settings)
 const HELI_START_TAXI_MIN = 10;     // start + hover-taxi allowance
